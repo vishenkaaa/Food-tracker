@@ -5,6 +5,7 @@ plugins {
 
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -67,4 +68,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.material3.android)
     ksp(libs.hilt.compiler)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
 }
