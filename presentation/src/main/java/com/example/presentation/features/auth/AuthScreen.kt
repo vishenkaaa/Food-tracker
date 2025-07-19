@@ -1,0 +1,57 @@
+package com.example.presentation.features.auth
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.wear.compose.material3.Text
+
+@Composable
+fun AuthRoute(viewModel: AuthVM = hiltViewModel()) {
+
+    val context = LocalContext.current
+    AuthScreen {
+        viewModel.signInWithGoogle(context)
+    }
+}
+
+@Composable
+fun AuthScreen(
+    onLoginClicked: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Wellcome!", color = Color.Black)
+        Button(
+            modifier = Modifier.padding(top = 32.dp),
+            onClick = {
+                onLoginClicked()
+            },
+        ) {
+            Text("Login with Google")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AuthScreenPreview(){
+    AuthScreen{}
+}

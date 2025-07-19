@@ -72,4 +72,5 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 }

@@ -23,11 +23,15 @@ androidxLifecycle = "2.8.7"
 androidxNavigation = "2.8.4"
 kotlinxSerializationJson = "1.6.3"
 monitor = "1.7.2"
+playServicesAuth = "21.3.0"
 runner = "1.6.2"
 junitKtx = "1.2.1"
 composeMaterial3Version = "1.0.0-alpha29"
 image-compressorVersion = "1.6.0"
 materialVersion = "1.7.5"
+firebaseAuthKtx = "23.2.1"
+playServicesBase = "18.0.1"
+googleid = "1.1.1"
 
 
 [libraries]
@@ -87,6 +91,10 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 
 [plugins]
