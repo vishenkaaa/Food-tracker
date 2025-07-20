@@ -104,7 +104,9 @@ private fun NavGraphBuilder.loginGraph(
         }
 
         composable<LoginGraph.TargetCalories> {
-            TargetRoute()
+            TargetRoute(){
+                navController.navigate(MainGraph.Dairy)
+            }
         }
     }
 }

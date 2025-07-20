@@ -2,29 +2,66 @@ package com.example.presentation.features.auth.target
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.presentation.features.auth.google.AuthScreen
-import com.example.presentation.features.auth.google.AuthVM
 
 @Composable
-fun TargetRoute() {
-    TargetScreen()
+fun TargetRoute(
+    viewModel: TargetVM = hiltViewModel(),
+    navigateToDiary: () -> Unit
+) {
+    TargetScreen(
+        onSave = { targetCalories ->
+            viewModel.saveTargetCalories(targetCalories, onSuccess = navigateToDiary)
+        }
+    )
 }
 
 @Composable
-fun TargetScreen(){
+fun TargetScreen(
+    onSave: (Int) -> Unit
+){
+    var target by remember { mutableStateOf("") }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("TARGET", color = Color.Black)
+        Text("Скільки калорій плануєш споживати?", color = Color.Black)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = target,
+            onValueChange = { if (it.all { c -> c.isDigit() }) target = it },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                val targetCalories = target.toIntOrNull() ?: 0
+                onSave(targetCalories)
+            },
+            enabled = target.isNotBlank()
+        ) {
+            Text("Зберегти")
+        }
     }
 }
