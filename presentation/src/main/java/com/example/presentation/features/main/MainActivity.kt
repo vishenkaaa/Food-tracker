@@ -6,13 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +31,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.data.auth.UserAuthState
 import com.example.foodtrack.ui.theme.FoodTrackTheme
 import com.example.presentation.R
 import com.example.presentation.features.main.navigation.AppNavHost
@@ -88,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
     private fun setContent(){
         setContent{
-            val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+            val snackbarHostState = remember { SnackbarHostState() }
             var shouldShowBottomBar by remember { mutableStateOf(false) }
             val topLevelDestinations = TopLevelDestinations.entries
 

@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    firestore: FirebaseFirestore
 ) : FirebaseAuthRepository {
 
     override suspend fun signInWithGoogle(idToken: String): Result<User> {
@@ -18,21 +18,47 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         val authResult = auth.signInWithCredential(credential).await()
 
         val firebaseUser = authResult.user ?: return Result.failure(Exception("User is null"))
-        val user =  User(
-            id = firebaseUser.uid,
-            name = firebaseUser.displayName,
-            email = firebaseUser.email,
-            photoUrl = firebaseUser.photoUrl?.toString(),
-            isNew = authResult.additionalUserInfo?.isNewUser ?: false
-        )
 
-        if (user.isNew) {
+        val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+        val userId = firebaseUser.uid
+
+        val userDocument = usersCollection.document(userId)
+        val targetCalories: Int
+
+        if (isNewUser) {
+            targetCalories = 0
+            val newUser = User(
+                id = userId,
+                name = firebaseUser.displayName,
+                email = firebaseUser.email,
+                photoUrl = firebaseUser.photoUrl?.toString(),
+                isNew = true,
+                targetCalories = targetCalories
+            )
             try {
-                usersCollection.document(user.id).set(user).await()
+                userDocument.set(newUser).await()
+            } catch (e: Exception) {
+                return Result.failure(e)
+            }
+        } else {
+            try {
+                val snapshot = userDocument.get().await()
+                val existingUser = snapshot.toObject(User::class.java)
+
+                targetCalories = existingUser?.targetCalories ?: 0
             } catch (e: Exception) {
                 return Result.failure(e)
             }
         }
+
+        val user = User(
+            id = userId,
+            name = firebaseUser.displayName,
+            email = firebaseUser.email,
+            photoUrl = firebaseUser.photoUrl?.toString(),
+            isNew = isNewUser,
+            targetCalories = targetCalories
+        )
 
         return Result.success(user)
     }

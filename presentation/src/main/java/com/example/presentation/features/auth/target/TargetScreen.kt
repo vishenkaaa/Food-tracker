@@ -23,11 +23,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun TargetRoute(
     viewModel: TargetVM = hiltViewModel(),
-    navigateToDiary: () -> Unit
 ) {
     TargetScreen(
         onSave = { targetCalories ->
-            viewModel.saveTargetCalories(targetCalories, onSuccess = navigateToDiary)
+            viewModel.saveTargetCalories(targetCalories)
         }
     )
 }

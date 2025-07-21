@@ -16,11 +16,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.feature.main.idle.IdleRoute
-import com.example.feature.main.idle.IdleScreen
+import com.example.data.auth.UserAuthState
+import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.target.TargetRoute
-import com.example.presentation.features.main.UserAuthState
 import com.example.presentation.features.main.diary.DiaryRoute
 
 @Composable
@@ -30,50 +29,42 @@ fun AppNavHost(
     userAuthState: UserAuthState,
     shouldShowBottomBar: Boolean,
 ) {
+    LaunchedEffect(userAuthState.isLoggedIn, userAuthState.isFullyRegistered) {
+        when {
+            userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
+                navController.navigate(Graphs.Login) {
+                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+                }
+            }
+            !userAuthState.isFullyRegistered -> {
+                navController.navigate(LoginGraph.TargetCalories) {
+                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+                }
+            }
+            else -> {
+                navController.navigate(MainGraph.Dairy) {
+                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+                }
+            }
+        }
+    }
 
     NavHost(
         modifier = modifier
             .fillMaxSize()
             .padding(bottom = if (shouldShowBottomBar) 32.dp else 0.dp),
         navController = navController,
-        enterTransition = { fadeIn() },
-        exitTransition = { fadeOut() },
         startDestination = Graphs.IdleScreen
     ) {
-
-        composable<Graphs.IdleScreen> {
-            LaunchedEffect(userAuthState) {
-                when {
-                    userAuthState.isLoading -> { /* Показуємо IdleScreen */ }
-                    userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
-                        navController.navigate(Graphs.Login) {
-                            popUpTo(Graphs.IdleScreen) { inclusive = true }
-                        }
-                    }
-                    !userAuthState.isFullyRegistered -> {
-                        navController.navigate(LoginGraph.TargetCalories) {
-                            popUpTo(Graphs.IdleScreen) { inclusive = true }
-                        }
-                    }
-                    else -> {
-                        navController.navigate(Graphs.Main) {
-                            popUpTo(Graphs.IdleScreen) { inclusive = true }
-                        }
-                    }
-                }
-            }
-
-            IdleRoute()
-        }
-
-
+        composable<Graphs.IdleScreen> { IdleRoute() }
         loginGraph(navController)
         mainGraph(navController)
     }
 }
 
+
 private fun NavGraphBuilder.loginGraph(
-    navController: NavController
+    navController: NavController,
 ) {
     navigation<Graphs.Login>(
         startDestination = LoginGraph.Google,
@@ -98,15 +89,11 @@ private fun NavGraphBuilder.loginGraph(
                 return@composable fadeOut()
             }
         ) {
-            AuthRoute(){
-                navController.navigate(LoginGraph.TargetCalories)
-            }
+            AuthRoute()
         }
 
         composable<LoginGraph.TargetCalories> {
-            TargetRoute(){
-                navController.navigate(MainGraph.Dairy)
-            }
+            TargetRoute()
         }
     }
 }

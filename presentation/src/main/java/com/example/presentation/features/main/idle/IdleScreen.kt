@@ -1,4 +1,4 @@
-package com.example.feature.main.idle
+package com.example.presentation.features.main.idle
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

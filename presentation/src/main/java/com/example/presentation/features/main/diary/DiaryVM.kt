@@ -1,24 +1,23 @@
-package com.example.presentation.features.main
+package com.example.presentation.features.main.diary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.auth.AuthStateManager
-import com.example.data.auth.UserAuthState
+import com.example.domain.usecase.auth.SignOutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainVM @Inject constructor(
+class DiaryVM @Inject constructor(
+    private val signOutUseCase: SignOutUseCase,
     private val authStateManager: AuthStateManager
 ) : ViewModel() {
 
-    val userAuthState: StateFlow<UserAuthState> = authStateManager.userAuthState
-
-    fun checkUserState() {
+    fun signOut() {
         viewModelScope.launch {
-            authStateManager.checkUserState()
+            signOutUseCase.invoke()
+            authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
         }
     }
 }

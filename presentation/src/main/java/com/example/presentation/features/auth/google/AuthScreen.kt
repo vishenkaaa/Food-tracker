@@ -1,6 +1,5 @@
 package com.example.presentation.features.auth.google
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,17 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material3.Text
-import com.example.presentation.features.main.MainVM
 
 @Composable
 fun AuthRoute(
-    viewModel: AuthVM = hiltViewModel(),
-    mainVM: MainVM = hiltViewModel(),
-    onNewSignIn: () -> Unit,
+    viewModel: AuthVM = hiltViewModel()
 ) {
     val context = LocalContext.current
+
     AuthScreen {
-        viewModel.signInWithGoogle(context, mainVM, false, onNewSignIn)
+        viewModel.signInWithGoogle(context, true)
     }
 }
 
@@ -34,7 +31,7 @@ fun AuthScreen(
     onLoginClicked: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

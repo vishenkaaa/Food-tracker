@@ -1,8 +1,6 @@
 package com.example.presentation.features.main.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Note
 import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.VerifiedUser
