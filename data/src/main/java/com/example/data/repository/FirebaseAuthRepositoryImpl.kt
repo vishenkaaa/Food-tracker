@@ -13,6 +13,10 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore
 ) : FirebaseAuthRepository {
 
+    companion object{
+        private const val USERS_KEY = "users"
+    }
+
     override suspend fun signInWithGoogle(idToken: String): Result<User> {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         val authResult = auth.signInWithCredential(credential).await()
@@ -67,7 +71,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         auth.signOut()
     }
 
-    private val usersCollection = firestore.collection("users")
+    private val usersCollection = firestore.collection(USERS_KEY)
 
     override suspend fun isUserLoggedIn(): Boolean {
         return auth.currentUser != null

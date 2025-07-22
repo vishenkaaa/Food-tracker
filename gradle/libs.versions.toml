@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+firebaseCommon = "22.0.0"
 kotlin = "2.0.21"
 kotlinSerialization = "1.9.22"
 coreKtx = "1.16.0"
@@ -8,13 +9,13 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2024.09.00"
+composeBom = "2025.07.00"
 appcompat = "1.6.1"
-material = "1.10.0"
+material = "1.12.0"
 jetbrainsKotlinJvm = "2.0.21"
 ksp = "2.0.21-1.0.28"
 hilt = "2.51.1"
-kotlinxCoroutines = "1.8.1"
+kotlinxCoroutines = "1.10.2"
 androidxHiltNavigationCompose = "1.2.0"
 material3Android = "1.3.2"
 androidxCoreSplashscreen = "1.0.1"
@@ -34,11 +35,11 @@ playServicesBase = "18.0.1"
 googleid = "1.1.1"
 firebaseFirestoreKtx = "25.1.4"
 
-
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-common = { module = "com.google.firebase:firebase-common"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -97,7 +98,7 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
-
+firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

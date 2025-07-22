@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="all_exit">Для виходу, натисніть ще раз</string>
+    <string name="retry">Повторити</string>
+    <string name="no_internet_connection">Немає підключення до Інтернету</string>
+    <string name="unknown_error">Невідома помилка</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.auth.AuthStateManager
 import com.example.domain.usecase.auth.SignOutUseCase
+import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,7 +13,7 @@ import javax.inject.Inject
 class DiaryVM @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val authStateManager: AuthStateManager
-) : ViewModel() {
+) : BaseViewModel() {
 
     fun signOut() {
         viewModelScope.launch {

@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.play.services.base)
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

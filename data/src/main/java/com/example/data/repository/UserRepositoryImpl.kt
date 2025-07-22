@@ -10,7 +10,12 @@ class UserRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore
 ) : UserRepository {
 
-    private val usersCollection = firestore.collection("users")
+    companion object{
+        private const val USERS_KEY = "users"
+        private const val TARGET_CALORIES_KEY = "targetCalories"
+    }
+
+    private val usersCollection = firestore.collection(USERS_KEY)
 
     override suspend fun createUser(user: User): Result<Unit> {
         return try {
@@ -34,7 +39,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateTargetCalories(userId: String, targetCalories: Int): Result<Unit> {
         return try {
-            usersCollection.document(userId).update("targetCalories", targetCalories).await()
+            usersCollection.document(userId).update(TARGET_CALORIES_KEY, targetCalories).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

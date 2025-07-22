@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.auth.AuthStateManager
 import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.repository.UserRepository
+import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class TargetVM @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: FirebaseAuthRepository,
     private val authStateManager: AuthStateManager
-) : ViewModel() {
+) : BaseViewModel() {
 
     fun saveTargetCalories(targetCalories: Int) {
         viewModelScope.launch {

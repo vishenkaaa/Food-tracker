@@ -133,6 +133,8 @@ class MainActivity : ComponentActivity() {
                                         //AppNavigationBar(currentDestination, navController)
                                     }
                                 }
+
+
                             }
                         }
                     )
