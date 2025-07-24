@@ -1,34 +1,110 @@
-package com.example.foodtrack.ui.theme
+package com.example.presentation.common.values
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.presentation.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+val gilroyFontFamily = FontFamily(
+    Font(R.font.gilroy_bold, FontWeight.Bold),
+    Font(R.font.gilroy_medium, FontWeight.Medium),
+    Font(R.font.gilroy_regular, FontWeight.Normal)
+)
+
+val display1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 46.sp,
+        lineHeight = 60.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val display2: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+        lineHeight = 60.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val headline1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 36.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val headline2: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 30.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val subtitle1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val subtitle2: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 21.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val body1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 21.sp,
+        color = if (isSystemInDarkTheme()) White else Black
+    )
+
+val body2: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        color = if (isSystemInDarkTheme()) White else Black
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+
+val Typography: Typography
+    @Composable
+    get() = Typography(
+        displayLarge = display1,
+        displayMedium = display2,
+        headlineLarge = headline1,
+        headlineMedium = headline2,
+        titleLarge = subtitle1,
+        titleMedium = subtitle2,
+        bodyLarge = body1,
+        bodyMedium = body2,
     )
-    */
-)

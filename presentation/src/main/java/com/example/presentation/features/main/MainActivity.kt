@@ -7,6 +7,7 @@ import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +33,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.data.auth.UserAuthState
-import com.example.foodtrack.ui.theme.FoodTrackTheme
 import com.example.presentation.R
+import com.example.presentation.common.values.FoodTrackTheme
 import com.example.presentation.features.main.navigation.AppNavHost
 import com.example.presentation.features.main.navigation.TopLevelDestinations
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,6 +108,7 @@ class MainActivity : ComponentActivity() {
 
             FoodTrackTheme {
                 Surface(
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold(
