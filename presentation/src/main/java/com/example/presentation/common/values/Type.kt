@@ -23,7 +23,7 @@ val display1: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 46.sp,
         lineHeight = 60.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val display2: TextStyle
@@ -33,7 +33,7 @@ val display2: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
         lineHeight = 60.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val headline1: TextStyle
@@ -43,7 +43,7 @@ val headline1: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 36.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val headline2: TextStyle
@@ -53,7 +53,7 @@ val headline2: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 30.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val subtitle1: TextStyle
@@ -63,7 +63,7 @@ val subtitle1: TextStyle
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val subtitle2: TextStyle
@@ -73,17 +73,7 @@ val subtitle2: TextStyle
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 21.sp,
-        color = if (isSystemInDarkTheme()) White else Black
-    )
-
-val body1: TextStyle
-    @Composable
-    get() = TextStyle(
-        fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 21.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val body2: TextStyle
@@ -92,8 +82,18 @@ val body2: TextStyle
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        color = if (isSystemInDarkTheme()) White else Black
+        lineHeight = 20.sp,
+        color = if (isSystemInDarkTheme()) White else DarkGreen
+    )
+
+val body1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+        color = if (isSystemInDarkTheme()) White else DarkGreen
     )
 
 val Typography: Typography

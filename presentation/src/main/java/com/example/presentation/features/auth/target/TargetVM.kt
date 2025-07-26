@@ -1,29 +1,187 @@
 package com.example.presentation.features.auth.target
 
-import androidx.lifecycle.ViewModel
+import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.data.auth.AuthStateManager
+import com.example.domain.model.UserActivityLevel
+import com.example.domain.model.Gender
+import com.example.domain.model.Goal
+import com.example.domain.model.User
 import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.repository.UserRepository
 import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class TargetVM @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: FirebaseAuthRepository,
-    private val authStateManager: AuthStateManager
+    private val authStateManager: AuthStateManager,
 ) : BaseViewModel() {
 
-    fun saveTargetCalories(targetCalories: Int) {
-        viewModelScope.launch {
-            val userId = authRepository.getCurrentUserId() ?: return@launch
+    private var totalStep by mutableIntStateOf(6)
 
-            userRepository.updateTargetCalories(userId, targetCalories).onSuccess {
-                authStateManager.updateFullyRegistered(true)
+    private var step by mutableIntStateOf(0)
+
+    private var goal by mutableStateOf<Goal?>(null)
+
+    private var targetWeight by mutableFloatStateOf(0f)
+
+    private var gender by mutableStateOf<Gender?>(null)
+
+    private var userActivityLevel by mutableStateOf<UserActivityLevel?>(null)
+
+    private var currentWeight by mutableFloatStateOf(0f)
+
+    private var height by mutableIntStateOf(0)
+
+    private var birthDate by mutableStateOf<LocalDate?>(null)
+
+    val uiState: TargetUiState
+        get() = TargetUiState(
+            step = step,
+            totalSteps = totalStep,
+            goal = goal,
+            currentWeight = currentWeight,
+            targetWeight = targetWeight,
+            height = height,
+            gender = gender,
+            birthDate = birthDate,
+            activityLevel = userActivityLevel,
+        )
+
+    fun onBackPressed() {
+        if (step == 0) {
+            goToAuth()
+        } else {
+            backToPreviousStep()
+        }
+    }
+
+    private fun backToPreviousStep() {
+        if (step > 0) {
+            step--
+        }
+    }
+
+    private fun goToAuth(){
+        viewModelScope.launch {
+            authRepository.signOut()
+        }
+        authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
+    }
+
+    fun onNextStep(){
+        step++
+    }
+
+    fun onGoalSelected(value: Goal) {
+        goal = value
+        totalStep = when (value){
+            Goal.LOSE -> 7
+            Goal.MAINTAIN -> 6
+            Goal.GAIN -> 7
+        }
+    }
+
+    fun onTargetWeightSelected(value: Float) {
+        targetWeight = value
+    }
+
+    fun onGenderSelected(value: Gender) {
+        gender = value
+    }
+
+    fun onActivityLevelSelected(value: UserActivityLevel) {
+        userActivityLevel = value
+    }
+
+    fun onCurrentWeightSelected(value: Float) {
+        currentWeight = value
+    }
+
+    fun onHeightSelected(value: Int) {
+        height = value
+    }
+
+    fun onBirthDateSelected(value: LocalDate) {
+        birthDate = value
+    }
+
+    fun saveUserInfo(context: Context) {
+        if (!isDataValid()) {
+            return
+        }
+
+        viewModelScope.launch {
+            handleLoading(
+                isLoading = true
+            )
+            clearErrors()
+
+            try {
+                val userId = authRepository.getCurrentUserId()
+
+                val user = User(
+                    id = userId!!,
+                    goal = goal!!,
+                    targetWeight = targetWeight,
+                    gender = gender!!,
+                    userActivityLevel = userActivityLevel!!,
+                    currentWeight = currentWeight,
+                    height = height,
+                    birthDate = birthDate,
+                )
+
+                val calculatedCalories = user.calculateCalories()
+                val userWithCalories = user.copy(targetCalories = calculatedCalories ?: 0)
+
+                userRepository.updateUserInfo(userWithCalories).onSuccess {
+                    authStateManager.updateFullyRegistered(true)
+                }.onFailure { exception ->
+                    handleUnexpectedError(exception, context)
+                }
+            } catch (e: Exception) {
+                handleUnexpectedError(e, context)
+            } finally {
+                handleLoading(
+                    isLoading = false
+                )
             }
         }
     }
+
+    private fun isDataValid(): Boolean {
+        return goal != null &&
+                gender != null &&
+                userActivityLevel != null &&
+                currentWeight > 0 &&
+                height > 0 &&
+                birthDate != null &&
+                (goal != Goal.LOSE && goal != Goal.GAIN || targetWeight > 0)
+    }
+
+    fun consumeError() {
+        clearErrors()
+    }
 }
+
+data class TargetUiState(
+    val step: Int = 0,
+    val totalSteps: Int = 6,
+    val goal: Goal? = null,
+    val currentWeight: Float = 0f,
+    val targetWeight: Float = 0f,
+    val height: Int = 0,
+    val gender: Gender? = null,
+    val birthDate: LocalDate? = null,
+    val activityLevel: UserActivityLevel? = null,
+)

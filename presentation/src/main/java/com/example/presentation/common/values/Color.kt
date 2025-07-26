@@ -5,23 +5,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import com.example.presentation.R
 
-val MainAccentColor: Color
+val Green: Color
     @Composable
-    get() = colorResource(R.color.main_accent_color)
+    get() = colorResource(R.color.green)
 
 val White: Color
     @Composable
     get() = colorResource(R.color.white)
 
-val White10: Color
+val Green20: Color
     @Composable
-    get() = colorResource(R.color.white_10)
+    get() = colorResource(R.color.green_20)
 
 val White50: Color
     @Composable
     get() = colorResource(R.color.white_50)
 
-val DarkColor: Color
+val DarkGreen: Color
     @Composable
     get() = colorResource(R.color.dark_color)
 
@@ -40,3 +40,7 @@ val GrayDark: Color
 val Black: Color
     @Composable
     get() = colorResource(R.color.black)
+
+val DarkBackground: Color
+    @Composable
+    get() = colorResource(R.color.dark_bg)

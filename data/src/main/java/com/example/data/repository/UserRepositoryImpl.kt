@@ -1,5 +1,7 @@
 package com.example.data.repository
 
+import com.example.data.mapper.UserModelMapper.mapToUser
+import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,7 +12,7 @@ class UserRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore
 ) : UserRepository {
 
-    companion object{
+    companion object {
         private const val USERS_KEY = "users"
         private const val TARGET_CALORIES_KEY = "targetCalories"
     }
@@ -19,7 +21,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun createUser(user: User): Result<Unit> {
         return try {
-            usersCollection.document(user.id).set(user).await()
+            val userMap = userToMap(user)
+            usersCollection.document(user.id).set(userMap).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -29,9 +32,22 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUser(userId: String): Result<User> {
         return try {
             val snapshot = usersCollection.document(userId).get().await()
-            val user = snapshot.toObject(User::class.java)
-                ?: return Result.failure(Exception("User not found"))
+            if (!snapshot.exists()) {
+                return Result.failure(Exception("User not found"))
+            }
+
+            val user = mapToUser(snapshot.data ?: emptyMap(), userId)
             Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateUserInfo(user: User): Result<Unit> {
+        return try {
+            val userMap = userToMap(user)
+            usersCollection.document(user.id).update(userMap).await()
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

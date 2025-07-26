@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="main_accent_color">#4B7E38</color>
+    <color name="green">#4B7E38</color>
 
     <!-- Light theme colors -->
     <color name="white">#FFFFFF</color>
-    <color name="white_10">#F5F5F5</color>
     <color name="white_50">#F0F0F0</color>
+    <color name="green_20">#334B7E38</color>
 
     <!-- Dark theme colors -->
     <color name="dark_color">#0C2004</color>
     <color name="black">#000000</color>
-    <color name="black_90">#1A1A1A</color>
+    <color name="dark_bg">#1E1E1E</color>
 
     <!-- Gray colors -->
     <color name="gray">#757575</color>
     <color name="gray_light">#BDBDBD</color>
-    <color name="gray_dark">#424242</color>
+    <color name="gray_dark">#1E1E1E</color>
 </resources>

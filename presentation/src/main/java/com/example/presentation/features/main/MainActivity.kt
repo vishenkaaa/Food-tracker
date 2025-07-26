@@ -5,8 +5,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -23,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -50,8 +54,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        super.onCreate(savedInstanceState)
 
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         viewModel.checkUserState()
 
         onBackPressedDispatcher.addCallback(this) {
@@ -113,6 +118,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         snackbarHost = { SnackbarHost(snackbarHostState) },
+                        contentWindowInsets = WindowInsets(0.dp),
                         content = { paddingValues ->
                             Box {
                                 AppNavHost(
@@ -135,10 +141,11 @@ class MainActivity : ComponentActivity() {
                                         //AppNavigationBar(currentDestination, navController)
                                     }
                                 }
-
-
                             }
-                        }
+                        },
+//                        bottomBar = {
+//                            AnimatedVisibility() { }
+//                        }
                     )
                 }
             }

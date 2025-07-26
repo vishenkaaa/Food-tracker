@@ -16,34 +16,34 @@ import androidx.core.view.WindowCompat
 private val LightColorScheme
     @Composable
     get() = lightColorScheme(
-        primary = MainAccentColor,
+        primary = Green,
         onPrimary = White,
-        secondary = Gray,
-        onSecondary = White,
-        surface = White10,
-        onSurface = DarkColor,
+        secondary = Green20,
+        onSecondary = DarkGreen,
+        surface = White,
+        onSurface = DarkGreen,
+        surfaceVariant = Green,
         onSurfaceVariant = GrayDark,
         background = White,
-        onBackground = DarkColor,
-        outline = GrayLight,
-        surfaceVariant = White50
+        onBackground = DarkGreen,
+        outline = White50,
     )
 
 // Dark Theme Colors
 private val DarkColorScheme
     @Composable
     get() = darkColorScheme(
-        primary = MainAccentColor,
+        primary = Green,
         onPrimary = White,
         secondary = GrayLight,
-        onSecondary = DarkColor,
-        surface = DarkColor,
+        onSecondary = DarkGreen,
+        surface = DarkBackground,
         onSurface = White,
+        surfaceVariant = Green,
         onSurfaceVariant = GrayLight,
-        background = DarkColor,
+        background = DarkBackground,
         onBackground = White,
-        outline = Gray,
-        surfaceVariant = Gray
+        outline = Gray
     )
 
 @Composable

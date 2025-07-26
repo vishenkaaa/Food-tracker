@@ -8,4 +8,21 @@
     <string name="your_daily_guide_to">Твій щоденний\nгід з</string>
     <string name="smart">розумного</string>
     <string name="eating">\nхарчування</string>
+    <string name="weight_gain">Набір ваги</string>
+    <string name="maintaining_current_weight">Підтримання поточної ваги</string>
+    <string name="weight_loss">Схуднення</string>
+    <string name="sedentary">Малорухливий</string>
+    <string name="lightly_active">Помірно активний</string>
+    <string name="active">Активний</string>
+    <string name="very_active">Дуже активний</string>
+    <string name="daily_activities_that_require_minimal_effort">Щоденні дії, що потребують мінімальних зусиль</string>
+    <string name="daily_activities_that_require_light_effort">Щоденні дії, що потребують легких зусиль</string>
+    <string name="daily_activities_that_require_moderate_effort">Щоденні дії, що потребують помірних зусиль</string>
+    <string name="daily_activities_that_require_intense_physical_effort">Щоденні дії, що потребують інтенсивних фізичних зусиль</string>
+    <string name="male">Чоловік</string>
+    <string name="female">Жінка</string>
+    <string name="new_profile">Новий профіль</string>
+    <string name="food">Food</string>
+    <string name="tracker">Tracker</string>
+    <string name="welcome_step_txt">Визначимо Ваші цілі, та\nрозрахуємо рекомендоване\nдобове споживання калорій</string>
 </resources>
