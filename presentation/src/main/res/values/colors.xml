@@ -5,7 +5,7 @@
     <!-- Light theme colors -->
     <color name="white">#FFFFFF</color>
     <color name="white_50">#F0F0F0</color>
-    <color name="green_20">#334B7E38</color>
+    <color name="green_50">#804B7E38</color>
 
     <!-- Dark theme colors -->
     <color name="dark_color">#0C2004</color>

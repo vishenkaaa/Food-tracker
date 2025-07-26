@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +30,7 @@ fun WelcomeStep(
     onNextStep: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -46,10 +47,11 @@ fun WelcomeStep(
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.height(120.dp))
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(
             onClick = { onNextStep() },
             modifier = Modifier
+                .padding(bottom = 76.dp)
                 .size(24.dp)
                 .clip(RoundedCornerShape(50.dp))
                 .background(MaterialTheme.colorScheme.primary)

@@ -18,7 +18,7 @@ private val LightColorScheme
     get() = lightColorScheme(
         primary = Green,
         onPrimary = White,
-        secondary = Green20,
+        secondary = Green50,
         onSecondary = DarkGreen,
         surface = White,
         onSurface = DarkGreen,
@@ -26,7 +26,7 @@ private val LightColorScheme
         onSurfaceVariant = GrayDark,
         background = White,
         onBackground = DarkGreen,
-        outline = White50,
+        outline = Green50,
     )
 
 // Dark Theme Colors
@@ -43,7 +43,7 @@ private val DarkColorScheme
         onSurfaceVariant = GrayLight,
         background = DarkBackground,
         onBackground = White,
-        outline = Gray
+        outline = Green50
     )
 
 @Composable

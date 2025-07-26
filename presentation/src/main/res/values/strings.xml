@@ -25,4 +25,6 @@
     <string name="food">Food</string>
     <string name="tracker">Tracker</string>
     <string name="welcome_step_txt">Визначимо Ваші цілі, та\nрозрахуємо рекомендоване\nдобове споживання калорій</string>
+    <string name="what_is_your_goal">Оберіть Вашу мету</string>
+    <string name="continue_">Продовжити</string>
 </resources>
