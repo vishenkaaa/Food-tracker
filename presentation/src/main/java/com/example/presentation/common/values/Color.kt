@@ -37,10 +37,6 @@ val GrayDark: Color
     @Composable
     get() = colorResource(R.color.gray_dark)
 
-val Black: Color
-    @Composable
-    get() = colorResource(R.color.black)
-
 val DarkBackground: Color
     @Composable
     get() = colorResource(R.color.dark_bg)

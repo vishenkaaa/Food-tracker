@@ -10,15 +10,15 @@
     <string name="eating">\nхарчування</string>
     <string name="weight_gain">Набір ваги</string>
     <string name="maintaining_current_weight">Підтримання поточної ваги</string>
-    <string name="weight_loss">Схуднення</string>
+    <string name="weight_loss">Скидання ваги</string>
     <string name="sedentary">Малорухливий</string>
     <string name="lightly_active">Помірно активний</string>
     <string name="active">Активний</string>
     <string name="very_active">Дуже активний</string>
-    <string name="daily_activities_that_require_minimal_effort">Щоденні дії, що потребують мінімальних зусиль</string>
-    <string name="daily_activities_that_require_light_effort">Щоденні дії, що потребують легких зусиль</string>
-    <string name="daily_activities_that_require_moderate_effort">Щоденні дії, що потребують помірних зусиль</string>
-    <string name="daily_activities_that_require_intense_physical_effort">Щоденні дії, що потребують інтенсивних фізичних зусиль</string>
+    <string name="sedentary_user_activities_description">Спорт - це не про мене, переважно сиджу вдома чи в офісі</string>
+    <string name="lightly_active_user_activities_description">Намагаюся рухатись, але нерегулярно. Іноді хожу пішки</string>
+    <string name="active_user_activities_description">Люблю спорт і стараюся тренуватись кілька разів на тиждень</string>
+    <string name="very_active_user_activities_description">Не можу жити без руху! Тренуюся майже щодня</string>
     <string name="male">Чоловік</string>
     <string name="female">Жінка</string>
     <string name="new_profile">Новий профіль</string>
@@ -27,4 +27,11 @@
     <string name="welcome_step_txt">Визначимо Ваші цілі, та\nрозрахуємо рекомендоване\nдобове споживання калорій</string>
     <string name="what_is_your_goal">Оберіть Вашу мету</string>
     <string name="continue_">Продовжити</string>
+    <string name="your_weight_gain_target">Ваша ціль набору ваги</string>
+    <string name="kilograms">Кг</string>
+    <string name="your_current_weight">Ваша поточна вага</string>
+    <string name="centimeters">См</string>
+    <string name="your_height">Ваш зріст</string>
+    <string name="how_much_weight_lose">Скільки ваги ви хотіли б скинути?</string>
+    <string name="how_much_weight_gain">Скільки ваги ви хотіли б набрати?</string>
 </resources>

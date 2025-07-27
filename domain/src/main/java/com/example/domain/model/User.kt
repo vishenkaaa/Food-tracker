@@ -11,7 +11,7 @@ data class User(
     val isNew: Boolean = false,
     val goal: Goal = Goal.MAINTAIN,
     val currentWeight: Float? = null,
-    val targetWeight: Float? = null,
+    val weightChange: Float? = null,
     val height: Int? = null,
     val gender: Gender = Gender.MALE,
     val birthDate: LocalDate? = null,

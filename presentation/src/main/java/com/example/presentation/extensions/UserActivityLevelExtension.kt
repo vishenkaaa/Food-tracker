@@ -18,9 +18,9 @@ fun UserActivityLevel.displayName(): String {
 @Composable
 fun UserActivityLevel.description(): String {
     return when (this) {
-        UserActivityLevel.SEDENTARY -> stringResource(R.string.daily_activities_that_require_minimal_effort)
-        UserActivityLevel.LIGHTLY_ACTIVE -> stringResource(R.string.daily_activities_that_require_light_effort)
-        UserActivityLevel.ACTIVE -> stringResource(R.string.daily_activities_that_require_moderate_effort)
-        UserActivityLevel.VERY_ACTIVE -> stringResource(R.string.daily_activities_that_require_intense_physical_effort)
+        UserActivityLevel.SEDENTARY -> stringResource(R.string.sedentary_user_activities_description)
+        UserActivityLevel.LIGHTLY_ACTIVE -> stringResource(R.string.lightly_active_user_activities_description)
+        UserActivityLevel.ACTIVE -> stringResource(R.string.active_user_activities_description)
+        UserActivityLevel.VERY_ACTIVE -> stringResource(R.string.very_active_user_activities_description)
     }
 }

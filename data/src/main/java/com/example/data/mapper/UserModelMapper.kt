@@ -9,7 +9,7 @@ import java.time.LocalDate
 object UserModelMapper {
     private const val GOAL_KEY = "goal"
     private const val TARGET_CALORIES_KEY = "targetCalories"
-    private const val TARGET_WEIGHT_KEY = "targetWeight"
+    private const val WEIGHT_CHANGE_KEY = "weightChange"
     private const val CURRENT_WEIGHT_KEY = "currentWeight"
     private const val GENDER_KEY = "gender"
     private const val USER_ACTIVITY_LEVEL_KEY = "userActivityLevel"
@@ -25,7 +25,7 @@ object UserModelMapper {
         return mapOf(
             GOAL_KEY to user.goal.name,
             TARGET_CALORIES_KEY to user.targetCalories,
-            TARGET_WEIGHT_KEY to user.targetWeight,
+            WEIGHT_CHANGE_KEY to user.weightChange,
             CURRENT_WEIGHT_KEY to user.currentWeight,
             GENDER_KEY to user.gender.name,
             USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.name,
@@ -44,7 +44,7 @@ object UserModelMapper {
             id = userId,
             goal = data[GOAL_KEY]?.toString()?.let { Goal.valueOf(it) } ?: Goal.MAINTAIN,
             targetCalories = (data[TARGET_CALORIES_KEY] as? Number)?.toInt() ?: 0,
-            targetWeight = (data[TARGET_WEIGHT_KEY] as? Number)?.toFloat(),
+            weightChange = (data[WEIGHT_CHANGE_KEY] as? Number)?.toFloat(),
             currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat(),
             gender = data[GENDER_KEY]?.toString()?.let { Gender.valueOf(it) } ?: Gender.MALE,
             userActivityLevel = data[USER_ACTIVITY_LEVEL_KEY]?.toString()?.let {

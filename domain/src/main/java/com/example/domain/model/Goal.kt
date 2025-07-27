@@ -1,5 +1,5 @@
 package com.example.domain.model
 
 enum class Goal {
-    LOSE, GAIN, MAINTAIN
+    LOSE, MAINTAIN, GAIN
 }

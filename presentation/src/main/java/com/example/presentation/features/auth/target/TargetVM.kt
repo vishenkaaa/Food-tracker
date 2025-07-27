@@ -33,7 +33,7 @@ class TargetVM @Inject constructor(
 
     private var goal by mutableStateOf<Goal?>(null)
 
-    private var targetWeight by mutableFloatStateOf(0f)
+    private var weightChange by mutableFloatStateOf(0f)
 
     private var gender by mutableStateOf<Gender?>(null)
 
@@ -51,7 +51,7 @@ class TargetVM @Inject constructor(
             totalSteps = totalStep,
             goal = goal,
             currentWeight = currentWeight,
-            targetWeight = targetWeight,
+            weightChange = weightChange,
             height = height,
             gender = gender,
             birthDate = birthDate,
@@ -67,8 +67,9 @@ class TargetVM @Inject constructor(
     }
 
     private fun backToPreviousStep() {
-        if (step > 0) {
-            step--
+        step = when {
+            step == 3 && goal == Goal.MAINTAIN -> 1
+            else -> --step
         }
     }
 
@@ -80,7 +81,13 @@ class TargetVM @Inject constructor(
     }
 
     fun onNextStep(){
-        step++
+        step = when {
+            step == 1 && goal == Goal.MAINTAIN -> {
+                onWeightChangeSelected(0f)
+                3
+            }
+            else -> ++step
+        }
     }
 
     fun onGoalSelected(value: Goal) {
@@ -92,8 +99,8 @@ class TargetVM @Inject constructor(
         }
     }
 
-    fun onTargetWeightSelected(value: Float) {
-        targetWeight = value
+    fun onWeightChangeSelected(value: Float) {
+        weightChange = value
     }
 
     fun onGenderSelected(value: Gender) {
@@ -133,7 +140,7 @@ class TargetVM @Inject constructor(
                 val user = User(
                     id = userId!!,
                     goal = goal!!,
-                    targetWeight = targetWeight,
+                    weightChange = weightChange,
                     gender = gender!!,
                     userActivityLevel = userActivityLevel!!,
                     currentWeight = currentWeight,
@@ -166,7 +173,7 @@ class TargetVM @Inject constructor(
                 currentWeight > 0 &&
                 height > 0 &&
                 birthDate != null &&
-                (goal != Goal.LOSE && goal != Goal.GAIN || targetWeight > 0)
+                (goal != Goal.LOSE && goal != Goal.GAIN || weightChange > 0)
     }
 
     fun consumeError() {
@@ -179,7 +186,7 @@ data class TargetUiState(
     val totalSteps: Int = 6,
     val goal: Goal? = null,
     val currentWeight: Float = 0f,
-    val targetWeight: Float = 0f,
+    val weightChange: Float = 0f,
     val height: Int = 0,
     val gender: Gender? = null,
     val birthDate: LocalDate? = null,

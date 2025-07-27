@@ -40,6 +40,11 @@ import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.features.auth.target.components.CurrentWeightStep
+import com.example.presentation.features.auth.target.components.GoalSelectionStep
+import com.example.presentation.features.auth.target.components.HeightStep
+import com.example.presentation.features.auth.target.components.WeightChangeStep
+import com.example.presentation.features.auth.target.components.WelcomeStep
 import java.time.LocalDate
 
 @Composable
@@ -54,7 +59,7 @@ fun TargetRoute(
         baseUiState = baseUiState,
         uiState = uiState,
         onGoalSelected = viewModel::onGoalSelected,
-        onTargetWeightSelected = viewModel::onTargetWeightSelected,
+        onWeightChangeSelected = viewModel::onWeightChangeSelected,
         onGenderSelected = viewModel::onGenderSelected,
         onActivityLevelSelected = viewModel::onActivityLevelSelected,
         onCurrentWeightSelected = viewModel::onCurrentWeightSelected,
@@ -73,7 +78,7 @@ fun TargetScreen(
     baseUiState: BaseUiState,
     uiState: TargetUiState,
     onGoalSelected: (Goal) -> Unit,
-    onTargetWeightSelected: (Float) -> Unit,
+    onWeightChangeSelected: (Float) -> Unit,
     onGenderSelected: (Gender) -> Unit,
     onActivityLevelSelected: (UserActivityLevel) -> Unit,
     onCurrentWeightSelected: (Float) -> Unit,
@@ -89,6 +94,9 @@ fun TargetScreen(
         initialPage = uiState.step,
         pageCount = { maxOf(uiState.totalSteps + 1, 8) }
     )
+
+    val adjustedTotalSteps = if (uiState.goal == Goal.MAINTAIN)
+        uiState.totalSteps - 1 else uiState.totalSteps
 
     LaunchedEffect(uiState.step) {
         pagerState.animateScrollToPage(uiState.step)
@@ -121,11 +129,7 @@ fun TargetScreen(
                     }
                 },
                 title = {
-                    if (uiState.step == 0) Text(
-                        stringResource(R.string.new_profile),
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    else Text(buildAnnotatedString {
+                    Text(buildAnnotatedString {
                         withStyle(
                             style = MaterialTheme.typography.headlineMedium.toSpanStyle().copy(
                                 color = MaterialTheme.colorScheme.onBackground
@@ -142,7 +146,10 @@ fun TargetScreen(
 
             if (uiState.step > 0) {
                 LinearWavyProgressIndicator(
-                    progress = { uiState.step.toFloat() / uiState.totalSteps.toFloat() },
+                    progress = {
+                        val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2)
+                            uiState.step - 1 else uiState.step
+                        adjustedStep.toFloat() / adjustedTotalSteps.toFloat() },
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
@@ -165,6 +172,9 @@ fun TargetScreen(
                     when (page) {
                         0 -> WelcomeStep(onNextStep = onNextStep)
                         1 -> GoalSelectionStep(uiState.goal, onGoalSelected, onNextStep)
+                        2 -> WeightChangeStep(uiState.goal?: Goal.MAINTAIN, uiState.weightChange, onWeightChangeSelected, onNextStep)
+                        3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected, onNextStep)
+                        4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
                         //TODO Інші кроки збору інформації про користувача
                     }
                 }
