@@ -44,6 +44,7 @@ import com.example.presentation.features.auth.target.components.CurrentWeightSte
 import com.example.presentation.features.auth.target.components.GenderSelectionStep
 import com.example.presentation.features.auth.target.components.GoalSelectionStep
 import com.example.presentation.features.auth.target.components.HeightStep
+import com.example.presentation.features.auth.target.components.UserActivityLevelSectionStep
 import com.example.presentation.features.auth.target.components.WeightChangeStep
 import com.example.presentation.features.auth.target.components.WelcomeStep
 import java.time.LocalDate
@@ -150,11 +151,12 @@ fun TargetScreen(
                     progress = {
                         val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2)
                             uiState.step - 1 else uiState.step
-                        adjustedStep.toFloat() / adjustedTotalSteps.toFloat() },
+                        (adjustedStep - 1).toFloat() / adjustedTotalSteps.toFloat()
+                    },
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    trackColor = MaterialTheme.colorScheme.outline,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -177,6 +179,7 @@ fun TargetScreen(
                         3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected, onNextStep)
                         4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
                         5 -> GenderSelectionStep(uiState.gender, onGenderSelected, onNextStep)
+                        6 -> UserActivityLevelSectionStep(uiState.activityLevel, onActivityLevelSelected, onNextStep)
                         //TODO Інші кроки збору інформації про користувача
                     }
                 }
