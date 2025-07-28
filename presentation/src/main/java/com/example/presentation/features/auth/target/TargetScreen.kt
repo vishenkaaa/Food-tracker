@@ -41,6 +41,7 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.features.auth.target.components.CurrentWeightStep
+import com.example.presentation.features.auth.target.components.GenderSelectionStep
 import com.example.presentation.features.auth.target.components.GoalSelectionStep
 import com.example.presentation.features.auth.target.components.HeightStep
 import com.example.presentation.features.auth.target.components.WeightChangeStep
@@ -175,6 +176,7 @@ fun TargetScreen(
                         2 -> WeightChangeStep(uiState.goal?: Goal.MAINTAIN, uiState.weightChange, onWeightChangeSelected, onNextStep)
                         3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected, onNextStep)
                         4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
+                        5 -> GenderSelectionStep(uiState.gender, onGenderSelected, onNextStep)
                         //TODO Інші кроки збору інформації про користувача
                     }
                 }

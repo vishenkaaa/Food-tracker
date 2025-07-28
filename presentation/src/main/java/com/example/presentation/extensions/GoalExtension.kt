@@ -8,8 +8,8 @@ import com.example.presentation.R
 @Composable
 fun Goal.displayName(): String{
     return when (this) {
-        Goal.LOSE -> stringResource(R.string.weight_gain)
+        Goal.LOSE -> stringResource(R.string.weight_loss)
         Goal.MAINTAIN -> stringResource(R.string.maintaining_current_weight)
-        Goal.GAIN -> stringResource(R.string.weight_loss)
+        Goal.GAIN -> stringResource(R.string.weight_gain)
     }
 }

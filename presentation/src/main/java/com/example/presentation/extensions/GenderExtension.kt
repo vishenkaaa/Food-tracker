@@ -16,7 +16,7 @@ fun Gender.displayName(): String{
 @Composable
 fun Gender.imgRes(): Int {
     return when (this) {
-        Gender.MALE -> R.drawable.google
-        Gender.FEMALE -> R.drawable.google
+        Gender.MALE -> R.drawable.man
+        Gender.FEMALE -> R.drawable.woman
     }
 }
