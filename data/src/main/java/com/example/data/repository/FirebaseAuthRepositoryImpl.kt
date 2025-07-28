@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.data.mapper.UserModelMapper.mapToUser
 import com.example.domain.model.User
 import com.example.domain.repository.FirebaseAuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -47,7 +48,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         } else {
             try {
                 val snapshot = userDocument.get().await()
-                val existingUser = snapshot.toObject(User::class.java)
+                val existingUser = snapshot.data?.let { mapToUser(it, userId) }
 
                 targetCalories = existingUser?.targetCalories ?: 0
             } catch (e: Exception) {
@@ -83,7 +84,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
     override suspend fun isUserFullyRegistered(userId: String): Boolean {
         val snapshot = usersCollection.document(userId).get().await()
-        val user = snapshot.toObject(User::class.java)
+        val user = snapshot.data?.let { mapToUser(it, userId) }
         return user?.targetCalories != 0
     }
 }

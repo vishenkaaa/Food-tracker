@@ -26,6 +26,7 @@ class TargetVM @Inject constructor(
     private val authRepository: FirebaseAuthRepository,
     private val authStateManager: AuthStateManager,
 ) : BaseViewModel() {
+    private val maxSteps = 8
 
     private var totalStep by mutableIntStateOf(6)
 
@@ -69,7 +70,7 @@ class TargetVM @Inject constructor(
     private fun backToPreviousStep() {
         step = when {
             step == 3 && goal == Goal.MAINTAIN -> 1
-            else -> --step
+            else -> step - 1
         }
     }
 
@@ -80,14 +81,15 @@ class TargetVM @Inject constructor(
         authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
     }
 
-    fun onNextStep(){
+    fun onNextStep(context: Context){
         step = when {
             step == 1 && goal == Goal.MAINTAIN -> {
                 onWeightChangeSelected(0f)
                 3
             }
-            else -> ++step
+            else -> step + 1
         }
+        if (step == maxSteps) saveUserInfo(context)
     }
 
     fun onGoalSelected(value: Goal) {

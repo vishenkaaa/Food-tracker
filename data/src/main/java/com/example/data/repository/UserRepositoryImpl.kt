@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import com.example.data.mapper.UserModelMapper.mapToUser
+import com.example.data.mapper.UserModelMapper.userInfoToMap
 import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
@@ -45,7 +46,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateUserInfo(user: User): Result<Unit> {
         return try {
-            val userMap = userToMap(user)
+            val userMap = userInfoToMap(user)
             usersCollection.document(user.id).update(userMap).await()
             Result.success(Unit)
         } catch (e: Exception) {

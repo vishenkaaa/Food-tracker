@@ -1,6 +1,5 @@
 package com.example.presentation.features.main
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.auth.AuthStateManager
 import com.example.data.auth.UserAuthState

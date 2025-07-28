@@ -40,6 +40,7 @@ import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.features.auth.target.components.BirthDateStep
 import com.example.presentation.features.auth.target.components.CurrentWeightStep
 import com.example.presentation.features.auth.target.components.GenderSelectionStep
 import com.example.presentation.features.auth.target.components.GoalSelectionStep
@@ -69,7 +70,7 @@ fun TargetRoute(
         onBirthDateSelected = viewModel::onBirthDateSelected,
         onSave = { viewModel.saveUserInfo(context) },
         onBackPressed = { viewModel.onBackPressed() },
-        onNextStep = { viewModel.onNextStep() },
+        onNextStep = { viewModel.onNextStep(context) },
         onErrorConsume = { viewModel.consumeError() }
     )
 }
@@ -96,9 +97,6 @@ fun TargetScreen(
         initialPage = uiState.step,
         pageCount = { maxOf(uiState.totalSteps + 1, 8) }
     )
-
-    val adjustedTotalSteps = if (uiState.goal == Goal.MAINTAIN)
-        uiState.totalSteps - 1 else uiState.totalSteps
 
     LaunchedEffect(uiState.step) {
         pagerState.animateScrollToPage(uiState.step)
@@ -149,9 +147,12 @@ fun TargetScreen(
             if (uiState.step > 0) {
                 LinearWavyProgressIndicator(
                     progress = {
-                        val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2)
-                            uiState.step - 1 else uiState.step
-                        (adjustedStep - 1).toFloat() / adjustedTotalSteps.toFloat()
+                        val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2) uiState.step - 1
+                        else uiState.step
+
+                        val currentProgressStep = (adjustedStep - 1).coerceAtLeast(0)
+
+                        currentProgressStep.toFloat() / (uiState.totalSteps - 1).toFloat()
                     },
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -180,7 +181,7 @@ fun TargetScreen(
                         4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
                         5 -> GenderSelectionStep(uiState.gender, onGenderSelected, onNextStep)
                         6 -> UserActivityLevelSectionStep(uiState.activityLevel, onActivityLevelSelected, onNextStep)
-                        //TODO Інші кроки збору інформації про користувача
+                        7 -> BirthDateStep(uiState.birthDate, onBirthDateSelected, onNextStep)
                     }
                 }
             }

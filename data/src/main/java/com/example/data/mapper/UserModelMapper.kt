@@ -20,6 +20,21 @@ object UserModelMapper {
     private const val PHOTO_URL_KEY = "photoUrl"
     private const val IS_NEW_KEY = "isNew"
 
+    // User info в Map для Firebase
+    fun userInfoToMap(user: User): Map<String, Any?> {
+        return mapOf(
+            GOAL_KEY to user.goal.name,
+            TARGET_CALORIES_KEY to user.targetCalories,
+            WEIGHT_CHANGE_KEY to user.weightChange,
+            CURRENT_WEIGHT_KEY to user.currentWeight,
+            GENDER_KEY to user.gender.name,
+            USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.name,
+            HEIGHT_KEY to user.height,
+            BIRTH_DATE_KEY to user.birthDate?.toString(),
+            IS_NEW_KEY to user.isNew
+        )
+    }
+
     // User в Map для Firebase
     fun userToMap(user: User): Map<String, Any?> {
         return mapOf(

@@ -36,4 +36,5 @@
     <string name="how_much_weight_gain">Скільки ваги ви хотіли б набрати?</string>
     <string name="your_gender">Ваша стать</string>
     <string name="your_activity_level">Ваш рівень активності</string>
+    <string name="your_birthdate">Ваша дата народження</string>
 </resources>
