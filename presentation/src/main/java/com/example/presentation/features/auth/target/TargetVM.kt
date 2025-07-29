@@ -175,7 +175,7 @@ class TargetVM @Inject constructor(
                 currentWeight > 0 &&
                 height > 0 &&
                 birthDate != null &&
-                (goal != Goal.LOSE && goal != Goal.GAIN || weightChange > 0)
+                (goal == Goal.MAINTAIN || weightChange != 0f)
     }
 
     fun consumeError() {

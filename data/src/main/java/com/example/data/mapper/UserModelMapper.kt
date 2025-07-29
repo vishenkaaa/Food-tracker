@@ -23,12 +23,12 @@ object UserModelMapper {
     // User info в Map для Firebase
     fun userInfoToMap(user: User): Map<String, Any?> {
         return mapOf(
-            GOAL_KEY to user.goal.name,
+            GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
             WEIGHT_CHANGE_KEY to user.weightChange,
             CURRENT_WEIGHT_KEY to user.currentWeight,
-            GENDER_KEY to user.gender.name,
-            USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.name,
+            GENDER_KEY to user.gender.value,
+            USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
             HEIGHT_KEY to user.height,
             BIRTH_DATE_KEY to user.birthDate?.toString(),
             IS_NEW_KEY to user.isNew
@@ -38,12 +38,12 @@ object UserModelMapper {
     // User в Map для Firebase
     fun userToMap(user: User): Map<String, Any?> {
         return mapOf(
-            GOAL_KEY to user.goal.name,
+            GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
             WEIGHT_CHANGE_KEY to user.weightChange,
             CURRENT_WEIGHT_KEY to user.currentWeight,
-            GENDER_KEY to user.gender.name,
-            USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.name,
+            GENDER_KEY to user.gender.value,
+            USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
             HEIGHT_KEY to user.height,
             BIRTH_DATE_KEY to user.birthDate?.toString(),
             NAME_KEY to user.name,
@@ -57,13 +57,13 @@ object UserModelMapper {
     fun mapToUser(data: Map<String, Any>, userId: String): User {
         return User(
             id = userId,
-            goal = data[GOAL_KEY]?.toString()?.let { Goal.valueOf(it) } ?: Goal.MAINTAIN,
+            goal = data[GOAL_KEY]?.toString()?.let { Goal.fromValue(it) } ?: Goal.MAINTAIN,
             targetCalories = (data[TARGET_CALORIES_KEY] as? Number)?.toInt() ?: 0,
             weightChange = (data[WEIGHT_CHANGE_KEY] as? Number)?.toFloat(),
             currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat(),
-            gender = data[GENDER_KEY]?.toString()?.let { Gender.valueOf(it) } ?: Gender.MALE,
+            gender = data[GENDER_KEY]?.toString()?.let { Gender.fromValue(it) } ?: Gender.MALE,
             userActivityLevel = data[USER_ACTIVITY_LEVEL_KEY]?.toString()?.let {
-                UserActivityLevel.valueOf(it)
+                UserActivityLevel.fromValue(it)
             } ?: UserActivityLevel.SEDENTARY,
             height = (data[HEIGHT_KEY] as? Number)?.toInt(),
             birthDate = data[BIRTH_DATE_KEY]?.toString()?.let { LocalDate.parse(it) },
