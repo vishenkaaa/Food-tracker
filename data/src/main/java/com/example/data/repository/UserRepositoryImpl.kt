@@ -20,16 +20,6 @@ class UserRepositoryImpl @Inject constructor(
 
     private val usersCollection = firestore.collection(USERS_KEY)
 
-    override suspend fun createUser(user: User): Result<Unit> {
-        return try {
-            val userMap = userToMap(user)
-            usersCollection.document(user.id).set(userMap).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     override suspend fun getUser(userId: String): Result<User> {
         return try {
             val snapshot = usersCollection.document(userId).get().await()

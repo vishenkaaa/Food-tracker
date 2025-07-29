@@ -20,7 +20,6 @@ import javax.inject.Inject
 class AuthVM @Inject constructor(
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val credentialManager: GoogleCredentialManager,
-    private val userRepository: UserRepository,
     private val authStateManager: AuthStateManager
 ) : BaseViewModel() {
 
@@ -33,47 +32,28 @@ class AuthVM @Inject constructor(
             handleLoading(true)
 
             try {
-                Log.d("AuthWM", "Starting Google sign-in process, forceNewAccount: $forceNewAccount")
-
                 val idToken = credentialManager.getGoogleIdToken(context, forceNewAccount)
                 val result = signInWithGoogleUseCase(idToken)
 
                 if (result.isSuccess) {
                     val user = result.getOrThrow()
-                    Log.i("AuthWM", "Google sign-in successful for user: ${user.id}, isNew: ${user.isNew}")
-
-                    if (user.isNew) {
-                        Log.d("AuthWM", "Creating new user in database")
-                        userRepository.createUser(user)
-                    }
 
                     authStateManager.setAuthState(true, user.targetCalories != 0)
 
                     _state.value = if (user.isNew) {
-                        Log.d("AuthWM", "Navigating to onboarding for new user")
                         AuthState.NewUser(user)
                     } else {
-                        Log.d("AuthWM", "User authentication completed successfully")
                         AuthState.Success(user)
                     }
                 } else {
                     val exception = result.exceptionOrNull() ?: Exception(context.getString(R.string.unknown_error))
-                    Log.e("AuthWM", "Google sign-in failed", exception)
                     handleUnexpectedError(exception)
                     _state.value = AuthState.Error(exception.message ?: context.getString(R.string.unknown_error))
                 }
             } catch (e: Exception) {
-                // Основне логування помилок
-                Log.e("AuthWM", "Exception during Google sign-in", e)
-
-                // Додаткова інформація для debugging
-                Log.e("AuthWM", "Exception details: ${e.javaClass.simpleName} - ${e.message}")
-                Log.e("AuthWM", "Stack trace: ${e.stackTraceToString()}")
-
                 handleUnexpectedError(e, context)
                 _state.value = AuthState.Error(e.message ?: context.getString(R.string.unknown_error))
             } finally {
-                Log.d("AuthWM", "Google sign-in process completed")
                 handleLoading(false)
             }
         }
