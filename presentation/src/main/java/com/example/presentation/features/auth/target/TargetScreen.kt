@@ -45,6 +45,7 @@ import com.example.presentation.features.auth.target.components.CurrentWeightSte
 import com.example.presentation.features.auth.target.components.GenderSelectionStep
 import com.example.presentation.features.auth.target.components.GoalSelectionStep
 import com.example.presentation.features.auth.target.components.HeightStep
+import com.example.presentation.features.auth.target.components.ResultStep
 import com.example.presentation.features.auth.target.components.UserActivityLevelSectionStep
 import com.example.presentation.features.auth.target.components.WeightChangeStep
 import com.example.presentation.features.auth.target.components.WelcomeStep
@@ -71,7 +72,8 @@ fun TargetRoute(
         onSave = { viewModel.saveUserInfo(context) },
         onBackPressed = { viewModel.onBackPressed() },
         onNextStep = { viewModel.onNextStep(context) },
-        onErrorConsume = { viewModel.consumeError() }
+        onErrorConsume = { viewModel.consumeError() },
+        onFinish = { viewModel.onFinish() }
     )
 }
 
@@ -91,11 +93,12 @@ fun TargetScreen(
     onBackPressed: () -> Unit,
     onNextStep: () -> Unit,
     onErrorConsume: () -> Unit,
+    onFinish: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(
         initialPage = uiState.step,
-        pageCount = { maxOf(uiState.totalSteps + 1, 8) }
+        pageCount = { maxOf(uiState.totalSteps + 1, 9) }
     )
 
     LaunchedEffect(uiState.step) {
@@ -152,7 +155,7 @@ fun TargetScreen(
 
                         val currentProgressStep = (adjustedStep - 1).coerceAtLeast(0)
 
-                        currentProgressStep.toFloat() / (uiState.totalSteps - 1).toFloat()
+                        currentProgressStep.toFloat() / (uiState.totalSteps).toFloat()
                     },
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -182,6 +185,7 @@ fun TargetScreen(
                         5 -> GenderSelectionStep(uiState.gender, onGenderSelected, onNextStep)
                         6 -> UserActivityLevelSectionStep(uiState.activityLevel, onActivityLevelSelected, onNextStep)
                         7 -> BirthDateStep(uiState.birthDate, onBirthDateSelected, onNextStep)
+                        8 -> ResultStep(uiState.macroNutrients, uiState.bmi, uiState.targetCalories, onFinish)
                     }
                 }
             }
@@ -203,6 +207,6 @@ fun TargetScreenPreview() {
     TargetScreen(
         BaseUiState(),
         TargetUiState(),
-        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
     )
 }

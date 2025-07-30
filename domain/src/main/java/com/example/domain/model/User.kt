@@ -37,4 +37,42 @@ data class User(
             Goal.MAINTAIN -> maintenance.toInt()
         }
     }
+
+    fun calculateMacroNutrients(): MacroNutrients {
+        val dailyCalories = calculateCalories() ?: return MacroNutrients()
+
+        // Константи калорійності макронутрієнтів (ккал/г)
+        val proteinCaloriesPerGram = 4
+        val carbCaloriesPerGram = 4
+        val fatCaloriesPerGram = 9
+
+        // Відсоткові співвідношення залежно від мети
+        val (proteinPercent, carbPercent, fatPercent) = when (goal) {
+            Goal.LOSE -> {
+                Triple(0.30, 0.40, 0.30)
+            }
+            Goal.GAIN -> {
+                Triple(0.25, 0.50, 0.25)
+            }
+            Goal.MAINTAIN -> {
+                Triple(0.20, 0.50, 0.30)
+            }
+        }
+
+        // Розрахунок калорій для кожного макронутрієнта
+        val proteinCalories = dailyCalories * proteinPercent
+        val carbCalories = dailyCalories * carbPercent
+        val fatCalories = dailyCalories * fatPercent
+
+        // Конвертація калорій в грами
+        val proteins = (proteinCalories / proteinCaloriesPerGram).toInt()
+        val carbs = (carbCalories / carbCaloriesPerGram).toInt()
+        val fats = (fatCalories / fatCaloriesPerGram).toInt()
+
+        return MacroNutrients(
+            proteins = proteins,
+            carbs = carbs,
+            fats = fats
+        )
+    }
 }

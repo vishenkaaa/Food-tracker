@@ -11,10 +11,12 @@ import com.example.data.auth.AuthStateManager
 import com.example.domain.model.UserActivityLevel
 import com.example.domain.model.Gender
 import com.example.domain.model.Goal
+import com.example.domain.model.MacroNutrients
 import com.example.domain.model.User
 import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.repository.UserRepository
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.common.utils.BMICalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -26,25 +28,26 @@ class TargetVM @Inject constructor(
     private val authRepository: FirebaseAuthRepository,
     private val authStateManager: AuthStateManager,
 ) : BaseViewModel() {
-    private val maxSteps = 8
+    companion object {
+        private const val MAX_STEPS = 8
+        private const val WELCOME_STEP = 0
+        private const val RESULT_STEP = 8
+    }
 
-    private var totalStep by mutableIntStateOf(6)
+    private var user by mutableStateOf(User())
 
     private var step by mutableIntStateOf(0)
+    private var totalStep by mutableIntStateOf(6)
 
     private var goal by mutableStateOf<Goal?>(null)
-
     private var weightChange by mutableFloatStateOf(0f)
-
     private var gender by mutableStateOf<Gender?>(null)
-
     private var userActivityLevel by mutableStateOf<UserActivityLevel?>(null)
-
     private var currentWeight by mutableFloatStateOf(0f)
-
     private var height by mutableIntStateOf(0)
-
     private var birthDate by mutableStateOf<LocalDate?>(null)
+
+    private var targetCalories by mutableIntStateOf(0)
 
     val uiState: TargetUiState
         get() = TargetUiState(
@@ -57,17 +60,26 @@ class TargetVM @Inject constructor(
             gender = gender,
             birthDate = birthDate,
             activityLevel = userActivityLevel,
+            targetCalories = targetCalories,
+            bmi = bmi,
+            macroNutrients = macroNutrients
         )
 
+    private val bmi: Float
+        get() = BMICalculator.calculateBMI(currentWeight, height)
+
+    private val macroNutrients: MacroNutrients
+        get() = user.calculateMacroNutrients()
+
     fun onBackPressed() {
-        if (step == 0) {
+        if (step == WELCOME_STEP) {
             goToAuth()
         } else {
-            backToPreviousStep()
+            navigateToPreviousStep()
         }
     }
 
-    private fun backToPreviousStep() {
+    private fun navigateToPreviousStep() {
         step = when {
             step == 3 && goal == Goal.MAINTAIN -> 1
             else -> step - 1
@@ -89,7 +101,7 @@ class TargetVM @Inject constructor(
             }
             else -> step + 1
         }
-        if (step == maxSteps) saveUserInfo(context)
+        if (step == MAX_STEPS) saveUserInfo(context)
     }
 
     fun onGoalSelected(value: Goal) {
@@ -131,41 +143,46 @@ class TargetVM @Inject constructor(
         }
 
         viewModelScope.launch {
-            handleLoading(
-                isLoading = true
-            )
+            handleLoading(isLoading = true)
             clearErrors()
 
             try {
                 val userId = authRepository.getCurrentUserId()
+                    ?: throw IllegalStateException("User not authenticated")
 
-                val user = User(
-                    id = userId!!,
-                    goal = goal!!,
-                    weightChange = weightChange,
-                    gender = gender!!,
-                    userActivityLevel = userActivityLevel!!,
-                    currentWeight = currentWeight,
-                    height = height,
-                    birthDate = birthDate,
-                )
+                val userWithCalculations = createUserWithCalculations(userId)
+                targetCalories = userWithCalculations.targetCalories
 
-                val calculatedCalories = user.calculateCalories()
-                val userWithCalories = user.copy(targetCalories = calculatedCalories ?: 0)
-
-                userRepository.updateUserInfo(userWithCalories).onSuccess {
-                    authStateManager.updateFullyRegistered(true)
-                }.onFailure { exception ->
+                userRepository.updateUserInfo(userWithCalculations)
+                    .onFailure { exception ->
                     handleUnexpectedError(exception, context)
                 }
             } catch (e: Exception) {
                 handleUnexpectedError(e, context)
             } finally {
-                handleLoading(
-                    isLoading = false
-                )
+                handleLoading(isLoading = false)
             }
         }
+    }
+
+    private fun createUserWithCalculations(userId: String): User {
+        user = User(
+            id = userId,
+            goal = goal!!,
+            weightChange = weightChange,
+            gender = gender!!,
+            userActivityLevel = userActivityLevel!!,
+            currentWeight = currentWeight,
+            height = height,
+            birthDate = birthDate,
+        )
+
+        val calculatedCalories = user.calculateCalories() ?: 0
+        return user.copy(targetCalories = calculatedCalories)
+    }
+
+    fun onFinish(){
+        authStateManager.updateFullyRegistered(true)
     }
 
     private fun isDataValid(): Boolean {
@@ -193,4 +210,7 @@ data class TargetUiState(
     val gender: Gender? = null,
     val birthDate: LocalDate? = null,
     val activityLevel: UserActivityLevel? = null,
+    val targetCalories: Int = 0,
+    val bmi: Float = 0f,
+    val macroNutrients: MacroNutrients = MacroNutrients()
 )

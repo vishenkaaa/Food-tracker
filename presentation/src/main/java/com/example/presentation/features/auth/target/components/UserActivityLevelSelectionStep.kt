@@ -59,12 +59,13 @@ fun UserActivityLevelSectionStep(
                     .shadow(
                         elevation = if (selectedActivityLevel == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
-                        clip = false
+                        clip = false,
+                        ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
                     ),
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedActivityLevel == currentGoal)
                         MaterialTheme.colorScheme.primary
-                    else Color.Transparent
+                    else MaterialTheme.colorScheme.background
                 ),
                 border = if (selectedActivityLevel != currentGoal)
                     BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
@@ -99,7 +100,7 @@ fun UserActivityLevelSectionStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun UserActivityLevelSectionStepPreview() {
     UserActivityLevelSectionStep(

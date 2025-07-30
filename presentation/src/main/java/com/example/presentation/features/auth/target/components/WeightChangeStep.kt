@@ -2,6 +2,7 @@ package com.example.presentation.features.auth.target.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.Goal
 import com.example.presentation.R
 
@@ -27,5 +28,13 @@ fun WeightChangeStep(
             onWeightChangeSelected(adjustedValue)
         },
         onNextStep = onNextStep
+    )
+}
+
+@Composable
+@Preview
+fun WeightChangeStepPreview(){
+    WeightChangeStep(
+        Goal.GAIN, 0f, {}, {}
     )
 }

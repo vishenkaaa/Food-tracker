@@ -58,7 +58,8 @@ fun GoalSelectionStep(
                     .shadow(
                         elevation = if (selectedGoal == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
-                        clip = false
+                        clip = false,
+                        ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
                     ),
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedGoal == currentGoal)

@@ -61,7 +61,7 @@ val subtitle1: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = if (isSystemInDarkTheme()) White else DarkGreen
     )

@@ -67,7 +67,8 @@ fun GenderSelectionStep(
                             .shadow(
                                 elevation = if (selectedGender == currentGender) 8.dp else 0.dp,
                                 shape = RoundedCornerShape(16.dp),
-                                clip = false
+                                clip = false,
+                                ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
                             ),
                         colors = CardDefaults.cardColors(
                             containerColor = if (selectedGender == currentGender)

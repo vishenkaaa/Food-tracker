@@ -84,17 +84,9 @@ fun NumberInputStep(
             OutlinedTextField(
                 value = input,
                 onValueChange = { newValue ->
-                    val regex = if (isIntegerInput) {
-                        Regex("^\\d*$") // цілі числа
-                    } else {
-                        Regex("^\\d*\\.?\\d*$") // десяткові числа
-                    }
-
-                    if (newValue.matches(regex)) {
-                        input = newValue
-                        val floatValue = newValue.toFloatOrNull() ?: 0f
-                        onValueSelected(floatValue)
-                    }
+                    input = newValue
+                    val floatValue = newValue.toFloatOrNull() ?: 0f
+                    onValueSelected(floatValue)
                 },
                 label = null,
                 keyboardOptions = KeyboardOptions(

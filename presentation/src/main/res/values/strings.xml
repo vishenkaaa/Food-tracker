@@ -37,4 +37,18 @@
     <string name="your_gender">Ваша стать</string>
     <string name="your_activity_level">Ваш рівень активності</string>
     <string name="your_birthdate">Ваша дата народження</string>
+    <string name="recommendations_ready">Ваші рекомендації готові!</string>
+    <string name="personalized_recommendations_description">Індивідуальні рекомендації розраховані на основі ваших даних</string>
+    <string name="proteins">Білки</string>
+    <string name="carbohydrates">Вуглеводи</string>
+    <string name="fats">Жири</string>
+    <string name="calories_format">%1$d kcal</string>
+    <string name="daily_calories_recommendation">Рекомендована денна калорійність\nдля досягнення ваших цілей</string>
+    <string name="bmi_format">Індекс маси тіла: %.2f</string>
+    <string name="bmi_category_format">У Вас %1$s</string>
+    <string name="grams_format">%1$d г</string>
+    <string name="underweight">недостатня вага</string>
+    <string name="normal_weight">нормальна вага</string>
+    <string name="overweight">надлишкова вага</string>
+    <string name="obesity">ожиріння</string>
 </resources>
