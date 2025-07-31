@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.data.auth.UserAuthState
+import com.example.domain.manager.UserAuthState
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.target.TargetRoute

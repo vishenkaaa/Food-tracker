@@ -7,14 +7,15 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.example.data.auth.AuthStateManager
-import com.example.domain.model.UserActivityLevel
+import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.Gender
 import com.example.domain.model.Goal
 import com.example.domain.model.MacroNutrients
 import com.example.domain.model.User
-import com.example.domain.repository.FirebaseAuthRepository
-import com.example.domain.repository.UserRepository
+import com.example.domain.model.UserActivityLevel
+import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
+import com.example.domain.usecase.auth.SignOutUseCase
+import com.example.domain.usecase.user.UpdateUserInfoUseCase
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.common.utils.BMICalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,14 +25,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TargetVM @Inject constructor(
-    private val userRepository: UserRepository,
-    private val authRepository: FirebaseAuthRepository,
     private val authStateManager: AuthStateManager,
+    private val signOutUseCase: SignOutUseCase,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
+    private val updateUserInfoUseCase: UpdateUserInfoUseCase
 ) : BaseViewModel() {
     companion object {
         private const val MAX_STEPS = 8
         private const val WELCOME_STEP = 0
-        private const val RESULT_STEP = 8
     }
 
     private var user by mutableStateOf(User())
@@ -88,7 +89,7 @@ class TargetVM @Inject constructor(
 
     private fun goToAuth(){
         viewModelScope.launch {
-            authRepository.signOut()
+            signOutUseCase()
         }
         authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
     }
@@ -147,13 +148,13 @@ class TargetVM @Inject constructor(
             clearErrors()
 
             try {
-                val userId = authRepository.getCurrentUserId()
+                val userId = getCurrentUserIdUseCase()
                     ?: throw IllegalStateException("User not authenticated")
 
                 val userWithCalculations = createUserWithCalculations(userId)
                 targetCalories = userWithCalculations.targetCalories
 
-                userRepository.updateUserInfo(userWithCalculations)
+                updateUserInfoUseCase.invoke(userWithCalculations)
                     .onFailure { exception ->
                     handleUnexpectedError(exception, context)
                 }

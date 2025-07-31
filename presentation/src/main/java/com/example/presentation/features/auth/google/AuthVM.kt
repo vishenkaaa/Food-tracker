@@ -1,12 +1,10 @@
 package com.example.presentation.features.auth.google
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.data.auth.AuthStateManager
+import com.example.domain.manager.AuthStateManager
 import com.example.data.auth.GoogleCredentialManager
 import com.example.domain.model.User
-import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel

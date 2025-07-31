@@ -1,8 +1,8 @@
 package com.example.presentation.features.main
 
 import androidx.lifecycle.viewModelScope
-import com.example.data.auth.AuthStateManager
-import com.example.data.auth.UserAuthState
+import com.example.domain.manager.AuthStateManager
+import com.example.domain.manager.UserAuthState
 import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow

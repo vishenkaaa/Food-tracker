@@ -1,6 +1,7 @@
-package com.example.data.auth
+package com.example.domain.manager
 
 import com.example.domain.repository.FirebaseAuthRepository
+import com.example.domain.usecase.user.CheckUserStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthStateManager @Inject constructor(
-    private val authRepository: FirebaseAuthRepository
+    private val checkUserStateUseCase: CheckUserStateUseCase
 ) {
     private val _userAuthState = MutableStateFlow(UserAuthState(isLoading = true))
     val userAuthState: StateFlow<UserAuthState> = _userAuthState.asStateFlow()
@@ -29,17 +30,9 @@ class AuthStateManager @Inject constructor(
         )
     }
 
-    suspend fun checkUserState() {
-        val isLoggedIn = authRepository.isUserLoggedIn()
-        val userId = authRepository.getCurrentUserId()
-
-        if (!isLoggedIn || userId == null) {
-            setAuthState(isLoggedIn = false, isFullyRegistered = false)
-            return
-        }
-
-        val isFullyRegistered = authRepository.isUserFullyRegistered(userId)
-        setAuthState(isLoggedIn = true, isFullyRegistered = isFullyRegistered)
+    suspend fun checkAndUpdateUserState() {
+        val newState = checkUserStateUseCase()
+        _userAuthState.value = newState
     }
 }
 
