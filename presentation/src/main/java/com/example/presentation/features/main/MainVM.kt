@@ -18,7 +18,7 @@ class MainVM @Inject constructor(
 
     fun checkUserState() {
         viewModelScope.launch {
-            authStateManager.checkUserState()
+            authStateManager.checkAndUpdateUserState()
         }
     }
 }

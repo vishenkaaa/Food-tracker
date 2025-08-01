@@ -1,5 +1,6 @@
 package com.example.presentation.common.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +17,12 @@ import com.example.presentation.R
 @Composable
 fun ContinueButton(
     enabled: Boolean = false,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     onNextStep: () -> Unit
 ) {
     Button(
         onClick = { onNextStep() },
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 45.dp)
             .fillMaxWidth()
             .padding(bottom = 72.dp),

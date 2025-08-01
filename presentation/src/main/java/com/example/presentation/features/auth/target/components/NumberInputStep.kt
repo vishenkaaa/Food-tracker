@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,6 +57,8 @@ fun NumberInputStep(
     }
 
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    var hasFocusBeenRequested by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -97,7 +103,15 @@ fun NumberInputStep(
                     onDone = {focusManager.clearFocus()}
                 ),
                 singleLine = true,
-                modifier = Modifier.width(140.dp),
+                modifier = Modifier
+                    .width(140.dp)
+                    .focusRequester(focusRequester)
+                    .onGloballyPositioned {
+                        if (!hasFocusBeenRequested) {
+                            focusRequester.requestFocus()
+                            hasFocusBeenRequested = true
+                        }
+                    },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.outline,
                 ),
@@ -121,7 +135,10 @@ fun NumberInputStep(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ContinueButton(value > 0) {
+        ContinueButton(
+            value > 0,
+            modifier = Modifier.imePadding()
+        ) {
             onNextStep()
         }
     }
