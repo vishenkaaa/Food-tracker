@@ -139,6 +139,7 @@ fun NumberInputStep(
             value > 0,
             modifier = Modifier.imePadding()
         ) {
+            focusManager.clearFocus()
             onNextStep()
         }
     }

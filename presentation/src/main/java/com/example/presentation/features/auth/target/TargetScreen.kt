@@ -152,9 +152,7 @@ fun TargetScreen(
                     progress = {
                         val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2) uiState.step - 1
                         else uiState.step
-
                         val currentProgressStep = (adjustedStep - 1).coerceAtLeast(0)
-
                         currentProgressStep.toFloat() / (uiState.totalSteps).toFloat()
                     },
                     modifier = Modifier
@@ -171,12 +169,12 @@ fun TargetScreen(
                 modifier = Modifier.fillMaxSize(),
                 userScrollEnabled = false,
                 pageSpacing = 0.dp
-            ) { page ->
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    when (page) {
+                    when (uiState.step) {
                         0 -> WelcomeStep(onNextStep = onNextStep)
                         1 -> GoalSelectionStep(uiState.goal, onGoalSelected, onNextStep)
                         2 -> WeightChangeStep(uiState.goal?: Goal.MAINTAIN, uiState.weightChange, onWeightChangeSelected, onNextStep)

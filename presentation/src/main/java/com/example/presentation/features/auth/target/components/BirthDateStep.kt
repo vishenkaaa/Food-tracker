@@ -40,7 +40,7 @@ fun BirthDateStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
             .padding(top = 58.dp)
     ) {
         Text(

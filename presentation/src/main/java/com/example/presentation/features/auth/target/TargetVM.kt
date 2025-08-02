@@ -22,9 +22,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import androidx.compose.runtime.saveable.Saver
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 
+@OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
 class TargetVM @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val authStateManager: AuthStateManager,
     private val signOutUseCase: SignOutUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
@@ -33,22 +39,32 @@ class TargetVM @Inject constructor(
     companion object {
         private const val MAX_STEPS = 8
         private const val WELCOME_STEP = 0
+
+        private const val KEY_STEP = "step"
+        private const val KEY_TOTAL_STEP = "total_step"
+        private const val KEY_GOAL = "goal"
+        private const val KEY_WEIGHT_CHANGE = "weight_change"
+        private const val KEY_GENDER = "gender"
+        private const val KEY_ACTIVITY_LEVEL = "activity_level"
+        private const val KEY_CURRENT_WEIGHT = "current_weight"
+        private const val KEY_HEIGHT = "height"
+        private const val KEY_BIRTH_DATE = "birth_date"
+        private const val KEY_TARGET_CALORIES = "target_calories"
     }
 
     private var user by mutableStateOf(User())
 
-    private var step by mutableIntStateOf(0)
-    private var totalStep by mutableIntStateOf(6)
+    private var step by savedStateHandle.saveable(KEY_STEP) { mutableIntStateOf(0) }
+    private var totalStep by savedStateHandle.saveable(KEY_TOTAL_STEP) { mutableIntStateOf(6) }
 
-    private var goal by mutableStateOf<Goal?>(null)
-    private var weightChange by mutableFloatStateOf(0f)
-    private var gender by mutableStateOf<Gender?>(null)
-    private var userActivityLevel by mutableStateOf<UserActivityLevel?>(null)
-    private var currentWeight by mutableFloatStateOf(0f)
-    private var height by mutableIntStateOf(0)
-    private var birthDate by mutableStateOf<LocalDate?>(null)
-
-    private var targetCalories by mutableIntStateOf(0)
+    private var goal by savedStateHandle.saveable(KEY_GOAL, GoalSaver) { mutableStateOf<Goal?>(null) }
+    private var weightChange by savedStateHandle.saveable(KEY_WEIGHT_CHANGE) { mutableFloatStateOf(0f) }
+    private var gender by savedStateHandle.saveable(KEY_GENDER, GenderSaver) { mutableStateOf<Gender?>(null) }
+    private var userActivityLevel by savedStateHandle.saveable(KEY_ACTIVITY_LEVEL, UserActivityLevelSaver) { mutableStateOf<UserActivityLevel?>(null) }
+    private var currentWeight by savedStateHandle.saveable(KEY_CURRENT_WEIGHT) { mutableFloatStateOf(0f) }
+    private var height by savedStateHandle.saveable(KEY_HEIGHT) { mutableIntStateOf(0) }
+    private var birthDate by savedStateHandle.saveable(KEY_BIRTH_DATE, LocalDateSaver) { mutableStateOf<LocalDate?>(null) }
+    private var targetCalories by savedStateHandle.saveable(KEY_TARGET_CALORIES) { mutableIntStateOf(0) }
 
     val uiState: TargetUiState
         get() = TargetUiState(
@@ -156,8 +172,8 @@ class TargetVM @Inject constructor(
 
                 updateUserInfoUseCase.invoke(userWithCalculations)
                     .onFailure { exception ->
-                    handleUnexpectedError(exception, context)
-                }
+                        handleUnexpectedError(exception, context)
+                    }
             } catch (e: Exception) {
                 handleUnexpectedError(e, context)
             } finally {
@@ -214,4 +230,24 @@ data class TargetUiState(
     val targetCalories: Int = 0,
     val bmi: Float = 0f,
     val macroNutrients: MacroNutrients = MacroNutrients()
+)
+
+val GoalSaver = Saver<Goal?, String>(
+    save = { it?.value },
+    restore = { savedValue -> savedValue.let { Goal.fromValue(it) } }
+)
+
+val GenderSaver = Saver<Gender?, String>(
+    save = { it?.value },
+    restore = { savedValue -> savedValue.let { Gender.fromValue(it) } }
+)
+
+val UserActivityLevelSaver = Saver<UserActivityLevel?, String>(
+    save = { it?.value },
+    restore = { savedValue -> savedValue.let { UserActivityLevel.fromValue(it) } }
+)
+
+val LocalDateSaver = Saver<LocalDate?, String>(
+    save = { it?.toString() },
+    restore = { savedValue -> savedValue.let { LocalDate.parse(it) } }
 )
