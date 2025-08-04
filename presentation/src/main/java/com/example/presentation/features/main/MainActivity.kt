@@ -37,7 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.domain.manager.UserAuthState
 import com.example.presentation.R
-import com.example.presentation.common.values.FoodTrackTheme
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.main.navigation.AppNavHost
 import com.example.presentation.features.main.navigation.TopLevelDestinations
 import dagger.hilt.android.AndroidEntryPoint

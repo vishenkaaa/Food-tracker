@@ -1,6 +1,7 @@
 package com.example.presentation.common.ui.values
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
@@ -9,8 +10,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
-import com.example.presentation.common.values.DarkGreen
-import com.example.presentation.common.values.White
 
 val gilroyFontFamily = FontFamily(
     Font(R.font.gilroy_bold, FontWeight.Bold),
@@ -25,7 +24,7 @@ val display1: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 46.sp,
         lineHeight = 60.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val display2: TextStyle
@@ -35,7 +34,17 @@ val display2: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
         lineHeight = 60.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
+val display3: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 32.sp,
+        lineHeight = 60.sp,
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val headline1: TextStyle
@@ -45,7 +54,7 @@ val headline1: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 36.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val headline2: TextStyle
@@ -55,7 +64,7 @@ val headline2: TextStyle
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 30.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val subtitle1: TextStyle
@@ -63,9 +72,9 @@ val subtitle1: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val subtitle2: TextStyle
@@ -75,7 +84,7 @@ val subtitle2: TextStyle
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 21.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val body2: TextStyle
@@ -85,7 +94,7 @@ val body2: TextStyle
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val body1: TextStyle
@@ -95,7 +104,7 @@ val body1: TextStyle
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = 22.sp,
-        color = if (isSystemInDarkTheme()) White else DarkGreen
+        color = MaterialTheme.colorScheme.onBackground
     )
 
 val Typography: Typography
@@ -103,6 +112,7 @@ val Typography: Typography
     get() = Typography(
         displayLarge = display1,
         displayMedium = display2,
+        displaySmall = display3,
         headlineLarge = headline1,
         headlineMedium = headline2,
         titleLarge = subtitle1,

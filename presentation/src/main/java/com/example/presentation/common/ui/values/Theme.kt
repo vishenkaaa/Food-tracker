@@ -1,4 +1,4 @@
-package com.example.presentation.common.values
+package com.example.presentation.common.ui.values
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,23 +11,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.example.presentation.common.ui.values.Typography
 
 // Light Theme Colors
 private val LightColorScheme
     @Composable
     get() = lightColorScheme(
-        primary = Green,
-        onPrimary = White,
-        secondary = Green50,
-        onSecondary = DarkGreen,
-        surface = White,
-        onSurface = DarkGreen,
-        surfaceVariant = Green,
-        onSurfaceVariant = GrayDark,
-        background = White,
-        onBackground = DarkGreen,
-        outline = Green50,
+        primary = Green, // акцентний
+        onPrimary = White, // на акцентному
+        secondary = DarkGreen30, // світло сірий текст
+        onSecondary = DarkGreen60, // темніший сірий текст
+        surface = Green30, // не заповнений прогрес
+        onSurface = DarkGreen50, // не вибраний текст
+        surfaceVariant = White.copy(0.16f), // тінь
+        background = White, //фон
+        onBackground = DarkGreen, // текст на фоні
+        outline = DarkBackground.copy(0.20f), // не активний контур
+        outlineVariant = Green30, // активний контур
+        error = Red, // попередження/помилка
+        onError = White // на попередженні
     )
 
 // Dark Theme Colors
@@ -36,15 +37,17 @@ private val DarkColorScheme
     get() = darkColorScheme(
         primary = Green,
         onPrimary = White,
-        secondary = GrayLight,
-        onSecondary = DarkGreen,
-        surface = DarkBackground,
-        onSurface = White,
-        surfaceVariant = Green,
-        onSurfaceVariant = GrayLight,
+        secondary = DarkGreen30,
+        onSecondary = DarkGreen60,
+        surface = Green30,
+        onSurface = White20,
+        surfaceVariant = DarkBackground.copy(0.16f),
         background = DarkBackground,
         onBackground = White,
-        outline = Green50
+        outline = White20,
+        outlineVariant = Green30,
+        error = Red,
+        onError = White
     )
 
 @Composable

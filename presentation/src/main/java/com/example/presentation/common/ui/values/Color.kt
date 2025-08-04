@@ -1,42 +1,46 @@
-package com.example.presentation.common.values
+package com.example.presentation.common.ui.values
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import com.example.presentation.R
 
-val Green: Color
-    @Composable
-    get() = colorResource(R.color.green)
-
 val White: Color
     @Composable
     get() = colorResource(R.color.white)
 
-val Green50: Color
+val White20: Color
     @Composable
-    get() = colorResource(R.color.green_50)
+    get() = colorResource(R.color.white_20)
 
-val White50: Color
+val Green: Color
     @Composable
-    get() = colorResource(R.color.white_50)
+    get() = colorResource(R.color.green)
+
+val Green30: Color
+    @Composable
+    get() = colorResource(R.color.green_30)
 
 val DarkGreen: Color
     @Composable
-    get() = colorResource(R.color.dark_color)
+    get() = colorResource(R.color.dark_green)
 
-val Gray: Color
+val DarkGreen60: Color
     @Composable
-    get() = colorResource(R.color.gray)
+    get() = colorResource(R.color.dark_green_60)
 
-val GrayLight: Color
+val DarkGreen50: Color
     @Composable
-    get() = colorResource(R.color.gray_light)
+    get() = colorResource(R.color.dark_green_50)
 
-val GrayDark: Color
+val DarkGreen30: Color
     @Composable
-    get() = colorResource(R.color.gray_dark)
+    get() = colorResource(R.color.dark_green_30)
 
 val DarkBackground: Color
     @Composable
     get() = colorResource(R.color.dark_bg)
+
+val Red: Color
+    @Composable
+    get() = colorResource(R.color.red)

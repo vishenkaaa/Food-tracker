@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.presentation.common.values.DarkBackground
+import com.example.presentation.common.ui.values.DarkBackground
 
 @Composable
 fun LoadingBackground(
