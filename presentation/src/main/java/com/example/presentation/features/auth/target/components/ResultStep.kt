@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.MacroNutrients
 import com.example.presentation.R
+import com.example.presentation.common.ui.components.ContinueButton
 import com.example.presentation.common.utils.BMICalculator
 
 @Composable
@@ -73,6 +74,14 @@ fun ResultStep(
                 stringResource(R.string.carbohydrates), painterResource(R.drawable.grains))
             MacroNutrientsCard(macroNutrients.fats,
                 stringResource(R.string.fats), painterResource(R.drawable.avocado))
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ContinueButton(
+            enabled = true
+        ){
+            onNextStep()
         }
     }
 }

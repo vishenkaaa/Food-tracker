@@ -1,5 +1,6 @@
 package com.example.presentation.features.auth.target
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,6 +97,10 @@ fun TargetScreen(
     onFinish: () -> Unit
 ) {
 
+    BackHandler{
+        onBackPressed()
+    }
+
     val pagerState = rememberPagerState(
         initialPage = uiState.step,
         pageCount = { maxOf(uiState.totalSteps + 1, 9) }
@@ -119,7 +124,7 @@ fun TargetScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
-                    IconButton(
+                    if(uiState.step != uiState.totalSteps + 1) IconButton(
                         onClick = { onBackPressed() },
                         modifier = Modifier
                             .padding(end = 16.dp)
