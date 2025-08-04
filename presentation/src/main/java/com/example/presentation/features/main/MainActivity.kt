@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         viewModel.checkUserState()
 
         onBackPressedDispatcher.addCallback(this) {
@@ -81,14 +82,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupSplashScreen(splashScreen: SplashScreen) {
-        var userAuth: UserAuthState by mutableStateOf(UserAuthState(isLoading = true))
+        var userAuthState: UserAuthState by mutableStateOf(UserAuthState(isLoading = true))
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userAuthState.onEach { userAuth = it }.collect {}
+                viewModel.userAuthState.onEach { userAuthState = it }.collect {}
             }
         }
         splashScreen.setKeepOnScreenCondition {
-            userAuth.isLoading
+            userAuthState.isLoading
         }
     }
 

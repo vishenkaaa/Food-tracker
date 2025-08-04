@@ -32,20 +32,24 @@ fun AppNavHost(
     shouldShowBottomBar: Boolean,
 ) {
     LaunchedEffect(userAuthState.isLoggedIn, userAuthState.isFullyRegistered) {
-        when {
-            userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
-                navController.navigate(Graphs.Login) {
-                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+        if (!userAuthState.isLoading) {
+            when {
+                userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
+                    navController.navigate(Graphs.Login) {
+                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+                    }
                 }
-            }
-            !userAuthState.isFullyRegistered -> {
-                navController.navigate(LoginGraph.TargetCalories) {
-                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+
+                !userAuthState.isFullyRegistered -> {
+                    navController.navigate(LoginGraph.TargetCalories) {
+                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+                    }
                 }
-            }
-            else -> {
-                navController.navigate(MainGraph.Dairy) {
-                    popUpTo(Graphs.IdleScreen) { inclusive = true }
+
+                else -> {
+                    navController.navigate(MainGraph.Dairy) {
+                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+                    }
                 }
             }
         }

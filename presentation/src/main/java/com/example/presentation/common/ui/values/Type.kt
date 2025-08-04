@@ -1,4 +1,4 @@
-package com.example.presentation.common.values
+package com.example.presentation.common.ui.values
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Typography
@@ -9,6 +9,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.presentation.R
+import com.example.presentation.common.values.DarkGreen
+import com.example.presentation.common.values.White
 
 val gilroyFontFamily = FontFamily(
     Font(R.font.gilroy_bold, FontWeight.Bold),

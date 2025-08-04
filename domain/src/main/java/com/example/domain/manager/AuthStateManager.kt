@@ -1,6 +1,5 @@
 package com.example.domain.manager
 
-import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.usecase.user.CheckUserStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +30,17 @@ class AuthStateManager @Inject constructor(
     }
 
     suspend fun checkAndUpdateUserState() {
-        val newState = checkUserStateUseCase()
-        _userAuthState.value = newState
+        try {
+            _userAuthState.value = _userAuthState.value.copy(isLoading = true)
+            val newState = checkUserStateUseCase()
+            _userAuthState.value = newState.copy(isLoading = false)
+        } catch (e: Exception) {
+            _userAuthState.value = UserAuthState(
+                isLoading = false,
+                isLoggedIn = false,
+                isFullyRegistered = false
+            )
+        }
     }
 }
 
