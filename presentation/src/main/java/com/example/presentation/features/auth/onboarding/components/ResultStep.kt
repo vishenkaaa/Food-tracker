@@ -1,10 +1,9 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.MacroNutrients
 import com.example.presentation.R
-import com.example.presentation.common.ui.components.ContinueButton
 import com.example.presentation.common.utils.BMICalculator
 
 @Composable
@@ -37,12 +35,11 @@ fun ResultStep(
     macroNutrients: MacroNutrients,
     bmi: Float,
     targetCalories: Int,
-    onNextStep: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
         Text(
@@ -74,14 +71,6 @@ fun ResultStep(
                 stringResource(R.string.carbohydrates), painterResource(R.drawable.grains))
             MacroNutrientsCard(macroNutrients.fats,
                 stringResource(R.string.fats), painterResource(R.drawable.avocado))
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContinueButton(
-            enabled = true
-        ){
-            onNextStep()
         }
     }
 }
@@ -237,5 +226,5 @@ fun MacroNutrientsCard(
 fun ResultStepPreview(){
     ResultStep(
         MacroNutrients(), 21f, 1000
-    ) {}
+    )
 }

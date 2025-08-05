@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -18,6 +18,5 @@ fun HeightStep(
         onValueSelected = { value->
             onHeightSelected(value.toInt())
         },
-        onNextStep = onNextStep
     )
 }

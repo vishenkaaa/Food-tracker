@@ -1,10 +1,9 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,14 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.UserActivityLevel
 import com.example.presentation.R
-import com.example.presentation.common.ui.components.ContinueButton
 import com.example.presentation.extensions.description
 import com.example.presentation.extensions.displayName
 
@@ -32,12 +29,11 @@ import com.example.presentation.extensions.displayName
 fun UserActivityLevelSectionStep(
     selectedActivityLevel: UserActivityLevel?,
     onActivityLevelSelected: (UserActivityLevel) -> Unit,
-    onNextStep: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 58.dp)
     ) {
@@ -63,12 +59,13 @@ fun UserActivityLevelSectionStep(
                         ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
                     ),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (selectedActivityLevel == currentGoal)
-                        MaterialTheme.colorScheme.primary
+                    containerColor = if (selectedActivityLevel == currentGoal) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.background
                 ),
-                border = if (selectedActivityLevel != currentGoal)
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
+                border = if (selectedActivityLevel != currentGoal) BorderStroke(
+                    2.dp,
+                    MaterialTheme.colorScheme.outline
+                )
                 else null,
             ) {
                 Column(
@@ -91,18 +88,11 @@ fun UserActivityLevelSectionStep(
             }
             Spacer(modifier = Modifier.height(12.dp))
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContinueButton(selectedActivityLevel!= null){
-            onNextStep()
-        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun UserActivityLevelSectionStepPreview() {
-    UserActivityLevelSectionStep(
-        UserActivityLevel.ACTIVE, {}, {})
+    UserActivityLevelSectionStep(UserActivityLevel.ACTIVE) {}
 }

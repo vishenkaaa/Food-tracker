@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Gender
 import com.example.presentation.R
-import com.example.presentation.common.ui.components.ContinueButton
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.imgRes
 
@@ -36,12 +35,11 @@ import com.example.presentation.extensions.imgRes
 fun GenderSelectionStep(
     selectedGender: Gender?,
     onGenderSelected: (Gender) -> Unit,
-    onNextStep: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 88.dp)
     ) {
@@ -83,7 +81,7 @@ fun GenderSelectionStep(
                             painter = painterResource(currentGender.imgRes()),
                             contentDescription = currentGender.toString(),
                             modifier = Modifier.padding(24.dp),
-                            colorFilter = if(selectedGender != currentGender) {
+                            colorFilter = if (selectedGender != currentGender) {
                                 ColorFilter.tint(MaterialTheme.colorScheme.outline)
                             } else null
                         )
@@ -99,18 +97,11 @@ fun GenderSelectionStep(
                 }
             }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContinueButton(selectedGender!= null){
-            onNextStep()
-        }
     }
 }
 
 @Preview
 @Composable
 fun GenderSelectionStepPreview() {
-    GenderSelectionStep(
-        Gender.MALE, {}, {})
+    GenderSelectionStep(Gender.MALE) {}
 }

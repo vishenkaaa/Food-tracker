@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,9 +9,8 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.presentation.common.ui.components.ContinueButton
 
 @Composable
 fun NumberInputStep(
@@ -46,7 +44,6 @@ fun NumberInputStep(
     unit: String,
     isIntegerInput: Boolean = false,
     onValueSelected: (Float) -> Unit,
-    onNextStep: () -> Unit
 ) {
     var input by remember(value) {
         mutableStateOf(
@@ -63,7 +60,7 @@ fun NumberInputStep(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(top = 88.dp)
             .clickable(
@@ -86,7 +83,7 @@ fun NumberInputStep(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .height(IntrinsicSize.Min)
-        ){
+        ) {
             OutlinedTextField(
                 value = input,
                 onValueChange = { newValue ->
@@ -100,7 +97,7 @@ fun NumberInputStep(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {focusManager.clearFocus()}
+                    onDone = { focusManager.clearFocus() }
                 ),
                 singleLine = true,
                 modifier = Modifier
@@ -120,27 +117,20 @@ fun NumberInputStep(
             Spacer(modifier = Modifier.width(12.dp))
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.background(
-                    MaterialTheme.colorScheme.primary,
-                    RoundedCornerShape(16.dp)
-                )
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.primary,
+                        RoundedCornerShape(16.dp)
+                    )
                     .fillMaxHeight()
                     .padding(horizontal = 16.dp)
             ) {
-                Text(unit,
+                Text(
+                    unit,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyLarge)
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContinueButton(
-            value > 0,
-            modifier = Modifier.imePadding()
-        ) {
-            focusManager.clearFocus()
-            onNextStep()
         }
     }
 }
@@ -153,5 +143,5 @@ fun NumberInputStepPreview() {
         0f,
         "Кг",
         false,
-        {}, {})
+    ) {}
 }

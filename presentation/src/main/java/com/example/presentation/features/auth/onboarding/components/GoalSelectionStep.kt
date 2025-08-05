@@ -1,10 +1,9 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,19 +23,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Goal
 import com.example.presentation.R
-import com.example.presentation.common.ui.components.ContinueButton
 import com.example.presentation.extensions.displayName
 
 @Composable
 fun GoalSelectionStep(
     selectedGoal: Goal?,
     onGoalSelected: (Goal) -> Unit,
-    onNextStep: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(top = 88.dp)
     ) {
@@ -80,18 +76,11 @@ fun GoalSelectionStep(
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ContinueButton(selectedGoal!= null){
-            onNextStep()
-        }
     }
 }
 
 @Preview
 @Composable
 fun GoalSelectionStepPreview() {
-    GoalSelectionStep(
-        Goal.GAIN, {}, {})
+    GoalSelectionStep(Goal.GAIN){}
 }

@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target
+package com.example.presentation.features.auth.onboarding
 
 import android.content.Context
 import androidx.compose.runtime.getValue
@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.saveable
 
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
-class TargetVM @Inject constructor(
+class OnboardingVM @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val authStateManager: AuthStateManager,
     private val signOutUseCase: SignOutUseCase,
@@ -79,8 +79,22 @@ class TargetVM @Inject constructor(
             activityLevel = userActivityLevel,
             targetCalories = targetCalories,
             bmi = bmi,
-            macroNutrients = macroNutrients
+            macroNutrients = macroNutrients,
+            isNextEnabled = isNextEnabled
         )
+
+    private val isNextEnabled: Boolean
+        get() = when (step) {
+            0 -> true
+            1 -> goal != null
+            2 -> goal == Goal.MAINTAIN || weightChange != 0f
+            3 -> currentWeight > 0f
+            4 -> height > 0
+            5 -> gender != null
+            6 -> userActivityLevel != null
+            7 -> birthDate != null
+            else -> true
+        }
 
     private val bmi: Float
         get() = BMICalculator.calculateBMI(currentWeight, height)
@@ -229,7 +243,8 @@ data class TargetUiState(
     val activityLevel: UserActivityLevel? = null,
     val targetCalories: Int = 0,
     val bmi: Float = 0f,
-    val macroNutrients: MacroNutrients = MacroNutrients()
+    val macroNutrients: MacroNutrients = MacroNutrients(),
+    val isNextEnabled: Boolean = true
 )
 
 val GoalSaver = Saver<Goal?, String>(

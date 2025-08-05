@@ -21,7 +21,7 @@ sealed class LoginGraph {
     data object Google : LoginGraph()
 
     @Serializable
-    data object TargetCalories : LoginGraph()
+    data object Onboarding : LoginGraph()
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target.components
+package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -11,9 +11,8 @@ fun WeightChangeStep(
     goal: Goal,
     weightChange: Float,
     onWeightChangeSelected: (Float) -> Unit,
-    onNextStep: () -> Unit
 ) {
-    val title = when(goal){
+    val title = when (goal) {
         Goal.LOSE -> stringResource(R.string.how_much_weight_lose)
         Goal.GAIN -> stringResource(R.string.how_much_weight_gain)
         Goal.MAINTAIN -> ""
@@ -27,14 +26,13 @@ fun WeightChangeStep(
             val adjustedValue = if (goal == Goal.LOSE) -value else value
             onWeightChangeSelected(adjustedValue)
         },
-        onNextStep = onNextStep
     )
 }
 
 @Composable
 @Preview
-fun WeightChangeStepPreview(){
+fun WeightChangeStepPreview() {
     WeightChangeStep(
-        Goal.GAIN, 0f, {}, {}
-    )
+        Goal.GAIN, 0f
+    ) {}
 }

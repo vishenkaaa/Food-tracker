@@ -21,7 +21,7 @@ import androidx.navigation.compose.navigation
 import com.example.domain.manager.UserAuthState
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.auth.google.AuthRoute
-import com.example.presentation.features.auth.target.TargetRoute
+import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
 
 @Composable
@@ -41,7 +41,7 @@ fun AppNavHost(
                 }
 
                 !userAuthState.isFullyRegistered -> {
-                    navController.navigate(LoginGraph.TargetCalories) {
+                    navController.navigate(LoginGraph.Onboarding) {
                         popUpTo(Graphs.IdleScreen) { inclusive = true }
                     }
                 }
@@ -98,11 +98,11 @@ private fun NavGraphBuilder.loginGraph(
             AuthRoute()
         }
 
-        composable<LoginGraph.TargetCalories> { backStackEntry ->
+        composable<LoginGraph.Onboarding> { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Graphs.Login>()
             }
-            TargetRoute(
+            OnboardingRoute(
                 viewModel = hiltViewModel(parentEntry)
             )
         }

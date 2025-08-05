@@ -1,4 +1,4 @@
-package com.example.presentation.features.auth.target
+package com.example.presentation.features.auth.onboarding
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,28 +41,29 @@ import com.example.domain.model.Goal
 import com.example.domain.model.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
-import com.example.presentation.features.auth.target.components.BirthDateStep
-import com.example.presentation.features.auth.target.components.CurrentWeightStep
-import com.example.presentation.features.auth.target.components.GenderSelectionStep
-import com.example.presentation.features.auth.target.components.GoalSelectionStep
-import com.example.presentation.features.auth.target.components.HeightStep
-import com.example.presentation.features.auth.target.components.ResultStep
-import com.example.presentation.features.auth.target.components.UserActivityLevelSectionStep
-import com.example.presentation.features.auth.target.components.WeightChangeStep
-import com.example.presentation.features.auth.target.components.WelcomeStep
+import com.example.presentation.features.auth.onboarding.components.BirthDateStep
+import com.example.presentation.features.auth.onboarding.components.CurrentWeightStep
+import com.example.presentation.features.auth.onboarding.components.GenderSelectionStep
+import com.example.presentation.features.auth.onboarding.components.GoalSelectionStep
+import com.example.presentation.features.auth.onboarding.components.HeightStep
+import com.example.presentation.features.auth.onboarding.components.ResultStep
+import com.example.presentation.features.auth.onboarding.components.UserActivityLevelSectionStep
+import com.example.presentation.features.auth.onboarding.components.WeightChangeStep
+import com.example.presentation.features.auth.onboarding.components.WelcomeStep
 import java.time.LocalDate
 
 @Composable
-fun TargetRoute(
-    viewModel: TargetVM = hiltViewModel()
+fun OnboardingRoute(
+    viewModel: OnboardingVM = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState = viewModel.uiState
     val baseUiState by viewModel.baseUiState.collectAsState()
 
-    TargetScreen(
+    OnboardingScreen(
         baseUiState = baseUiState,
         uiState = uiState,
         onGoalSelected = viewModel::onGoalSelected,
@@ -80,7 +83,7 @@ fun TargetRoute(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TargetScreen(
+fun OnboardingScreen(
     baseUiState: BaseUiState,
     uiState: TargetUiState,
     onGoalSelected: (Goal) -> Unit,
@@ -97,7 +100,9 @@ fun TargetScreen(
     onFinish: () -> Unit
 ) {
 
-    BackHandler{
+    val focusManager = LocalFocusManager.current
+
+    BackHandler {
         onBackPressed()
     }
 
@@ -124,7 +129,7 @@ fun TargetScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
-                    if(uiState.step != uiState.totalSteps + 1) IconButton(
+                    if (uiState.step != uiState.totalSteps + 1) IconButton(
                         onClick = { onBackPressed() },
                         modifier = Modifier
                             .padding(end = 16.dp)
@@ -147,7 +152,7 @@ fun TargetScreen(
                             style = MaterialTheme.typography.headlineMedium.toSpanStyle().copy(
                                 color = MaterialTheme.colorScheme.primary
                             )
-                        ) { append(stringResource(R.string.tracker)) }
+                        ) { append(stringResource(R.string.snap)) }
                     })
                 }
             )
@@ -155,8 +160,9 @@ fun TargetScreen(
             if (uiState.step > 0) {
                 LinearWavyProgressIndicator(
                     progress = {
-                        val adjustedStep = if (uiState.goal == Goal.MAINTAIN && uiState.step > 2) uiState.step - 1
-                        else uiState.step
+                        val adjustedStep =
+                            if (uiState.goal == Goal.MAINTAIN && uiState.step > 2) uiState.step - 1
+                            else uiState.step
                         val currentProgressStep = (adjustedStep - 1).coerceAtLeast(0)
                         currentProgressStep.toFloat() / (uiState.totalSteps).toFloat()
                     },
@@ -171,27 +177,48 @@ fun TargetScreen(
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 userScrollEnabled = false,
                 pageSpacing = 0.dp
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    when (uiState.step) {
-                        0 -> WelcomeStep(onNextStep = onNextStep)
-                        1 -> GoalSelectionStep(uiState.goal, onGoalSelected, onNextStep)
-                        2 -> WeightChangeStep(uiState.goal?: Goal.MAINTAIN, uiState.weightChange, onWeightChangeSelected, onNextStep)
-                        3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected, onNextStep)
-                        4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
-                        5 -> GenderSelectionStep(uiState.gender, onGenderSelected, onNextStep)
-                        6 -> UserActivityLevelSectionStep(uiState.activityLevel, onActivityLevelSelected, onNextStep)
-                        7 -> BirthDateStep(uiState.birthDate, onBirthDateSelected, onNextStep)
-                        8 -> ResultStep(uiState.macroNutrients, uiState.bmi, uiState.targetCalories, onFinish)
-                    }
+                when (uiState.step) {
+                    0 -> WelcomeStep()
+                    1 -> GoalSelectionStep(uiState.goal, onGoalSelected)
+                    2 -> WeightChangeStep(
+                        uiState.goal ?: Goal.MAINTAIN,
+                        uiState.weightChange,
+                        onWeightChangeSelected
+                    )
+                    3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected)
+                    4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
+                    5 -> GenderSelectionStep(uiState.gender, onGenderSelected)
+                    6 -> UserActivityLevelSectionStep(
+                        uiState.activityLevel,
+                        onActivityLevelSelected
+                    )
+                    7 -> BirthDateStep(uiState.birthDate, onBirthDateSelected)
+                    8 -> ResultStep(uiState.macroNutrients, uiState.bmi, uiState.targetCalories)
                 }
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+            CustomButton(
+                modifier = Modifier
+                    .imePadding()
+                    .padding(bottom = 80.dp),
+                text = when (uiState.step){
+                    0 -> stringResource(R.string.start)
+                    8 -> stringResource(R.string.finish)
+                    else -> stringResource(R.string.continue_)
+                },
+                icon = if (uiState.step == 0) painterResource(R.drawable.arrow_start) else null,
+                iconPositionStart = false,
+                onClick = {
+                    focusManager.clearFocus()
+                    if (uiState.step != 8) onNextStep() else onFinish()
+                },
+                enabled = uiState.isNextEnabled
+            )
         }
 
         LoadingBackground(baseUiState.isLoading)
@@ -207,7 +234,7 @@ fun TargetScreen(
 @Preview(showBackground = true)
 @Composable
 fun TargetScreenPreview() {
-    TargetScreen(
+    OnboardingScreen(
         BaseUiState(),
         TargetUiState(),
         {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}

@@ -23,7 +23,7 @@
     <string name="female">Жінка</string>
     <string name="new_profile">Новий профіль</string>
     <string name="food">Food</string>
-    <string name="tracker">Tracker</string>
+    <string name="snap">Snap</string>
     <string name="welcome_step_txt">Визначимо Ваші цілі, та\nрозрахуємо рекомендоване\nдобове споживання калорій</string>
     <string name="what_is_your_goal">Оберіть Вашу мету</string>
     <string name="continue_">Продовжити</string>
@@ -51,4 +51,6 @@
     <string name="normal_weight">нормальна вага</string>
     <string name="overweight">надлишкова вага</string>
     <string name="obesity">ожиріння</string>
+    <string name="start">Розпочати</string>
+    <string name="finish">Завершити</string>
 </resources>

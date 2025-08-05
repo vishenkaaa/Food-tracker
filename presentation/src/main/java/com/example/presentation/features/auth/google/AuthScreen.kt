@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
@@ -71,7 +68,7 @@ fun AuthScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 72.dp, horizontal = 32.dp),
+                .padding(vertical = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -81,7 +78,7 @@ fun AuthScreen(
                         append(stringResource(R.string.food))
                     }
                     withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append(stringResource(R.string.tracker))
+                        append(stringResource(R.string.snap))
                     }
                 },
                 textAlign = TextAlign.Center,
@@ -107,12 +104,12 @@ fun AuthScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp)
+                    .padding(horizontal = 32.dp)
             )
             CustomButton(
                 text = stringResource(R.string.login_with_google),
                 icon = painterResource(R.drawable.google),
                 onClick = { onLoginClicked() },
-                enabled = !baseUiState.isLoading,
                 iconPositionStart = true
             )
         }
