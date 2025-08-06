@@ -34,7 +34,7 @@ fun WelcomeStep() {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
             text = stringResource(R.string.welcome_step_txt),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
         )

@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Gender
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.White
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.imgRes
 
@@ -46,7 +47,7 @@ fun GenderSelectionStep(
         Text(
             text = stringResource(R.string.your_gender),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -66,7 +67,7 @@ fun GenderSelectionStep(
                                 elevation = if (selectedGender == currentGender) 8.dp else 0.dp,
                                 shape = RoundedCornerShape(16.dp),
                                 clip = false,
-                                ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                                ambientColor = MaterialTheme.colorScheme.surfaceVariant
                             ),
                         colors = CardDefaults.cardColors(
                             containerColor = if (selectedGender == currentGender)
@@ -74,7 +75,7 @@ fun GenderSelectionStep(
                             else Color.Transparent
                         ),
                         border = if (selectedGender != currentGender)
-                            BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
+                            BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                         else null,
                     ) {
                         Image(
@@ -82,15 +83,15 @@ fun GenderSelectionStep(
                             contentDescription = currentGender.toString(),
                             modifier = Modifier.padding(24.dp),
                             colorFilter = if (selectedGender != currentGender) {
-                                ColorFilter.tint(MaterialTheme.colorScheme.outline)
-                            } else null
+                                ColorFilter.tint(MaterialTheme.colorScheme.onBackground.copy(0.24f))
+                            } else ColorFilter.tint(White)
                         )
                     }
                     Text(
                         currentGender.displayName(),
                         color = if (selectedGender == currentGender)
-                            MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.outline,
+                            MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.onBackground.copy(0.24f),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.headlineMedium
                     )

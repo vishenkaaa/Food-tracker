@@ -1,9 +1,9 @@
 package com.example.domain.model
 
 enum class Goal(val value: String) {
-    LOSE("lose"),
+    GAIN("gain"),
     MAINTAIN("maintain"),
-    GAIN("gain");
+    LOSE("lose");
 
     companion object {
         fun fromValue(value: String): Goal? {

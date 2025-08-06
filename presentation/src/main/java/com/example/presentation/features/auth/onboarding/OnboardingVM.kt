@@ -37,8 +37,8 @@ class OnboardingVM @Inject constructor(
     private val updateUserInfoUseCase: UpdateUserInfoUseCase
 ) : BaseViewModel() {
     companion object {
-        private const val MAX_STEPS = 8
-        private const val WELCOME_STEP = 0
+        const val MAX_STEPS = 8
+        const val WELCOME_STEP = 0
 
         private const val KEY_STEP = "step"
         private const val KEY_TOTAL_STEP = "total_step"

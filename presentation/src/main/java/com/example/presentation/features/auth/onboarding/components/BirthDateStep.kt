@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.UserActivityLevel
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.DatePickerTypography
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -54,19 +55,23 @@ fun BirthDateStep(
         Text(
             text = stringResource(R.string.your_birthdate),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        DatePicker(
-            state = datePickerState,
-            colors = DatePickerDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.background
-            ),
-            title = null,
-        )
+        MaterialTheme(
+            typography = DatePickerTypography
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                title = null,
+            )
+        }
     }
 }
 

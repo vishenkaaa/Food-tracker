@@ -40,7 +40,7 @@ fun UserActivityLevelSectionStep(
         Text(
             text = stringResource(R.string.your_activity_level),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -56,14 +56,14 @@ fun UserActivityLevelSectionStep(
                         elevation = if (selectedActivityLevel == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
                         clip = false,
-                        ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                        ambientColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedActivityLevel == currentGoal) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.background
                 ),
                 border = if (selectedActivityLevel != currentGoal) BorderStroke(
-                    2.dp,
+                    1.dp,
                     MaterialTheme.colorScheme.outline
                 )
                 else null,
@@ -73,14 +73,14 @@ fun UserActivityLevelSectionStep(
                 ) {
                     Text(
                         text = currentGoal.displayName(),
-                        color = if (selectedActivityLevel != currentGoal) MaterialTheme.colorScheme.outline
+                        color = if (selectedActivityLevel != currentGoal) MaterialTheme.colorScheme.onSurface
                         else MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
                         text = currentGoal.description(),
-                        color = if (selectedActivityLevel != currentGoal) MaterialTheme.colorScheme.outline
+                        color = if (selectedActivityLevel != currentGoal) MaterialTheme.colorScheme.onSurface
                         else MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.bodyMedium
                     )

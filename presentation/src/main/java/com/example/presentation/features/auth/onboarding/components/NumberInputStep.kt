@@ -73,7 +73,7 @@ fun NumberInputStep(
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -91,6 +91,9 @@ fun NumberInputStep(
                     val floatValue = newValue.toFloatOrNull() ?: 0f
                     onValueSelected(floatValue)
                 },
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
                 label = null,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = if (isIntegerInput) KeyboardType.Number else KeyboardType.Decimal,
@@ -110,7 +113,8 @@ fun NumberInputStep(
                         }
                     },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                 ),
                 shape = RoundedCornerShape(16.dp),
             )
@@ -128,7 +132,7 @@ fun NumberInputStep(
                 Text(
                     unit,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
         }

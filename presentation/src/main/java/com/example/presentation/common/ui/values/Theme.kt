@@ -25,7 +25,7 @@ private val LightColorScheme
         surfaceVariant = White.copy(0.16f), // тінь
         background = White, //фон
         onBackground = DarkGreen, // текст на фоні
-        outline = DarkBackground.copy(0.20f), // не активний контур
+        outline = DarkBackground.copy(0.16f), // не активний контур
         outlineVariant = Green30, // активний контур
         error = Red, // попередження/помилка
         onError = White // на попередженні
@@ -38,9 +38,9 @@ private val DarkColorScheme
         primary = Green,
         onPrimary = White,
         secondary = DarkGreen30,
-        onSecondary = DarkGreen60,
+        onSecondary = White.copy(0.6f),
         surface = Green30,
-        onSurface = White20,
+        onSurface = White.copy(0.4f),
         surfaceVariant = DarkBackground.copy(0.16f),
         background = DarkBackground,
         onBackground = White,

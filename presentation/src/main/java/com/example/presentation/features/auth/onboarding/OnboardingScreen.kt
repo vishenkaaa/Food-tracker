@@ -44,6 +44,8 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MAX_STEPS
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.WELCOME_STEP
 import com.example.presentation.features.auth.onboarding.components.BirthDateStep
 import com.example.presentation.features.auth.onboarding.components.CurrentWeightStep
 import com.example.presentation.features.auth.onboarding.components.GenderSelectionStep
@@ -103,7 +105,7 @@ fun OnboardingScreen(
     val focusManager = LocalFocusManager.current
 
     BackHandler {
-        onBackPressed()
+        if (uiState.step != MAX_STEPS) onBackPressed()
     }
 
     val pagerState = rememberPagerState(
@@ -129,27 +131,28 @@ fun OnboardingScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
-                    if (uiState.step != uiState.totalSteps + 1) IconButton(
-                        onClick = { onBackPressed() },
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.back),
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
+                    if (uiState.step != MAX_STEPS)
+                        IconButton(
+                            onClick = { onBackPressed() },
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.back),
+                                contentDescription = "Back",
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
                 },
                 title = {
                     Text(buildAnnotatedString {
                         withStyle(
-                            style = MaterialTheme.typography.headlineMedium.toSpanStyle().copy(
+                            style = MaterialTheme.typography.displaySmall.toSpanStyle().copy(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         ) { append(stringResource(R.string.food)) }
                         withStyle(
-                            style = MaterialTheme.typography.headlineMedium.toSpanStyle().copy(
+                            style = MaterialTheme.typography.displaySmall.toSpanStyle().copy(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         ) { append(stringResource(R.string.snap)) }
@@ -207,15 +210,15 @@ fun OnboardingScreen(
                     .imePadding()
                     .padding(bottom = 80.dp),
                 text = when (uiState.step){
-                    0 -> stringResource(R.string.start)
-                    8 -> stringResource(R.string.finish)
+                    WELCOME_STEP -> stringResource(R.string.start)
+                    MAX_STEPS -> stringResource(R.string.finish)
                     else -> stringResource(R.string.continue_)
                 },
                 icon = if (uiState.step == 0) painterResource(R.drawable.arrow_start) else null,
                 iconPositionStart = false,
                 onClick = {
                     focusManager.clearFocus()
-                    if (uiState.step != 8) onNextStep() else onFinish()
+                    if (uiState.step != MAX_STEPS) onNextStep() else onFinish()
                 },
                 enabled = uiState.isNextEnabled
             )

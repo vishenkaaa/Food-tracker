@@ -39,7 +39,7 @@ fun GoalSelectionStep(
         Text(
             text = stringResource(R.string.what_is_your_goal),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
 
@@ -55,7 +55,7 @@ fun GoalSelectionStep(
                         elevation = if (selectedGoal == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
                         clip = false,
-                        ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                        ambientColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedGoal == currentGoal)
@@ -63,15 +63,15 @@ fun GoalSelectionStep(
                     else Color.Transparent
                 ),
                 border = if (selectedGoal != currentGoal)
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 else null,
             ) {
                 Text(
                     text = currentGoal.displayName(),
                     modifier = Modifier.padding(16.dp),
-                    color = if (selectedGoal != currentGoal) MaterialTheme.colorScheme.outline
+                    color = if (selectedGoal != currentGoal) MaterialTheme.colorScheme.onSurface
                     else MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

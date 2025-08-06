@@ -9,7 +9,7 @@
     <string name="smart">розумного</string>
     <string name="eating">\nхарчування</string>
     <string name="weight_gain">Набір ваги</string>
-    <string name="maintaining_current_weight">Підтримання поточної ваги</string>
+    <string name="maintaining_current_weight">Утримання поточної ваги</string>
     <string name="weight_loss">Скидання ваги</string>
     <string name="sedentary">Малорухливий</string>
     <string name="lightly_active">Помірно активний</string>
@@ -32,8 +32,8 @@
     <string name="your_current_weight">Ваша поточна вага</string>
     <string name="centimeters">См</string>
     <string name="your_height">Ваш зріст</string>
-    <string name="how_much_weight_lose">Скільки ваги ви хотіли б скинути?</string>
-    <string name="how_much_weight_gain">Скільки ваги ви хотіли б набрати?</string>
+    <string name="how_much_weight_lose">Скільки ваги Ви хотіли б скинути?</string>
+    <string name="how_much_weight_gain">Скільки ваги Ви хотіли б набрати?</string>
     <string name="your_gender">Ваша стать</string>
     <string name="your_activity_level">Ваш рівень активності</string>
     <string name="your_birthdate">Ваша дата народження</string>

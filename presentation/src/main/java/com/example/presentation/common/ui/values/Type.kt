@@ -1,6 +1,5 @@
 package com.example.presentation.common.ui.values
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
@@ -51,7 +50,7 @@ val headline1: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 36.sp,
         color = MaterialTheme.colorScheme.onBackground
@@ -61,7 +60,7 @@ val headline2: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         lineHeight = 30.sp,
         color = MaterialTheme.colorScheme.onBackground
@@ -71,7 +70,7 @@ val subtitle1: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
@@ -92,7 +91,7 @@ val body2: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         lineHeight = 20.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -101,8 +100,8 @@ val body1: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
         lineHeight = 22.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -119,4 +118,12 @@ val Typography: Typography
         titleMedium = subtitle2,
         bodyLarge = body1,
         bodyMedium = body2,
+    )
+
+val DatePickerTypography: Typography
+    @Composable
+    get() = Typography(
+        headlineLarge = headline2, // вибрана дата
+        labelLarge  = subtitle1, // назва місяця
+        bodyLarge = subtitle1, // числа днів
     )

@@ -40,18 +40,22 @@ fun ResultStep(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = 58.dp)
             .padding(horizontal = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.recommendations_ready),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(horizontal = 24.dp),
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.personalized_recommendations_description),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
-            textAlign = TextAlign.Center
+            color = MaterialTheme.colorScheme.onSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp)
         )
 
         Spacer(Modifier.height(40.dp))
@@ -87,7 +91,7 @@ fun CaloriesCard(
                 elevation = 3.dp,
                 shape = RoundedCornerShape(16.dp),
                 clip = false,
-                ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
     ) {
@@ -118,7 +122,7 @@ fun CaloriesCard(
             Text(
                 text = stringResource(R.string.daily_calories_recommendation),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Center
             )
         }
@@ -141,7 +145,7 @@ fun BmiCard(
                 elevation = 3.dp,
                 shape = RoundedCornerShape(16.dp),
                 clip = false,
-                ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
     ) {
@@ -151,7 +155,7 @@ fun BmiCard(
         ) {
             Text(
                 text = stringResource(R.string.bmi_format).format(bmi),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -167,7 +171,7 @@ fun BmiCard(
             Text(
                 text = stringResource(R.string.bmi_category_format, bmiCategory.label),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Start
             )
         }
@@ -187,7 +191,7 @@ fun MacroNutrientsCard(
                 elevation = 3.dp,
                 shape = RoundedCornerShape(16.dp),
                 clip = false,
-                ambientColor = MaterialTheme.colorScheme.onBackground.copy(0.15f)
+                ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
     ) {
@@ -199,21 +203,22 @@ fun MacroNutrientsCard(
             Icon(
                 painter = icon,
                 contentDescription = "Fire",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
+                modifier = Modifier.height(32.dp)
             )
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.grams_format, value),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Start
+                text = name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondary,
+                textAlign = TextAlign.Start
                 )
                 Text(
-                    text = name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(0.6f),
+                    text = stringResource(R.string.grams_format, value),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Start
                 )
             }
