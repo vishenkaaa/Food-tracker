@@ -19,10 +19,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.domain.manager.UserAuthState
-import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
+import com.example.presentation.features.main.idle.IdleRoute
+import kotlinx.coroutines.delay
 
 @Composable
 fun AppNavHost(
@@ -32,6 +33,7 @@ fun AppNavHost(
     shouldShowBottomBar: Boolean,
 ) {
     LaunchedEffect(userAuthState.isLoggedIn, userAuthState.isFullyRegistered) {
+        delay(1500)
         if (!userAuthState.isLoading) {
             when {
                 userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
@@ -67,7 +69,6 @@ fun AppNavHost(
         mainGraph(navController)
     }
 }
-
 
 private fun NavGraphBuilder.loginGraph(
     navController: NavController,

@@ -53,7 +53,7 @@ fun GenderSelectionStep(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(52.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
             Gender.entries.forEach { currentGender ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
