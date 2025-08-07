@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFF</color>
+    <color name="light_bg">#FDFDFD</color>
     <color name="white_20">#33FFFFFF</color>
     <color name="green">#4B7E38</color>
     <color name="green_30">#4D4B7E38</color>
@@ -8,6 +9,8 @@
     <color name="dark_green_60">#990C2004</color>
     <color name="dark_green_50">#800C2004</color>
     <color name="dark_green_30">#4D0C2004</color>
-    <color name="dark_bg">#1E1E1E</color>
+    <color name="dark">#1E1E1E</color>
+    <color name="dark_bg">#101010</color>
+    <color name="dark_container">#1D1D1D</color>
     <color name="red">#D92632</color>
 </resources>

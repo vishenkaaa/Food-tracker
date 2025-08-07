@@ -91,8 +91,8 @@ class OnboardingVM @Inject constructor(
             3 -> currentWeight > 0f
             4 -> height > 0
             5 -> gender != null
-            6 -> userActivityLevel != null
-            7 -> birthDate != null
+            6 -> birthDate != null
+            7 -> userActivityLevel != null
             else -> true
         }
 

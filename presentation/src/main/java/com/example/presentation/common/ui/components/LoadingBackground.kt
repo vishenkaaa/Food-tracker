@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.presentation.common.ui.values.DarkBackground
+import com.example.presentation.common.ui.values.Dark
 
 @Composable
 fun LoadingBackground(
@@ -21,7 +21,7 @@ fun LoadingBackground(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DarkBackground.copy(alpha = 0.5f))
+                .background(Dark.copy(alpha = 0.5f))
                 .zIndex(1f),
             contentAlignment = Alignment.Center
         ) {

@@ -1,8 +1,8 @@
 package com.example.domain.model
 
 enum class Gender(val value: String) {
-    MALE("male"),
-    FEMALE("female");
+    FEMALE("female"),
+    MALE("male");
 
     companion object{
         fun fromValue(value: String): Gender? {

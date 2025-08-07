@@ -72,7 +72,7 @@ val subtitle1: TextStyle
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 22.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
 
@@ -123,7 +123,7 @@ val Typography: Typography
 val DatePickerTypography: Typography
     @Composable
     get() = Typography(
-        headlineLarge = headline2, // вибрана дата
-        labelLarge  = subtitle1, // назва місяця
+        headlineLarge = headline1, // вибрана дата
+        labelLarge  = subtitle2, // назва місяця
         bodyLarge = subtitle1, // числа днів
     )

@@ -67,7 +67,14 @@ fun BirthDateStep(
             DatePicker(
                 state = datePickerState,
                 colors = DatePickerDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = MaterialTheme.colorScheme.background,
+                    headlineContentColor = MaterialTheme.colorScheme.onBackground, // Колір вибраної дати
+                    weekdayContentColor = MaterialTheme.colorScheme.onBackground, // Колір днів тижня
+                    dayContentColor = MaterialTheme.colorScheme.onBackground, // Колір днів
+                    navigationContentColor = MaterialTheme.colorScheme.onBackground, // Колір місяця
+                    yearContentColor = MaterialTheme.colorScheme.onBackground, // Колір року
+                    todayContentColor = MaterialTheme.colorScheme.onBackground, // Колір сьогоднішнього дня
+                    todayDateBorderColor = MaterialTheme.colorScheme.background, // Колір рамки сьогоднішнього дня
                 ),
                 title = null,
             )

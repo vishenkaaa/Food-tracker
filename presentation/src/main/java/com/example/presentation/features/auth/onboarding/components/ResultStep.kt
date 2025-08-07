@@ -93,7 +93,7 @@ fun CaloriesCard(
                 clip = false,
                 ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Column(
             modifier = Modifier
@@ -147,7 +147,7 @@ fun BmiCard(
                 clip = false,
                 ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -193,7 +193,7 @@ fun MacroNutrientsCard(
                 clip = false,
                 ambientColor = MaterialTheme.colorScheme.surfaceVariant
             ),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),

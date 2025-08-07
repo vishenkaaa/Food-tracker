@@ -172,7 +172,7 @@ fun OnboardingScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.outline,
+                    trackColor = MaterialTheme.colorScheme.surface,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -195,11 +195,11 @@ fun OnboardingScreen(
                     3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected)
                     4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
                     5 -> GenderSelectionStep(uiState.gender, onGenderSelected)
-                    6 -> UserActivityLevelSectionStep(
+                    6 -> BirthDateStep(uiState.birthDate, onBirthDateSelected)
+                    7 -> UserActivityLevelSectionStep(
                         uiState.activityLevel,
                         onActivityLevelSelected
                     )
-                    7 -> BirthDateStep(uiState.birthDate, onBirthDateSelected)
                     8 -> ResultStep(uiState.macroNutrients, uiState.bmi, uiState.targetCalories)
                 }
             }
@@ -239,7 +239,7 @@ fun OnboardingScreen(
 fun TargetScreenPreview() {
     OnboardingScreen(
         BaseUiState(),
-        TargetUiState(),
+        TargetUiState(step = 0),
         {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
     )
 }

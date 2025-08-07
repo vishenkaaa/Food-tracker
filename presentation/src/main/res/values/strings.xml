@@ -32,8 +32,8 @@
     <string name="your_current_weight">Ваша поточна вага</string>
     <string name="centimeters">См</string>
     <string name="your_height">Ваш зріст</string>
-    <string name="how_much_weight_lose">Скільки ваги Ви хотіли б скинути?</string>
-    <string name="how_much_weight_gain">Скільки ваги Ви хотіли б набрати?</string>
+    <string name="how_much_weight_lose">Скільки ваги Ви хотіли б\nскинути?</string>
+    <string name="how_much_weight_gain">Скільки ваги Ви хотіли б\nнабрати?</string>
     <string name="your_gender">Ваша стать</string>
     <string name="your_activity_level">Ваш рівень активності</string>
     <string name="your_birthdate">Ваша дата народження</string>
