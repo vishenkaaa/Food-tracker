@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+datastorePreferencesCore = "1.1.7"
 kotlin = "2.0.21"
 kotlinSerialization = "1.9.22"
 jetbrainsKotlinJvm = "2.0.21"
@@ -36,11 +37,14 @@ monitor = "1.7.2"
 runner = "1.6.2"
 
 image-compressorVersion = "1.6.0"
+firebaseAuthKtxVersion = "24.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesCore" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -90,6 +94,7 @@ androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "m
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 image-compressor = { group = "com.github.Shouheng88", name = "compressor", version.ref = "image-compressorVersion" }
+google-firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

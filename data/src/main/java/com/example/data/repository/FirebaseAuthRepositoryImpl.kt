@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.data.auth.LocalAuthStateManager
 import com.example.data.mapper.UserModelMapper.mapToUser
 import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.domain.model.User
@@ -11,8 +12,9 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
+    firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    firestore: FirebaseFirestore
+    private val localAuthStateManager: LocalAuthStateManager
 ) : FirebaseAuthRepository {
 
     companion object{
@@ -45,6 +47,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 if (createResult.isFailure)
                     return Result.failure(createResult.exceptionOrNull() ?: Exception("Failed to create user"))
 
+                localAuthStateManager.saveAuthState(userId, firebaseUser.email, true)
                 Result.success(newUser)
             } else {
                 val snapshot = userDocument.get().await()
@@ -52,6 +55,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 val existingUser = snapshot.data?.let { mapToUser(it, userId) }
                     ?: return Result.failure(Exception("User data not found"))
 
+                localAuthStateManager.saveAuthState(userId, firebaseUser.email, true)
                 Result.success(existingUser)
             }
         }
@@ -71,15 +75,16 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signOut() {
+        localAuthStateManager.clearAuthState()
         auth.signOut()
     }
 
     override suspend fun isUserLoggedIn(): Boolean {
-        return auth.currentUser != null
+        return localAuthStateManager.isUserLoggedIn()
     }
 
     override suspend fun getCurrentUserId(): String? {
-        return auth.currentUser?.uid
+        return localAuthStateManager.getCurrentUserId()
     }
 
     override suspend fun isUserFullyRegistered(userId: String): Boolean {
