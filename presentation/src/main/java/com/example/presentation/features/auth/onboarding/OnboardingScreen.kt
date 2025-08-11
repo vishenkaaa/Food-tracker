@@ -1,15 +1,12 @@
 package com.example.presentation.features.auth.onboarding
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -27,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +41,7 @@ import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
@@ -57,6 +56,8 @@ import com.example.presentation.features.auth.onboarding.components.ResultStep
 import com.example.presentation.features.auth.onboarding.components.UserActivityLevelSectionStep
 import com.example.presentation.features.auth.onboarding.components.WeightChangeStep
 import com.example.presentation.features.auth.onboarding.components.WelcomeStep
+import com.example.presentation.features.auth.onboarding.models.OnboardingStep
+import com.example.presentation.features.auth.onboarding.models.OnboardingUiState
 import java.time.LocalDate
 
 @Composable
@@ -81,6 +82,7 @@ fun OnboardingRoute(
         onBackPressed = { viewModel.onBackPressed() },
         onNextStep = { viewModel.onNextStep(context) },
         onErrorConsume = { viewModel.consumeError() },
+        onLogoutConfirmationResult = viewModel::onLogoutConfirmationResult,
         onFinish = { viewModel.onFinish() }
     )
 }
@@ -89,7 +91,7 @@ fun OnboardingRoute(
 @Composable
 fun OnboardingScreen(
     baseUiState: BaseUiState,
-    uiState: TargetUiState,
+    uiState: OnboardingUiState,
     onGoalSelected: (Goal) -> Unit,
     onWeightChangeSelected: (Float) -> Unit,
     onGenderSelected: (Gender) -> Unit,
@@ -100,6 +102,7 @@ fun OnboardingScreen(
     onSave: () -> Unit,
     onBackPressed: () -> Unit,
     onNextStep: () -> Unit,
+    onLogoutConfirmationResult: (Boolean) -> Unit,
     onErrorConsume: () -> Unit,
     onFinish: () -> Unit
 ) {
@@ -110,19 +113,37 @@ fun OnboardingScreen(
         if (uiState.step != MAX_STEPS) onBackPressed()
     }
 
+    val steps = remember(uiState.goal) {
+        buildList {
+            add(OnboardingStep.Welcome)
+            add(OnboardingStep.GoalSelection)
+            if (uiState.goal != Goal.MAINTAIN) {
+                add(OnboardingStep.WeightChange)
+            }
+            add(OnboardingStep.CurrentWeight)
+            add(OnboardingStep.Height)
+            add(OnboardingStep.Gender)
+            add(OnboardingStep.BirthDate)
+            add(OnboardingStep.ActivityLevel)
+            add(OnboardingStep.Result)
+        }
+    }
+
+    var currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
+        .takeIf { it >= 0 } ?: 0
+
     val pagerState = rememberPagerState(
-        initialPage = uiState.step,
-        pageCount = { MAX_STEPS + 1 }
+        initialPage = currentPageIndex,
+        pageCount = { steps.size }
     )
 
     LaunchedEffect(uiState.step) {
-        pagerState.animateScrollToPage(
-            uiState.step,
-            animationSpec = tween(
-                durationMillis = 300,
-                easing = FastOutSlowInEasing
+        val targetPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
+        if (targetPageIndex >= 0 && pagerState.currentPage != targetPageIndex) {
+            pagerState.animateScrollToPage(
+                targetPageIndex
             )
-        )
+        }
     }
 
     Box {
@@ -171,48 +192,71 @@ fun OnboardingScreen(
             if (uiState.step > 0) {
                 LinearWavyProgressIndicator(
                     progress = {
-                        val adjustedStep =
-                            if (uiState.goal == Goal.MAINTAIN && uiState.step > 2) uiState.step - 1
-                            else uiState.step
-                        val currentProgressStep = (adjustedStep - 1).coerceAtLeast(0)
-                        currentProgressStep.toFloat() / (uiState.totalSteps).toFloat()
+                        currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
+                            .takeIf { it >= 0 } ?: 0
+                        val progressPageIndex = (currentPageIndex - 1).coerceAtLeast(0)
+                        progressPageIndex.toFloat() / (steps.size - 2).toFloat()
                     },
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surface,
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
             }
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(1f).fillMaxWidth(),
                 userScrollEnabled = false,
                 pageSpacing = 0.dp
-            ) {
-                when (uiState.step) {
-                    0 -> WelcomeStep()
-                    1 -> GoalSelectionStep(uiState.goal, onGoalSelected)
-                    2 -> WeightChangeStep(
-                        uiState.goal ?: Goal.MAINTAIN,
-                        uiState.weightChange,
-                        onWeightChangeSelected
-                    )
-                    3 -> CurrentWeightStep(uiState.currentWeight, onCurrentWeightSelected)
-                    4 -> HeightStep(uiState.height, onHeightSelected, onNextStep)
-                    5 -> GenderSelectionStep(uiState.gender, onGenderSelected)
-                    6 -> BirthDateStep(uiState.birthDate, onBirthDateSelected)
-                    7 -> UserActivityLevelSectionStep(
-                        uiState.activityLevel,
-                        onActivityLevelSelected
-                    )
-                    8 -> ResultStep(uiState.macroNutrients, uiState.bmi, uiState.targetCalories)
+            ) { pageIndex ->
+                val currentStep = steps[pageIndex]
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    when (currentStep) {
+                        is OnboardingStep.Welcome -> WelcomeStep()
+                        is OnboardingStep.GoalSelection -> GoalSelectionStep(
+                            uiState.goal,
+                            onGoalSelected
+                        )
+                        is OnboardingStep.WeightChange -> WeightChangeStep(
+                            uiState.goal ?: Goal.MAINTAIN,
+                            uiState.weightChange,
+                            onWeightChangeSelected
+                        )
+                        is OnboardingStep.CurrentWeight -> CurrentWeightStep(
+                            uiState.currentWeight,
+                            onCurrentWeightSelected
+                        )
+                        is OnboardingStep.Height -> HeightStep(
+                            uiState.height,
+                            onHeightSelected,
+                            onNextStep
+                        )
+                        is OnboardingStep.Gender -> GenderSelectionStep(
+                            uiState.gender,
+                            onGenderSelected
+                        )
+                        is OnboardingStep.BirthDate -> BirthDateStep(
+                            uiState.birthDate,
+                            onBirthDateSelected
+                        )
+                        is OnboardingStep.ActivityLevel -> UserActivityLevelSectionStep(
+                            uiState.activityLevel,
+                            onActivityLevelSelected
+                        )
+                        is OnboardingStep.Result -> ResultStep(
+                            uiState.macroNutrients,
+                            uiState.bmi,
+                            uiState.targetCalories
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
             CustomButton(
                 modifier = Modifier
                     .imePadding()
@@ -234,6 +278,16 @@ fun OnboardingScreen(
 
         LoadingBackground(baseUiState.isLoading)
 
+        ConfirmationDialog(
+            visible = uiState.showLogoutDialog,
+            title = stringResource(R.string.logout_title),
+            message = stringResource(R.string.logout_message),
+            confirmButtonText = stringResource(R.string.logout),
+            dismissButtonText = stringResource(R.string.cancel),
+            onConfirm = { onLogoutConfirmationResult(true) },
+            onDismiss = { onLogoutConfirmationResult(false) }
+        )
+
         HandleError(
             baseUiState = baseUiState,
             onErrorConsume = onErrorConsume,
@@ -247,7 +301,7 @@ fun OnboardingScreen(
 fun TargetScreenPreview() {
     OnboardingScreen(
         BaseUiState(),
-        TargetUiState(step = 0),
-        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        OnboardingUiState(step = 0),
+        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
     )
 }

@@ -47,10 +47,15 @@
     <string name="bmi_format">Індекс маси тіла: %.2f</string>
     <string name="bmi_category_format">У Вас %1$s</string>
     <string name="grams_format">%1$d г</string>
-    <string name="underweight">недостатня вага</string>
-    <string name="normal_weight">нормальна вага</string>
-    <string name="overweight">надлишкова вага</string>
-    <string name="obesity">ожиріння</string>
+    <string name="underweight">Недостатня вага</string>
+    <string name="normal_weight">Нормальна вага</string>
+    <string name="overweight">Надлишкова вага</string>
+    <string name="obesity">Ожиріння</string>
     <string name="start">Розпочати</string>
     <string name="finish">Завершити</string>
+    <string name="logout_title">Вихід з облікового запису</string>
+    <string name="logout_message">Ви впевнені, що хочете вийти?</string>
+    <string name="logout">Вийти</string>
+    <string name="cancel">Скасувати</string>
+    <string name="ok">OK</string>
 </resources>

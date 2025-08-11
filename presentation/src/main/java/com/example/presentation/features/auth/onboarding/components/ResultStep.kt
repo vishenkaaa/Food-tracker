@@ -1,12 +1,14 @@
 package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -65,16 +67,32 @@ fun ResultStep(
         CaloriesCard(targetCalories)
 
         Spacer(Modifier.height(20.dp))
-        Row (
-            horizontalArrangement = Arrangement.SpaceBetween,
+        BoxWithConstraints(
             modifier = Modifier.fillMaxWidth()
-        ){
-            MacroNutrientsCard(macroNutrients.proteins,
-                stringResource(R.string.proteins), painterResource(R.drawable.eggcrack))
-            MacroNutrientsCard(macroNutrients.carbs,
-                stringResource(R.string.carbohydrates), painterResource(R.drawable.grains))
-            MacroNutrientsCard(macroNutrients.fats,
-                stringResource(R.string.fats), painterResource(R.drawable.avocado))
+        ) {
+            val totalWidth = maxWidth
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                MacroNutrientsCard(
+                    macroNutrients.proteins,
+                    stringResource(R.string.proteins),
+                    painterResource(R.drawable.eggcrack),
+                    modifier = Modifier.width(totalWidth * 0.28f)
+                )
+                MacroNutrientsCard(
+                    macroNutrients.carbs,
+                    stringResource(R.string.carbohydrates),
+                    painterResource(R.drawable.grains),
+                    modifier = Modifier.width(totalWidth * 0.38f)
+                )
+                MacroNutrientsCard(
+                    macroNutrients.fats,
+                    stringResource(R.string.fats),
+                    painterResource(R.drawable.avocado),
+                    modifier = Modifier.width(totalWidth * 0.28f)
+                )
+            }
         }
     }
 }
@@ -169,7 +187,7 @@ fun BmiCard(
                 color = bmiCategory.color
             )
             Text(
-                text = stringResource(R.string.bmi_category_format, bmiCategory.label),
+                text = bmiCategory.label,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Start
@@ -182,11 +200,12 @@ fun BmiCard(
 fun MacroNutrientsCard(
     value: Int,
     name: String,
-    icon: Painter
+    icon: Painter,
+    modifier: Modifier = Modifier
 ){
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
+        modifier = modifier
             .shadow(
                 elevation = 3.dp,
                 shape = RoundedCornerShape(16.dp),
