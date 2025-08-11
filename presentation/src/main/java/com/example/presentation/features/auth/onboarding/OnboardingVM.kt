@@ -1,7 +1,6 @@
 package com.example.presentation.features.auth.onboarding
 
 import android.content.Context
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,10 +22,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-import androidx.compose.runtime.saveable.Saver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.example.presentation.features.auth.onboarding.models.*
+import com.example.presentation.features.auth.onboarding.models.OnboardingUiState
 
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel
@@ -42,7 +42,6 @@ class OnboardingVM @Inject constructor(
         const val WELCOME_STEP = 0
 
         private const val KEY_STEP = "step"
-        private const val KEY_TOTAL_STEP = "total_step"
         private const val KEY_GOAL = "goal"
         private const val KEY_WEIGHT_CHANGE = "weight_change"
         private const val KEY_GENDER = "gender"
@@ -56,8 +55,6 @@ class OnboardingVM @Inject constructor(
     private var user by mutableStateOf(User())
 
     private var step by savedStateHandle.saveable(KEY_STEP) { mutableIntStateOf(0) }
-    private var totalStep by savedStateHandle.saveable(KEY_TOTAL_STEP) { mutableIntStateOf(6) }
-
     private var goal by savedStateHandle.saveable(KEY_GOAL, GoalSaver) { mutableStateOf<Goal?>(null) }
     private var weightChange by savedStateHandle.saveable(KEY_WEIGHT_CHANGE) { mutableFloatStateOf(0f) }
     private var gender by savedStateHandle.saveable(KEY_GENDER, GenderSaver) { mutableStateOf<Gender?>(null) }
@@ -67,10 +64,9 @@ class OnboardingVM @Inject constructor(
     private var birthDate by savedStateHandle.saveable(KEY_BIRTH_DATE, LocalDateSaver) { mutableStateOf<LocalDate?>(null) }
     private var targetCalories by savedStateHandle.saveable(KEY_TARGET_CALORIES) { mutableIntStateOf(0) }
 
-    val uiState: TargetUiState
-        get() = TargetUiState(
+    val uiState: OnboardingUiState
+        get() = OnboardingUiState(
             step = step,
-            totalSteps = totalStep,
             goal = goal,
             currentWeight = currentWeight,
             weightChange = weightChange,
@@ -115,6 +111,14 @@ class OnboardingVM @Inject constructor(
         if (status) goToAuth()
     }
 
+    private fun getValidStepsForGoal(): List<Int> {
+        return if (goal == Goal.MAINTAIN) {
+            listOf(0, 1, 3, 4, 5, 6, 7, 8)
+        } else {
+            listOf(0, 1, 2, 3, 4, 5, 6, 7, 8)
+        }
+    }
+
     fun onBackPressed() {
         if (step == WELCOME_STEP) {
             requestLogoutConfirmation()
@@ -124,9 +128,11 @@ class OnboardingVM @Inject constructor(
     }
 
     private fun navigateToPreviousStep() {
-        step = when {
-            step == 3 && goal == Goal.MAINTAIN -> 1
-            else -> step - 1
+        val validSteps = getValidStepsForGoal()
+        val currentIndex = validSteps.indexOf(step)
+
+        if (currentIndex > 0) {
+            step = validSteps[currentIndex - 1]
         }
     }
 
@@ -137,23 +143,23 @@ class OnboardingVM @Inject constructor(
         authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
     }
 
-    fun onNextStep(context: Context){
-        step = when {
-            step == 1 && goal == Goal.MAINTAIN -> {
-                onWeightChangeSelected(0f)
-                3
-            }
-            else -> step + 1
+    fun onNextStep(context: Context) {
+        val validSteps = getValidStepsForGoal()
+        val currentIndex = validSteps.indexOf(step)
+
+        if (currentIndex >= 0 && currentIndex < validSteps.size - 1) {
+            step = validSteps[currentIndex + 1]
         }
-        if (step == MAX_STEPS) saveUserInfo(context)
+
+        if (step == MAX_STEPS) {
+            saveUserInfo(context)
+        }
     }
 
     fun onGoalSelected(value: Goal) {
         goal = value
-        totalStep = when (value){
-            Goal.LOSE -> 7
-            Goal.MAINTAIN -> 6
-            Goal.GAIN -> 7
+        if (value == Goal.MAINTAIN) {
+            onWeightChangeSelected(0f)
         }
     }
 
@@ -243,40 +249,3 @@ class OnboardingVM @Inject constructor(
         clearErrors()
     }
 }
-
-data class TargetUiState(
-    val step: Int = 0,
-    val totalSteps: Int = 6,
-    val goal: Goal? = null,
-    val currentWeight: Float = 0f,
-    val weightChange: Float = 0f,
-    val height: Int = 0,
-    val gender: Gender? = null,
-    val birthDate: LocalDate? = null,
-    val activityLevel: UserActivityLevel? = null,
-    val targetCalories: Int = 0,
-    val bmi: Float = 0f,
-    val macroNutrients: MacroNutrients = MacroNutrients(),
-    val isNextEnabled: Boolean = true,
-    val showLogoutDialog: Boolean = false
-)
-
-val GoalSaver = Saver<Goal?, String>(
-    save = { it?.value },
-    restore = { savedValue -> savedValue.let { Goal.fromValue(it) } }
-)
-
-val GenderSaver = Saver<Gender?, String>(
-    save = { it?.value },
-    restore = { savedValue -> savedValue.let { Gender.fromValue(it) } }
-)
-
-val UserActivityLevelSaver = Saver<UserActivityLevel?, String>(
-    save = { it?.value },
-    restore = { savedValue -> savedValue.let { UserActivityLevel.fromValue(it) } }
-)
-
-val LocalDateSaver = Saver<LocalDate?, String>(
-    save = { it?.toString() },
-    restore = { savedValue -> savedValue.let { LocalDate.parse(it) } }
-)

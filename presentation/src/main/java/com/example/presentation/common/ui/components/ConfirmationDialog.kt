@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
@@ -44,7 +45,7 @@ fun ConfirmationDialog(
                 }
             },
             dismissButton = {
-                TextButton(onDismiss) {
+                TextButton(onDismiss, shape = RoundedCornerShape(16.dp)) {
                     Text(text = dismissButtonText, style = MaterialTheme.typography.titleMedium)
                 }
             },
