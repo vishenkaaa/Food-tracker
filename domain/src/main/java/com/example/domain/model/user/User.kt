@@ -1,5 +1,6 @@
-package com.example.domain.model
+package com.example.domain.model.user
 
+import com.example.domain.model.MacroNutrients
 import java.time.LocalDate
 import java.time.Period
 

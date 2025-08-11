@@ -1,6 +1,8 @@
 package com.example.presentation.features.auth.onboarding
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,9 +38,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.domain.model.Gender
-import com.example.domain.model.Goal
-import com.example.domain.model.UserActivityLevel
+import com.example.domain.model.user.Gender
+import com.example.domain.model.user.Goal
+import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CustomButton
@@ -110,11 +112,17 @@ fun OnboardingScreen(
 
     val pagerState = rememberPagerState(
         initialPage = uiState.step,
-        pageCount = { maxOf(uiState.totalSteps + 1, 9) }
+        pageCount = { MAX_STEPS + 1 }
     )
 
     LaunchedEffect(uiState.step) {
-        pagerState.animateScrollToPage(uiState.step)
+        pagerState.animateScrollToPage(
+            uiState.step,
+            animationSpec = tween(
+                durationMillis = 300,
+                easing = FastOutSlowInEasing
+            )
+        )
     }
 
     Box {

@@ -3,7 +3,7 @@ package com.example.presentation.features.auth.onboarding.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.domain.model.Goal
+import com.example.domain.model.user.Goal
 import com.example.presentation.R
 
 @Composable

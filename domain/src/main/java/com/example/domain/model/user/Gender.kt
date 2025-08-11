@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.model.user
 
 enum class Gender(val value: String) {
     FEMALE("female"),

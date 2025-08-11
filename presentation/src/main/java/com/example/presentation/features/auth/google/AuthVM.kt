@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
 import com.example.data.auth.GoogleCredentialManager
-import com.example.domain.model.User
+import com.example.domain.model.user.User
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel

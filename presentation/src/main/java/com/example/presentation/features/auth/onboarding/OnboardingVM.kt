@@ -8,11 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
-import com.example.domain.model.Gender
-import com.example.domain.model.Goal
+import com.example.domain.model.user.Gender
+import com.example.domain.model.user.Goal
 import com.example.domain.model.MacroNutrients
-import com.example.domain.model.User
-import com.example.domain.model.UserActivityLevel
+import com.example.domain.model.user.User
+import com.example.domain.model.user.UserActivityLevel
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase

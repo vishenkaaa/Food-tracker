@@ -1,6 +1,7 @@
 package com.example.data.di
 
 import com.example.data.repository.UserRepositoryImpl
+import com.example.domain.logger.ErrorLogger
 import com.example.domain.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -17,6 +18,7 @@ object UserRepositoryModule {
 
     @Provides
     fun provideUserRepository(
-        firestore: FirebaseFirestore
-    ): UserRepository = UserRepositoryImpl(firestore)
+        firestore: FirebaseFirestore,
+        errorLogger: ErrorLogger
+    ): UserRepository = UserRepositoryImpl(firestore, errorLogger)
 }

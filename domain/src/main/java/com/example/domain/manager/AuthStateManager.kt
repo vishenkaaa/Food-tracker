@@ -1,5 +1,6 @@
 package com.example.domain.manager
 
+import com.example.domain.logger.ErrorLogger
 import com.example.domain.usecase.user.CheckUserStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthStateManager @Inject constructor(
-    private val checkUserStateUseCase: CheckUserStateUseCase
+    private val checkUserStateUseCase: CheckUserStateUseCase,
+    private val errorLogger: ErrorLogger
 ) {
     private val _userAuthState = MutableStateFlow(UserAuthState(isLoading = true))
     val userAuthState: StateFlow<UserAuthState> = _userAuthState.asStateFlow()
@@ -35,6 +37,7 @@ class AuthStateManager @Inject constructor(
             val newState = checkUserStateUseCase()
             _userAuthState.value = newState.copy(isLoading = false)
         } catch (e: Exception) {
+            errorLogger.logException(e)
             _userAuthState.value = UserAuthState(
                 isLoading = false,
                 isLoggedIn = false,

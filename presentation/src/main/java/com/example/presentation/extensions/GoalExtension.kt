@@ -2,7 +2,7 @@ package com.example.presentation.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.example.domain.model.Goal
+import com.example.domain.model.user.Goal
 import com.example.presentation.R
 
 @Composable
