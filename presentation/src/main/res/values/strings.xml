@@ -58,4 +58,7 @@
     <string name="logout">Вийти</string>
     <string name="cancel">Скасувати</string>
     <string name="ok">OK</string>
+    <string name="diary">Щоденник</string>
+    <string name="statistics">Статистика</string>
+    <string name="profile">Профіль</string>
 </resources>

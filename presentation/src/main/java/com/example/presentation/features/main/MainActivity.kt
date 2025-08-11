@@ -7,11 +7,11 @@ import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -39,7 +39,7 @@ import com.example.domain.manager.UserAuthState
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.main.navigation.AppNavHost
-import com.example.presentation.features.main.navigation.TopLevelDestinations
+import com.example.presentation.features.main.navigation.AppNavigationBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -97,14 +97,10 @@ class MainActivity : ComponentActivity() {
         setContent{
             val snackbarHostState = remember { SnackbarHostState() }
             var shouldShowBottomBar by remember { mutableStateOf(false) }
-            val topLevelDestinations = TopLevelDestinations.entries
-
             val navController = rememberNavController()
                 .apply {
                     addOnDestinationChangedListener { _, destination, _ ->
-                        shouldShowBottomBar = topLevelDestinations.any {
-                            it.route::class.qualifiedName == destination.route
-                        }
+                        shouldShowBottomBar = viewModel.isDestinationInMainGraph(destination.route)
                     }
                     navHostController = this
                 }
@@ -120,10 +116,9 @@ class MainActivity : ComponentActivity() {
                         snackbarHost = { SnackbarHost(snackbarHostState) },
                         contentWindowInsets = WindowInsets(0.dp),
                         content = { paddingValues ->
-                            Box {
+                            Box(modifier = Modifier.padding(paddingValues)) {
                                 AppNavHost(
-                                    modifier = Modifier
-                                        .padding(paddingValues),
+                                    modifier = Modifier.fillMaxSize(),
                                     navController = navController,
                                     userAuthState = userAuthState.value,
                                     shouldShowBottomBar = shouldShowBottomBar,
@@ -132,20 +127,14 @@ class MainActivity : ComponentActivity() {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentDestination = navBackStackEntry?.destination
 
-                                if (shouldShowBottomBar) {
-                                    Box(
-                                        modifier = Modifier
-                                            .wrapContentWidth()
-                                            .align(Alignment.BottomEnd)
-                                    ) {
-                                        //AppNavigationBar(currentDestination, navController)
-                                    }
+                                AnimatedVisibility(
+                                    visible = shouldShowBottomBar,
+                                    modifier = Modifier.align(Alignment.BottomCenter)
+                                ) {
+                                    AppNavigationBar(currentDestination, navController)
                                 }
                             }
                         },
-//                        bottomBar = {
-//                            AnimatedVisibility() { }
-//                        }
                     )
                 }
             }

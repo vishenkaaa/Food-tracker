@@ -4,11 +4,14 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,7 +26,9 @@ import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
 import com.example.presentation.features.main.idle.IdleRoute
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AppNavHost(
@@ -33,24 +38,26 @@ fun AppNavHost(
     shouldShowBottomBar: Boolean,
 ) {
     LaunchedEffect(userAuthState.isLoggedIn, userAuthState.isFullyRegistered) {
-        delay(1500)
+        delay(1000)
         if (!userAuthState.isLoading) {
-            when {
-                userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
-                    navController.navigate(Graphs.Login) {
-                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+            withContext(Dispatchers.Main) {
+                when {
+                    userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
+                        navController.navigate(Graphs.Login) {
+                            popUpTo(Graphs.IdleScreen) { inclusive = true }
+                        }
                     }
-                }
 
-                !userAuthState.isFullyRegistered -> {
-                    navController.navigate(LoginGraph.Onboarding) {
-                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+                    !userAuthState.isFullyRegistered -> {
+                        navController.navigate(LoginGraph.Onboarding) {
+                            popUpTo(Graphs.IdleScreen) { inclusive = true }
+                        }
                     }
-                }
 
-                else -> {
-                    navController.navigate(MainGraph.Dairy) {
-                        popUpTo(Graphs.IdleScreen) { inclusive = true }
+                    else -> {
+                        navController.navigate(MainGraph.Dairy) {
+                            popUpTo(Graphs.IdleScreen) { inclusive = true }
+                        }
                     }
                 }
             }
@@ -59,8 +66,8 @@ fun AppNavHost(
 
     NavHost(
         modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = if (shouldShowBottomBar) 32.dp else 0.dp),
+            .fillMaxSize(),
+//            .padding(bottom = if (shouldShowBottomBar) 32.dp else 0.dp),
         navController = navController,
         startDestination = Graphs.IdleScreen
     ) {
@@ -119,7 +126,25 @@ private fun NavGraphBuilder.mainGraph(
         exitTransition = { fadeOut() }
     ) {
         composable<MainGraph.Dairy> {
-           DiaryRoute()
+            DiaryRoute()
+        }
+
+        composable<MainGraph.Statistics> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Statistics Screen")
+            }
+        }
+
+        composable<MainGraph.Profile> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Profile Screen")
+            }
         }
     }
 }
