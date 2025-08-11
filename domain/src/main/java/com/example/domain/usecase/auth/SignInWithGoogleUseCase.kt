@@ -1,6 +1,6 @@
 package com.example.domain.usecase.auth
 
-import com.example.domain.model.User
+import com.example.domain.model.user.User
 import com.example.domain.repository.FirebaseAuthRepository
 import javax.inject.Inject
 

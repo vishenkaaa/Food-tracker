@@ -2,7 +2,7 @@ package com.example.presentation.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.example.domain.model.UserActivityLevel
+import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 
 @Composable

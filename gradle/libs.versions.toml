@@ -38,6 +38,7 @@ runner = "1.6.2"
 
 image-compressorVersion = "1.6.0"
 firebaseAuthKtxVersion = "24.0.0"
+firebaseCrashlyticsKtx = "20.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,8 @@ androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name =
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
@@ -95,6 +98,7 @@ androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 image-compressor = { group = "com.github.Shouheng88", name = "compressor", version.ref = "image-compressorVersion" }
 google-firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtxVersion" }
+firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebaseCrashlyticsKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

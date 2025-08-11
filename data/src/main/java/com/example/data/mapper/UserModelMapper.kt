@@ -1,9 +1,9 @@
 package com.example.data.mapper
 
-import com.example.domain.model.Gender
-import com.example.domain.model.Goal
-import com.example.domain.model.User
-import com.example.domain.model.UserActivityLevel
+import com.example.domain.model.user.Gender
+import com.example.domain.model.user.Goal
+import com.example.domain.model.user.User
+import com.example.domain.model.user.UserActivityLevel
 import java.time.LocalDate
 
 object UserModelMapper {

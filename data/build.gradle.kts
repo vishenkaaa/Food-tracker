@@ -54,4 +54,7 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.preferences.core)
+
+    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+    implementation(libs.firebase.crashlytics)
 }

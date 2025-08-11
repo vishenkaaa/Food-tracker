@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.model.user
 
 enum class UserActivityLevel(val value: String, val factor: Double) {
     SEDENTARY("sedentary", 1.2),
