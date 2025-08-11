@@ -43,6 +43,7 @@ import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
@@ -81,6 +82,7 @@ fun OnboardingRoute(
         onBackPressed = { viewModel.onBackPressed() },
         onNextStep = { viewModel.onNextStep(context) },
         onErrorConsume = { viewModel.consumeError() },
+        onLogoutConfirmationResult = viewModel::onLogoutConfirmationResult,
         onFinish = { viewModel.onFinish() }
     )
 }
@@ -100,6 +102,7 @@ fun OnboardingScreen(
     onSave: () -> Unit,
     onBackPressed: () -> Unit,
     onNextStep: () -> Unit,
+    onLogoutConfirmationResult: (Boolean) -> Unit,
     onErrorConsume: () -> Unit,
     onFinish: () -> Unit
 ) {
@@ -234,6 +237,16 @@ fun OnboardingScreen(
 
         LoadingBackground(baseUiState.isLoading)
 
+        ConfirmationDialog(
+            visible = uiState.showLogoutDialog,
+            title = stringResource(R.string.logout_title),
+            message = stringResource(R.string.logout_message),
+            confirmButtonText = stringResource(R.string.logout),
+            dismissButtonText = stringResource(R.string.cancel),
+            onConfirm = { onLogoutConfirmationResult(true) },
+            onDismiss = { onLogoutConfirmationResult(false) }
+        )
+
         HandleError(
             baseUiState = baseUiState,
             onErrorConsume = onErrorConsume,
@@ -248,6 +261,6 @@ fun TargetScreenPreview() {
     OnboardingScreen(
         BaseUiState(),
         TargetUiState(step = 0),
-        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
     )
 }

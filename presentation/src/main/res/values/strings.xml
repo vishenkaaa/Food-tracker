@@ -53,4 +53,9 @@
     <string name="obesity">ожиріння</string>
     <string name="start">Розпочати</string>
     <string name="finish">Завершити</string>
+    <string name="logout_title">Вихід з облікового запису</string>
+    <string name="logout_message">Ви впевнені, що хочете вийти?</string>
+    <string name="logout">Вийти</string>
+    <string name="cancel">Скасувати</string>
+    <string name="ok">OK</string>
 </resources>

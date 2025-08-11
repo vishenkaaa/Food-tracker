@@ -1,6 +1,7 @@
 package com.example.presentation.features.auth.onboarding
 
 import android.content.Context
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -80,7 +81,8 @@ class OnboardingVM @Inject constructor(
             targetCalories = targetCalories,
             bmi = bmi,
             macroNutrients = macroNutrients,
-            isNextEnabled = isNextEnabled
+            isNextEnabled = isNextEnabled,
+            showLogoutDialog = showLogoutDialog.value
         )
 
     private val isNextEnabled: Boolean
@@ -102,9 +104,20 @@ class OnboardingVM @Inject constructor(
     private val macroNutrients: MacroNutrients
         get() = user.calculateMacroNutrients()
 
+    private val showLogoutDialog = mutableStateOf(false)
+
+    private fun requestLogoutConfirmation() {
+        showLogoutDialog.value = true
+    }
+
+    fun onLogoutConfirmationResult(status: Boolean) {
+        showLogoutDialog.value = false
+        if (status) goToAuth()
+    }
+
     fun onBackPressed() {
         if (step == WELCOME_STEP) {
-            goToAuth()
+            requestLogoutConfirmation()
         } else {
             navigateToPreviousStep()
         }
@@ -244,7 +257,8 @@ data class TargetUiState(
     val targetCalories: Int = 0,
     val bmi: Float = 0f,
     val macroNutrients: MacroNutrients = MacroNutrients(),
-    val isNextEnabled: Boolean = true
+    val isNextEnabled: Boolean = true,
+    val showLogoutDialog: Boolean = false
 )
 
 val GoalSaver = Saver<Goal?, String>(
