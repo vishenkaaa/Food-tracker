@@ -42,10 +42,9 @@
     <string name="proteins">Білки</string>
     <string name="carbohydrates">Вуглеводи</string>
     <string name="fats">Жири</string>
-    <string name="calories_format">%1$d kcal</string>
+    <string name="calories_format">%1$d Ккал</string>
     <string name="daily_calories_recommendation">Рекомендована денна калорійність\nдля досягнення ваших цілей</string>
     <string name="bmi_format">Індекс маси тіла: %.2f</string>
-    <string name="bmi_category_format">У Вас %1$s</string>
     <string name="grams_format">%1$d г</string>
     <string name="underweight">Недостатня вага</string>
     <string name="normal_weight">Нормальна вага</string>
@@ -61,4 +60,16 @@
     <string name="diary">Щоденник</string>
     <string name="statistics">Статистика</string>
     <string name="profile">Профіль</string>
+    <string name="years_old">%1$d years old</string>
+    <string name="goal">Ціль</string>
+    <string name="calories">Калорії</string>
+    <string name="goal_weight">Цільова вага</string>
+    <string name="kg">%1$s кг</string>
+    <string name="cm">%1$d см</string>
+    <string name="current_weight">Поточна вага</string>
+    <string name="height">Зріст</string>
+    <string name="date_of_birth">Дата народження</string>
+    <string name="activity_level">Рівень активності</string>
+    <string name="gender">Стать</string>
+    <string name="delete_account">Видалити акаунт</string>
 </resources>

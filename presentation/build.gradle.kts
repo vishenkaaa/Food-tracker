@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.material3.android)
 

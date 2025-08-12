@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+coilCompose = "2.7.0"
 datastorePreferencesCore = "1.1.7"
 kotlin = "2.0.21"
 kotlinSerialization = "1.9.22"
@@ -65,6 +66,7 @@ androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name =
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
