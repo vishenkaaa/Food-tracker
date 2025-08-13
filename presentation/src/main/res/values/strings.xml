@@ -72,4 +72,7 @@
     <string name="activity_level">Рівень активності</string>
     <string name="gender">Стать</string>
     <string name="delete_account">Видалити акаунт</string>
+    <string name="save">Зберегти</string>
+    <string name="calories_goal">Ціль калорій</string>
+    <string name="recommended_daily_calories_intake">Рекомендоване добове споживання калорій - %1$d Ккал</string>
 </resources>

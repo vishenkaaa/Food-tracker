@@ -86,6 +86,16 @@ val subtitle2: TextStyle
         color = MaterialTheme.colorScheme.onBackground
     )
 
+val body1: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
 val body2: TextStyle
     @Composable
     get() = TextStyle(
@@ -96,15 +106,15 @@ val body2: TextStyle
         color = MaterialTheme.colorScheme.onBackground
     )
 
-val body1: TextStyle
+val body3: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
+
 
 val Typography: Typography
     @Composable
@@ -118,6 +128,7 @@ val Typography: Typography
         titleMedium = subtitle2,
         bodyLarge = body1,
         bodyMedium = body2,
+        bodySmall = body3
     )
 
 val DatePickerTypography: Typography
@@ -126,4 +137,5 @@ val DatePickerTypography: Typography
         headlineLarge = headline1, // вибрана дата
         labelLarge  = subtitle2, // назва місяця
         bodyLarge = subtitle1, // числа днів
+        headlineMedium = headline2,
     )

@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.user.Goal
 import com.example.presentation.R
+import kotlin.math.abs
 
 @Composable
 fun WeightChangeStep(
@@ -19,7 +20,7 @@ fun WeightChangeStep(
     }
     NumberInputStep(
         title = title,
-        value = if (goal == Goal.LOSE) -weightChange else weightChange,
+        value = abs(weightChange),
         unit = stringResource(R.string.kilograms),
         isIntegerInput = false,
         onValueSelected = { value ->

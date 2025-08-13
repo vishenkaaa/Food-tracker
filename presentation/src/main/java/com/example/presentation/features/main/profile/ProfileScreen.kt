@@ -44,10 +44,12 @@ import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.shimmerEffect
+import com.example.presentation.features.main.profile.components.ProfileEditDialogs
+import com.example.presentation.features.main.profile.models.ProfileEditDialogType
+import com.example.presentation.features.main.profile.models.ProfileUiState
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
-
 
 @Composable
 fun ProfileRoute(viewModel: ProfileVM = hiltViewModel()) {
@@ -61,7 +63,22 @@ fun ProfileRoute(viewModel: ProfileVM = hiltViewModel()) {
         onLogoutConfirmation = viewModel::onLogoutConfirmation,
         onDeleteAccountClick = viewModel::onDeleteAccountClick,
         onRetry = { viewModel.loadUserProfile() },
-        onErrorConsume = viewModel::consumeError
+        onErrorConsume = viewModel::consumeError,
+        onEditClick = viewModel::onEditClick
+    )
+
+    ProfileEditDialogs(
+        uiState = uiState,
+        onDismiss = viewModel::onDialogDismiss,
+        onSave = viewModel::saveDialogChanges,
+        onGenderUpdate = viewModel::updateTempGender,
+        onGoalUpdate = viewModel::updateTempGoal,
+        onActivityLevelUpdate = viewModel::updateTempActivityLevel,
+        onWeightChangeUpdate = viewModel::updateTempWeightChange,
+        onCurrentWeightUpdate = viewModel::updateTempCurrentWeight,
+        onHeightUpdate = viewModel::updateTempHeight,
+        onBirthDateUpdate = viewModel::updateTempBirthDate,
+        onCaloriesGoalUpdate = viewModel::updateTempCaloriesGoal,
     )
 }
 
@@ -74,6 +91,7 @@ fun ProfileScreen(
     onDeleteAccountClick: () -> Unit,
     onRetry: () -> Unit,
     onErrorConsume: () -> Unit,
+    onEditClick: (ProfileEditDialogType) -> Unit,
 ) {
     val isLoading = baseUiState.isLoading
     val hasError = baseUiState.unexpectedError != null || baseUiState.isConnectionError || uiState.user==null
@@ -93,12 +111,12 @@ fun ProfileScreen(
             Spacer(Modifier.height(16.dp))
 
             if (isLoading || hasError) UserGoalsSectionShimmer()
-            else UserGoalsSection(user = uiState.user!!)
+            else UserGoalsSection(user = uiState.user!!, onEditClick = onEditClick)
 
             Divider()
 
             if (isLoading || hasError) UserInfoSectionShimmer()
-            else UserInfoSection(uiState.user!!)
+            else UserInfoSection(uiState.user!!, onEditClick = onEditClick)
 
             Divider()
 
@@ -235,17 +253,25 @@ private fun ProfileUserCardShimmer() {
 }
 
 @Composable
-private fun UserGoalsSection(user: User) {
+private fun UserGoalsSection(
+    user: User,
+    onEditClick: (ProfileEditDialogType) -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ProfileItem(
-            title = stringResource(R.string.goal), value = user.goal.displayName(), hasArrow = true
+            title = stringResource(R.string.goal),
+            value = user.goal.displayName(),
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.GOAL) }
         )
 
         ProfileItem(
-            title = stringResource(R.string.calories), value = stringResource(
+            title = stringResource(R.string.calories),
+            value = stringResource(
                 R.string.calories_format,
-                user.targetCalories
-            ), hasArrow = true
+                user.targetCalories),
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.CALORIES_GOAL) }
         )
 
         if (user.goal!=Goal.MAINTAIN)
@@ -255,7 +281,8 @@ private fun UserGoalsSection(user: User) {
                     R.string.kg,
                     user.currentWeight!!.plus(user.weightChange ?: 0f)
                 ),
-                hasArrow = true
+                hasArrow = true,
+                onClick = { onEditClick(ProfileEditDialogType.WEIGHT_CHANGE) }
             )
     }
 }
@@ -270,7 +297,10 @@ private fun UserGoalsSectionShimmer() {
 }
 
 @Composable
-private fun UserInfoSection(user: User) {
+private fun UserInfoSection(
+    user: User,
+    onEditClick: (ProfileEditDialogType) -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ProfileItem(
             icon = painterResource(R.drawable.speedometer),
@@ -280,7 +310,8 @@ private fun UserInfoSection(user: User) {
                 user.currentWeight!!
             ),
             iconTint = MaterialTheme.colorScheme.primary,
-            hasArrow = true
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.CURRENT_WEIGHT) }
         )
 
         ProfileItem(
@@ -288,7 +319,8 @@ private fun UserInfoSection(user: User) {
             title = stringResource(R.string.height),
             value = stringResource(R.string.cm, user.height ?: 170),
             iconTint = MaterialTheme.colorScheme.primary,
-            hasArrow = true
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.HEIGHT) }
         )
 
         ProfileItem(
@@ -296,7 +328,8 @@ private fun UserInfoSection(user: User) {
             title = stringResource(R.string.date_of_birth),
             value = user.birthDate!!.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
             iconTint = MaterialTheme.colorScheme.primary,
-            hasArrow = true
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.DATE_OF_BIRTH) }
         )
 
         ProfileItem(
@@ -304,7 +337,8 @@ private fun UserInfoSection(user: User) {
             title = stringResource(R.string.gender),
             value = user.gender.displayName(),
             iconTint = MaterialTheme.colorScheme.primary,
-            hasArrow = true
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.GENDER) }
         )
 
         ProfileItem(
@@ -312,7 +346,8 @@ private fun UserInfoSection(user: User) {
             title = stringResource(R.string.activity_level),
             value = user.userActivityLevel.displayName(),
             iconTint = MaterialTheme.colorScheme.primary,
-            hasArrow = true
+            hasArrow = true,
+            onClick = { onEditClick(ProfileEditDialogType.ACTIVITY_LEVEL) }
         )
     }
 }
@@ -336,7 +371,7 @@ private fun ProfileActionsSection(
             icon = painterResource(R.drawable.sign_out),
             title = stringResource(R.string.logout),
             onClick = onLogoutClick,
-            iconTint = MaterialTheme.colorScheme.onBackground.copy(0.4f)
+            iconTint = MaterialTheme.colorScheme.onBackground.copy(0.6f)
         )
 
         ProfileItem(
