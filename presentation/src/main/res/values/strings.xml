@@ -75,4 +75,7 @@
     <string name="save">Зберегти</string>
     <string name="calories_goal">Ціль калорій</string>
     <string name="recommended_daily_calories_intake">Рекомендоване добове споживання калорій - %1$d Ккал</string>
+    <string name="attention">Попередження</string>
+    <string name="delete_attention">Ви збираєтеся остаточно видалити свій обліковий запис. Ця дія незворотна, і всі ваші дані буде втрачено.\nВи впевнені, що бажаєте продовжити?</string>
+    <string name="success_delete">Акаунт успішно видалено</string>
 </resources>

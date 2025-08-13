@@ -118,7 +118,9 @@ class MainActivity : ComponentActivity() {
                         snackbarHost = { SnackbarHost(snackbarHostState) },
                         contentWindowInsets = WindowInsets(
                             top = 0.dp,
-                            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                            bottom = if (shouldShowBottomBar)
+                                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                            else 0.dp
                         ),
                         content = { paddingValues ->
                             Box(modifier = Modifier.padding(paddingValues)) {

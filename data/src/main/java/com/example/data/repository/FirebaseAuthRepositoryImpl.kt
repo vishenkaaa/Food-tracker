@@ -1,5 +1,7 @@
 package com.example.data.repository
 
+import android.content.Context
+import com.example.data.auth.GoogleCredentialManager
 import com.example.data.auth.LocalAuthStateManager
 import com.example.data.mapper.UserModelMapper.mapToUser
 import com.example.data.mapper.UserModelMapper.userToMap
@@ -17,6 +19,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
     private val localAuthStateManager: LocalAuthStateManager,
+    private val googleCredentialManager: GoogleCredentialManager,
     private val errorLogger: ErrorLogger
 ) : FirebaseAuthRepository {
 
@@ -66,6 +69,19 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     override suspend fun signOut() {
         localAuthStateManager.clearAuthState()
         auth.signOut()
+    }
+
+    override suspend fun deleteAccount(idToken: String): Result<Unit> = safeCall(errorLogger) {
+        val currentUser = auth.currentUser ?: throw Exception("No authenticated user")
+        val userId = currentUser.uid
+
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        currentUser.reauthenticate(credential).await()
+
+        currentUser.delete().await()
+
+        usersCollection.document(userId).delete().await()
+        localAuthStateManager.clearAuthState()
     }
 
     override suspend fun isUserLoggedIn(): Boolean {

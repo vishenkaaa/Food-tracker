@@ -25,12 +25,13 @@ class MainVM @Inject constructor(
     }
 
     fun isDestinationInMainGraph(route: String?): Boolean {
-        val mainGraphRoutes = listOf(
-            MainGraph.Statistics::class.qualifiedName,
-            MainGraph.Dairy::class.qualifiedName,
-            MainGraph.Profile::class.qualifiedName,
-            Graphs.Main::class.qualifiedName
-        )
-        return route in mainGraphRoutes
+        if (route == null) return false
+
+        return when {
+            route.contains("MainGraph.Dairy") -> true
+            route.contains("MainGraph.Statistics") -> true
+            route.contains("MainGraph.Profile") -> true
+            else -> false
+        }
     }
 }

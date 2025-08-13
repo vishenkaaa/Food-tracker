@@ -27,6 +27,7 @@ fun CustomButton(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
     iconPositionStart: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -36,8 +37,8 @@ fun CustomButton(
             .fillMaxWidth(),
         onClick = onClick,
         colors = ButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = color,
+            contentColor = color,
             disabledContentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.surface
         ),
@@ -59,7 +60,7 @@ fun CustomButton(
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = text,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             if(icon!=null && !iconPositionStart)

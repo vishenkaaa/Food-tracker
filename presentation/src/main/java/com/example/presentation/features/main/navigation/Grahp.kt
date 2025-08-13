@@ -36,4 +36,7 @@ sealed class MainGraph {
 
     @Serializable
     data object Profile : MainGraph()
+
+    @Serializable
+    data object DeleteAccount : MainGraph()
 }

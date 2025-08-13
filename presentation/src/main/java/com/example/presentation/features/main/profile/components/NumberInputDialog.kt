@@ -54,7 +54,8 @@ fun NumberInputDialog(
         mutableStateOf(
             TextFieldValue(
                 text = initialValue,
-                selection = TextRange(initialValue.length)
+                selection = TextRange(if (isIntegerInput) initialValue.length else (initialValue.length - 2).coerceIn(0, initialValue.length)),
+                //selection = TextRange(initialValue.length)
             )
         )
     }

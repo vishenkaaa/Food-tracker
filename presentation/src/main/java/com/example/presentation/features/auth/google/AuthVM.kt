@@ -3,8 +3,8 @@ package com.example.presentation.features.auth.google
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
-import com.example.data.auth.GoogleCredentialManager
 import com.example.domain.model.user.User
+import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthVM @Inject constructor(
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
-    private val credentialManager: GoogleCredentialManager,
+    private val getGoogleIdTokenUseCase: GetGoogleIdTokenUseCase,
     private val authStateManager: AuthStateManager
 ) : BaseViewModel() {
 
@@ -30,7 +30,7 @@ class AuthVM @Inject constructor(
             handleLoading(true)
 
             try {
-                val idToken = credentialManager.getGoogleIdToken(context, forceNewAccount)
+                val idToken = getGoogleIdTokenUseCase(forceNewAccount)
                 val result = signInWithGoogleUseCase(idToken)
 
                 if (result.isSuccess) {

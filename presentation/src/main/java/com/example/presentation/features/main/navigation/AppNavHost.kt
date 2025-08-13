@@ -22,6 +22,7 @@ import androidx.navigation.compose.navigation
 import com.example.domain.manager.UserAuthState
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
+import com.example.presentation.features.main.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.diary.DiaryRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
@@ -142,8 +143,13 @@ private fun NavGraphBuilder.mainGraph(
                 navController.getBackStackEntry<Graphs.Main>()
             }
             ProfileRoute(
-                viewModel = hiltViewModel(parentEntry)
+                viewModel = hiltViewModel(parentEntry),
+                onDeleteAccount = { navController.navigate(MainGraph.DeleteAccount) }
             )
+        }
+
+        composable<MainGraph.DeleteAccount> {
+            DeleteAccountRoute{ navController.popBackStack() }
         }
     }
 }

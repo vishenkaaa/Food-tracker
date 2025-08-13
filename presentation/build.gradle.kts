@@ -43,18 +43,11 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":data"))
 
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
-    // Firebase & Google Services
-    implementation(libs.play.services.base)
-    implementation(libs.play.services.auth)
-    implementation(libs.firebase.common.ktx)
-    implementation(libs.firebase.common)
 
     // Compose BOM
     val composeBom = platform(libs.androidx.compose.bom)

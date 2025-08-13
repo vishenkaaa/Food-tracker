@@ -52,7 +52,10 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ProfileRoute(viewModel: ProfileVM = hiltViewModel()) {
+fun ProfileRoute(
+    viewModel: ProfileVM = hiltViewModel(),
+    onDeleteAccount: () -> Unit,
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
 
@@ -61,7 +64,7 @@ fun ProfileRoute(viewModel: ProfileVM = hiltViewModel()) {
         baseUiState = baseUiState,
         onLogoutClick = viewModel::onLogoutClick,
         onLogoutConfirmation = viewModel::onLogoutConfirmation,
-        onDeleteAccountClick = viewModel::onDeleteAccountClick,
+        onDeleteAccountClick = onDeleteAccount,
         onRetry = { viewModel.loadUserProfile() },
         onErrorConsume = viewModel::consumeError,
         onEditClick = viewModel::onEditClick

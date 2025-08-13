@@ -31,8 +31,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,10 +48,17 @@ fun NumberInputStep(
     onValueSelected: (Float) -> Unit,
 ) {
     var input by remember(value) {
-        mutableStateOf(
+        val initialValue =
             if (value > 0) {
                 if (isIntegerInput) value.toInt().toString() else value.toString()
             } else ""
+
+        mutableStateOf(
+            TextFieldValue(
+                text = initialValue,
+                selection = TextRange(if (isIntegerInput) initialValue.length else (initialValue.length - 2).coerceIn(0, initialValue.length)),
+                //selection = TextRange(initialValue.length)
+            )
         )
     }
 
@@ -88,7 +97,7 @@ fun NumberInputStep(
                 value = input,
                 onValueChange = { newValue ->
                     input = newValue
-                    val floatValue = newValue.toFloatOrNull() ?: 0f
+                    val floatValue = newValue.text.toFloatOrNull() ?: 0f
                     onValueSelected(floatValue)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(

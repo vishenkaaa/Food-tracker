@@ -72,7 +72,7 @@ val subtitle1: TextStyle
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 22.sp,
+        lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
 
@@ -90,9 +90,9 @@ val body1: TextStyle
     @Composable
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
-        lineHeight = 22.sp,
+        lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
 
@@ -102,19 +102,9 @@ val body2: TextStyle
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 21.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
-
-val body3: TextStyle
-    @Composable
-    get() = TextStyle(
-        fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        color = MaterialTheme.colorScheme.onBackground
-    )
-
 
 val Typography: Typography
     @Composable
@@ -127,8 +117,7 @@ val Typography: Typography
         titleLarge = subtitle1,
         titleMedium = subtitle2,
         bodyLarge = body1,
-        bodyMedium = body2,
-        bodySmall = body3
+        bodyMedium = body2
     )
 
 val DatePickerTypography: Typography

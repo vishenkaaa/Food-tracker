@@ -78,7 +78,7 @@ fun<T> RadioSelectionDialog(
                             Text(
                                 text = getDisplayName(item),
                                 color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp)
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         }
 

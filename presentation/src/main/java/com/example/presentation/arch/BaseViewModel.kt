@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
-import com.google.firebase.FirebaseNetworkException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +30,6 @@ open class BaseViewModel : ViewModel() {
 
         _baseUiState.update {
             when (e) {
-                is FirebaseNetworkException,
                 is java.net.UnknownHostException,
                 is java.net.SocketTimeoutException,
                 is java.io.IOException -> {
