@@ -60,7 +60,12 @@
     <string name="diary">Щоденник</string>
     <string name="statistics">Статистика</string>
     <string name="profile">Профіль</string>
-    <string name="years_old">%1$d years old</string>
+    <plurals name="years_old">
+        <item quantity="one">%1$d рік</item>
+        <item quantity="few">%d роки</item>
+        <item quantity="many">%d років</item>
+        <item quantity="other">%d років</item>
+    </plurals>
     <string name="goal">Ціль</string>
     <string name="calories">Калорії</string>
     <string name="goal_weight">Цільова вага</string>

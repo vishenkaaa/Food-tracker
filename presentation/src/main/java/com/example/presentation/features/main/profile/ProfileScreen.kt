@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -176,6 +177,7 @@ private fun ProfileHeader() {
 private fun ProfileUserCard(
     user: User,
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -207,7 +209,7 @@ private fun ProfileUserCard(
             if (user.birthDate != null) {
                 val age = Period.between(user.birthDate, LocalDate.now()).years
                 Text(
-                    text = stringResource(R.string.years_old, age),
+                    text = context.resources.getQuantityString(R.plurals.years_old, age, age),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
