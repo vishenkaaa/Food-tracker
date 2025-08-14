@@ -42,22 +42,22 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NumberInputStep(
     title: String,
-    value: Float,
+    value: String,
     unit: String,
     isIntegerInput: Boolean = false,
-    onValueSelected: (Float) -> Unit,
+    onValueSelected: (String) -> Unit,
 ) {
     var input by remember(value) {
         val initialValue =
-            if (value > 0) {
-                if (isIntegerInput) value.toInt().toString() else value.toString()
+            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+                if (isIntegerInput) value.toFloat().toInt().toString()
+                else value
             } else ""
 
         mutableStateOf(
             TextFieldValue(
                 text = initialValue,
-                selection = TextRange(if (isIntegerInput) initialValue.length else (initialValue.length - 2).coerceIn(0, initialValue.length)),
-                //selection = TextRange(initialValue.length)
+                selection = TextRange(initialValue.length)
             )
         )
     }
@@ -73,9 +73,7 @@ fun NumberInputStep(
             .padding(horizontal = 16.dp)
             .padding(top = 88.dp)
             .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
+                indication = null, interactionSource = remember { MutableInteractionSource() }) {
                 focusManager.clearFocus()
             }
     ) {
@@ -96,9 +94,15 @@ fun NumberInputStep(
             OutlinedTextField(
                 value = input,
                 onValueChange = { newValue ->
-                    input = newValue
-                    val floatValue = newValue.text.toFloatOrNull() ?: 0f
-                    onValueSelected(floatValue)
+                    val filteredValue = if (isIntegerInput) newValue.text.filter { it.isDigit() }
+                    else {
+                        val text = newValue.text
+                        if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
+                            text
+                        else input.text
+                    }
+                    input = newValue.copy(text = filteredValue)
+                    onValueSelected(filteredValue)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
@@ -132,8 +136,7 @@ fun NumberInputStep(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .background(
-                        MaterialTheme.colorScheme.primary,
-                        RoundedCornerShape(16.dp)
+                        MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp)
                     )
                     .fillMaxHeight()
                     .padding(horizontal = 16.dp)
@@ -153,7 +156,7 @@ fun NumberInputStep(
 fun NumberInputStepPreview() {
     NumberInputStep(
         "Ваша ціль набору ваги",
-        0f,
+        "0",
         "Кг",
         false,
     ) {}

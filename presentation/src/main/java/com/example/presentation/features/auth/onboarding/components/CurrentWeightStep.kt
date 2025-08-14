@@ -6,8 +6,8 @@ import com.example.presentation.R
 
 @Composable
 fun CurrentWeightStep(
-    currentWeight: Float,
-    onCurrentWeightSelected: (Float) -> Unit,
+    currentWeight: String,
+    onCurrentWeightSelected: (String) -> Unit,
 ) {
     NumberInputStep(
         title = stringResource(R.string.your_current_weight),

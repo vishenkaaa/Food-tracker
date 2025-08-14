@@ -10,8 +10,8 @@ import kotlin.math.abs
 @Composable
 fun WeightChangeStep(
     goal: Goal,
-    weightChange: Float,
-    onWeightChangeSelected: (Float) -> Unit,
+    weightChange: String,
+    onWeightChangeSelected: (String) -> Unit,
 ) {
     val title = when (goal) {
         Goal.LOSE -> stringResource(R.string.how_much_weight_lose)
@@ -20,13 +20,10 @@ fun WeightChangeStep(
     }
     NumberInputStep(
         title = title,
-        value = abs(weightChange),
+        value = abs(weightChange.toFloatOrNull() ?: 0f).toString(),
         unit = stringResource(R.string.kilograms),
         isIntegerInput = false,
-        onValueSelected = { value ->
-            val adjustedValue = if (goal == Goal.LOSE) -value else value
-            onWeightChangeSelected(adjustedValue)
-        },
+        onValueSelected = onWeightChangeSelected,
     )
 }
 
@@ -34,6 +31,6 @@ fun WeightChangeStep(
 @Preview
 fun WeightChangeStepPreview() {
     WeightChangeStep(
-        Goal.GAIN, 0f
+        Goal.GAIN, ""
     ) {}
 }

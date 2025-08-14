@@ -56,11 +56,11 @@ class OnboardingVM @Inject constructor(
 
     private var step by savedStateHandle.saveable(KEY_STEP) { mutableIntStateOf(0) }
     private var goal by savedStateHandle.saveable(KEY_GOAL, GoalSaver) { mutableStateOf<Goal?>(null) }
-    private var weightChange by savedStateHandle.saveable(KEY_WEIGHT_CHANGE) { mutableFloatStateOf(0f) }
+    private var weightChange by savedStateHandle.saveable(KEY_WEIGHT_CHANGE) { mutableStateOf("") }
     private var gender by savedStateHandle.saveable(KEY_GENDER, GenderSaver) { mutableStateOf<Gender?>(null) }
     private var userActivityLevel by savedStateHandle.saveable(KEY_ACTIVITY_LEVEL, UserActivityLevelSaver) { mutableStateOf<UserActivityLevel?>(null) }
-    private var currentWeight by savedStateHandle.saveable(KEY_CURRENT_WEIGHT) { mutableFloatStateOf(0f) }
-    private var height by savedStateHandle.saveable(KEY_HEIGHT) { mutableIntStateOf(0) }
+    private var currentWeight by savedStateHandle.saveable(KEY_CURRENT_WEIGHT) { mutableStateOf("") }
+    private var height by savedStateHandle.saveable(KEY_HEIGHT) { mutableStateOf("") }
     private var birthDate by savedStateHandle.saveable(KEY_BIRTH_DATE, LocalDateSaver) { mutableStateOf<LocalDate?>(null) }
     private var targetCalories by savedStateHandle.saveable(KEY_TARGET_CALORIES) { mutableIntStateOf(0) }
 
@@ -85,9 +85,9 @@ class OnboardingVM @Inject constructor(
         get() = when (step) {
             0 -> true
             1 -> goal != null
-            2 -> goal == Goal.MAINTAIN || weightChange != 0f
-            3 -> currentWeight > 0f
-            4 -> height > 0
+            2 -> goal == Goal.MAINTAIN || (weightChange.toFloatOrNull()?.let { it > 0 } == true)
+            3 -> currentWeight.toFloatOrNull()?.let { it > 0 } == true
+            4 -> height.toIntOrNull()?.let { it > 0 } == true
             5 -> gender != null
             6 -> birthDate != null
             7 -> userActivityLevel != null
@@ -95,7 +95,11 @@ class OnboardingVM @Inject constructor(
         }
 
     private val bmi: Float
-        get() = BMICalculator.calculateBMI(currentWeight, height)
+        get() {
+            val weight = currentWeight.toFloatOrNull() ?: 0f
+            val heightValue = height.toIntOrNull() ?: 0
+            return BMICalculator.calculateBMI(weight, heightValue)
+        }
 
     private val macroNutrients: MacroNutrients
         get() = user.calculateMacroNutrients()
@@ -159,11 +163,11 @@ class OnboardingVM @Inject constructor(
     fun onGoalSelected(value: Goal) {
         goal = value
         if (value == Goal.MAINTAIN) {
-            onWeightChangeSelected(0f)
+            onWeightChangeSelected("0")
         }
     }
 
-    fun onWeightChangeSelected(value: Float) {
+    fun onWeightChangeSelected(value: String) {
         weightChange = value
     }
 
@@ -175,11 +179,11 @@ class OnboardingVM @Inject constructor(
         userActivityLevel = value
     }
 
-    fun onCurrentWeightSelected(value: Float) {
+    fun onCurrentWeightSelected(value: String) {
         currentWeight = value
     }
 
-    fun onHeightSelected(value: Int) {
+    fun onHeightSelected(value: String) {
         height = value
     }
 
@@ -188,10 +192,6 @@ class OnboardingVM @Inject constructor(
     }
 
     fun saveUserInfo(context: Context) {
-        if (!isDataValid()) {
-            return
-        }
-
         viewModelScope.launch {
             handleLoading(isLoading = true)
             clearErrors()
@@ -216,14 +216,19 @@ class OnboardingVM @Inject constructor(
     }
 
     private fun createUserWithCalculations(userId: String): User {
+        val weightChangeFloat = weightChange.toFloatOrNull() ?: 0f
+        val finalWeightChangeFloat = if(goal == Goal.LOSE) -weightChangeFloat else weightChangeFloat
+        val currentWeightFloat = currentWeight.toFloatOrNull() ?: 0f
+        val heightInt = height.toIntOrNull() ?: 0
+
         user = User(
             id = userId,
             goal = goal!!,
-            weightChange = weightChange,
+            weightChange = finalWeightChangeFloat,
             gender = gender!!,
             userActivityLevel = userActivityLevel!!,
-            currentWeight = currentWeight,
-            height = height,
+            currentWeight = currentWeightFloat,
+            height = heightInt,
             birthDate = birthDate,
         )
 
@@ -233,16 +238,6 @@ class OnboardingVM @Inject constructor(
 
     fun onFinish(){
         authStateManager.updateFullyRegistered(true)
-    }
-
-    private fun isDataValid(): Boolean {
-        return goal != null &&
-                gender != null &&
-                userActivityLevel != null &&
-                currentWeight > 0 &&
-                height > 0 &&
-                birthDate != null &&
-                (goal == Goal.MAINTAIN || weightChange != 0f)
     }
 
     fun consumeError() {

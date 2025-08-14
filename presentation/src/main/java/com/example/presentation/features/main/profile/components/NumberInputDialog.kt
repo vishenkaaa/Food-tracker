@@ -43,19 +43,16 @@ fun NumberInputDialog(
     onSave: () -> Unit
 ) {
     var input by remember(value) {
-        val initialValue = if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
-            if (isIntegerInput) {
-                value.toFloat().toInt().toString()
-            } else {
-                value
-            }
-        } else ""
+        val initialValue =
+            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+                if (isIntegerInput) value.toFloat().toInt().toString()
+                else value
+            } else ""
 
         mutableStateOf(
             TextFieldValue(
                 text = initialValue,
-                selection = TextRange(if (isIntegerInput) initialValue.length else (initialValue.length - 2).coerceIn(0, initialValue.length)),
-                //selection = TextRange(initialValue.length)
+                selection = TextRange(initialValue.length)
             )
         )
     }
@@ -87,14 +84,16 @@ fun NumberInputDialog(
             BasicTextField(
                 value = input,
                 onValueChange = { newValue ->
-                    input = newValue
-                    if (isIntegerInput) {
-                        val intValue = newValue.text.toIntOrNull()
-                        onValueChanged(intValue?.toString() ?: "")
-                    } else {
-                        val floatValue = newValue.text.toFloatOrNull()
-                        onValueChanged(floatValue?.toString() ?: "")
+                    val filteredText = if (isIntegerInput) newValue.text.filter { it.isDigit() }
+                    else {
+                        val text = newValue.text
+                        if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
+                            text
+                        else input.text
                     }
+
+                    input = newValue.copy(text = filteredText)
+                    onValueChanged(filteredText)
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(

@@ -96,18 +96,17 @@ class ProfileVM @Inject constructor(
                     }else currentUser
                 }
                 ProfileEditDialogType.CURRENT_WEIGHT -> {
-                    val weight = state.tempCurrentWeight.toFloatOrNull()
+                    val weight = state.tempCurrentWeight.toFloatOrNull() ?: 0f
                     currentUser.copy(currentWeight = weight)
                 }
                 ProfileEditDialogType.HEIGHT -> {
-                    val height = state.tempHeight.toIntOrNull()
-                    if (height != null) currentUser.copy(height = height)
-                    else currentUser
+                    val height = state.tempHeight.toIntOrNull() ?: 0
+                    currentUser.copy(height = height)
                 }
                 ProfileEditDialogType.DATE_OF_BIRTH -> currentUser.copy(birthDate = state.tempBirthDate)
                 ProfileEditDialogType.CALORIES_GOAL -> {
-                    val calories = state.tempCaloriesGoal.toIntOrNull()
-                    currentUser.copy(targetCalories = calories?: 0)
+                    val calories = state.tempCaloriesGoal.toIntOrNull()?: 0
+                    currentUser.copy(targetCalories = calories)
                 }
                 null -> currentUser
             }
@@ -162,10 +161,6 @@ class ProfileVM @Inject constructor(
 
     fun onLogoutClick() {
         _uiState.update { it.copy(showLogoutDialog = true) }
-    }
-
-    fun onDeleteAccountClick() {
-        // TODO: видалення акаунту
     }
 
     fun onLogoutConfirmation(status: Boolean) {

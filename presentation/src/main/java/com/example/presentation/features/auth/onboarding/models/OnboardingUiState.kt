@@ -9,9 +9,9 @@ import java.time.LocalDate
 data class OnboardingUiState(
     val step: Int = 0,
     val goal: Goal? = null,
-    val currentWeight: Float = 0f,
-    val weightChange: Float = 0f,
-    val height: Int = 0,
+    val currentWeight: String = "",
+    val weightChange: String = "",
+    val height: String = "",
     val gender: Gender? = null,
     val birthDate: LocalDate? = null,
     val activityLevel: UserActivityLevel? = null,
