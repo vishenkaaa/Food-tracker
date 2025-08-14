@@ -234,7 +234,6 @@ fun OnboardingScreen(
                         is OnboardingStep.Height -> HeightStep(
                             uiState.height,
                             onHeightSelected,
-                            onNextStep
                         )
                         is OnboardingStep.Gender -> GenderSelectionStep(
                             uiState.gender,

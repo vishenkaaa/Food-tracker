@@ -2,7 +2,6 @@ package com.example.presentation.features.main.deleteAccount
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -75,61 +74,14 @@ fun DeleteAccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Spacer(modifier = Modifier.weight(1f))
-                Column(
-                    modifier = Modifier.padding(horizontal = 40.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.warning_circle),
-                        contentDescription = "Warning circle",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .padding(bottom = 4.dp)
-                            .size(32.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.attention),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text = stringResource(R.string.delete_attention),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                    )
-                }
+            WarningContent()
 
             Spacer(modifier = Modifier.weight(1f))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp)
-            ) {
-                CustomButton(
-                    text = stringResource(R.string.delete_account),
-                    color = MaterialTheme.colorScheme.error
-                ) { onDelete() }
-
-                TextButton(
-                    onClick = onCancel,
-                    enabled = !baseUiState.isLoading,
-                    modifier = Modifier
-                        .padding(horizontal = 32.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.cancel),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                    )
-                }
-            }
+            ActionsSection(
+                isLoading = baseUiState.isLoading,
+                onDelete = onDelete,
+                onCancel = onCancel
+            )
         }
 
         LoadingBackground(baseUiState.isLoading)
@@ -138,6 +90,71 @@ fun DeleteAccountScreen(
             baseUiState = baseUiState,
             onErrorConsume = { onErrorConsume() },
             onConnectionRetry = { onDelete() }
+        )
+    }
+}
+
+@Composable
+private fun ActionsSection(
+    isLoading: Boolean,
+    onDelete: () -> Unit,
+    onCancel: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp)
+    ) {
+        CustomButton(
+            text = stringResource(R.string.delete_account),
+            color = MaterialTheme.colorScheme.error,
+            onClick = onDelete
+        )
+
+        TextButton(
+            onClick = onCancel,
+            enabled = !isLoading,
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.cancel),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun WarningContent() {
+    Column(
+        modifier = Modifier.padding(horizontal = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.warning_circle),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier
+                .padding(bottom = 4.dp)
+                .size(32.dp)
+        )
+        Text(
+            text = stringResource(R.string.attention),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.delete_attention),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }

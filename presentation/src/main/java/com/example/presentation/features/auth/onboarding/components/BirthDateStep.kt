@@ -82,7 +82,7 @@ fun BirthDateStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun BirthDateStep() {
     UserActivityLevelSectionStep(

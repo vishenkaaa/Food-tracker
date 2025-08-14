@@ -2,6 +2,7 @@ package com.example.presentation.features.main.profile.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel
@@ -136,4 +137,13 @@ fun ProfileEditDialogs(
         null -> {
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileEditDialogsPreview() {
+    ProfileEditDialogs(
+        uiState = ProfileUiState(),
+        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+    )
 }

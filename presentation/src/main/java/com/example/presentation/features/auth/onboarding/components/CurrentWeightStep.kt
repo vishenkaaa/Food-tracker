@@ -2,6 +2,7 @@ package com.example.presentation.features.auth.onboarding.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.presentation.R
 
 @Composable
@@ -16,4 +17,12 @@ fun CurrentWeightStep(
         isIntegerInput = false,
         onValueSelected = onCurrentWeightSelected,
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CurrentWeightStepPreview() {
+    CurrentWeightStep(
+        ""
+    ) {}
 }

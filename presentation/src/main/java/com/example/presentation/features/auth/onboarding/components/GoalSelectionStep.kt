@@ -79,7 +79,7 @@ fun GoalSelectionStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GoalSelectionStepPreview() {
     GoalSelectionStep(Goal.GAIN){}

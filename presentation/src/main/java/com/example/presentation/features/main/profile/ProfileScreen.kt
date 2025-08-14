@@ -33,12 +33,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.User
+import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.ConfirmationDialog
@@ -456,4 +459,43 @@ private fun ProfileItemShimmer(hasIcon: Boolean = false) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    val fakeUser = User(
+        name = "Нагалка Анна",
+        birthDate = LocalDate.of(2006, 12, 22),
+        gender = Gender.MALE,
+        goal = Goal.MAINTAIN,
+        currentWeight = 75f,
+        height = 180,
+        targetCalories = 2200,
+        userActivityLevel = UserActivityLevel.ACTIVE,
+        photoUrl = null,
+        weightChange = 0f
+    )
+
+    val uiState = ProfileUiState(
+        user = fakeUser,
+        showLogoutDialog = false
+    )
+
+    val baseUiState = BaseUiState(
+        isLoading = false,
+        unexpectedError = null,
+        isConnectionError = false
+    )
+
+    ProfileScreen(
+        uiState = uiState,
+        baseUiState = baseUiState,
+        onLogoutClick = {},
+        onLogoutConfirmation = {},
+        onDeleteAccountClick = {},
+        onRetry = {},
+        onErrorConsume = {},
+        onEditClick = {}
+    )
 }

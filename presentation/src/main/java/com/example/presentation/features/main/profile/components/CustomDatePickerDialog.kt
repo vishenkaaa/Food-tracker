@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.DatePickerTypography
+import com.example.presentation.features.auth.onboarding.components.HeightStep
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -92,4 +94,12 @@ fun CustomDatePickerDialog(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CustomDatePickerDialogPreview() {
+    CustomDatePickerDialog(
+        LocalDate.now(), {}, {}
+    ) {}
 }

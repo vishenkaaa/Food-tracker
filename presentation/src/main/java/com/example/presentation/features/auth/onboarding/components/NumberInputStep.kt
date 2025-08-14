@@ -151,7 +151,7 @@ fun NumberInputStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun NumberInputStepPreview() {
     NumberInputStep(

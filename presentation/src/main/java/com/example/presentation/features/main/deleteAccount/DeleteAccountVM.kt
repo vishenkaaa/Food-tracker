@@ -3,7 +3,6 @@ package com.example.presentation.features.main.deleteAccount
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.usecase.auth.DeleteAccountUseCase
-import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -2,15 +2,17 @@ package com.example.presentation.features.auth.onboarding
 
 import android.content.Context
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.example.domain.manager.AuthStateManager
+import com.example.domain.model.MacroNutrients
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
-import com.example.domain.model.MacroNutrients
 import com.example.domain.model.user.User
 import com.example.domain.model.user.UserActivityLevel
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
@@ -18,15 +20,15 @@ import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.common.utils.BMICalculator
+import com.example.presentation.features.auth.onboarding.models.GenderSaver
+import com.example.presentation.features.auth.onboarding.models.GoalSaver
+import com.example.presentation.features.auth.onboarding.models.LocalDateSaver
+import com.example.presentation.features.auth.onboarding.models.OnboardingUiState
+import com.example.presentation.features.auth.onboarding.models.UserActivityLevelSaver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
-import androidx.lifecycle.viewmodel.compose.saveable
-import com.example.presentation.features.auth.onboarding.models.*
-import com.example.presentation.features.auth.onboarding.models.OnboardingUiState
 
 @OptIn(SavedStateHandleSaveableApi::class)
 @HiltViewModel

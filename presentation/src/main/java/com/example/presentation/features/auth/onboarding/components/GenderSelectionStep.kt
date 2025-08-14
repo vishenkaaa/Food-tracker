@@ -101,7 +101,7 @@ fun GenderSelectionStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GenderSelectionStepPreview() {
     GenderSelectionStep(Gender.MALE) {}

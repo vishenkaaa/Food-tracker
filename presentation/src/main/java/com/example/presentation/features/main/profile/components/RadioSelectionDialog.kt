@@ -3,7 +3,6 @@ package com.example.presentation.features.main.profile.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,9 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.domain.model.user.Gender
 import com.example.presentation.R
+import com.example.presentation.extensions.displayName
 
 @Composable
 fun<T> RadioSelectionDialog(
@@ -114,5 +115,17 @@ fun<T> RadioSelectionDialog(
         },
         shape = RoundedCornerShape(20.dp),
         containerColor = MaterialTheme.colorScheme.background
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RadioSelectionDialogPreview() {
+    RadioSelectionDialog(
+        title = "Стать",
+        items = Gender.entries,
+        selectedItem = Gender.MALE,
+        {}, {}, {},
+        getDisplayName = { it.displayName() }
     )
 }

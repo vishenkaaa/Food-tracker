@@ -29,8 +29,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
+import java.time.LocalDate
 
 @Composable
 fun NumberInputDialog(
@@ -150,5 +152,17 @@ fun NumberInputDialog(
         },
         shape = RoundedCornerShape(20.dp),
         containerColor = MaterialTheme.colorScheme.background
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NumberInputDialogPreview() {
+    NumberInputDialog(
+        title = "Вага",
+        value = "",
+        onDismiss = {},
+        onSave = {},
+        onValueChanged = {}
     )
 }
