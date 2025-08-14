@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.presentation.features.auth.onboarding.models
 
 enum class BMIStatus(val maxValue: Float){
     UNDERWEIGHT(18.5f),

@@ -1,6 +1,6 @@
 package com.example.presentation.features.auth.onboarding.models
 
-import com.example.domain.model.MacroNutrients
+import com.example.domain.model.user.MacroNutrients
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel

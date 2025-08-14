@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.model.user
 
 data class MacroNutrients(
     val proteins: Int = 0,

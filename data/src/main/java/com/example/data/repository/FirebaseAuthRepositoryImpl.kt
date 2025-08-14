@@ -1,14 +1,12 @@
 package com.example.data.repository
 
-import android.content.Context
-import com.example.data.auth.GoogleCredentialManager
 import com.example.data.auth.LocalAuthStateManager
 import com.example.data.mapper.UserModelMapper.mapToUser
-import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.data.util.safeCall
 import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.user.User
 import com.example.domain.repository.FirebaseAuthRepository
+import com.example.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,9 +15,9 @@ import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore,
+    private val userRepository: UserRepository,
     private val auth: FirebaseAuth,
     private val localAuthStateManager: LocalAuthStateManager,
-    private val googleCredentialManager: GoogleCredentialManager,
     private val errorLogger: ErrorLogger
 ) : FirebaseAuthRepository {
 
@@ -47,7 +45,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 photoUrl = firebaseUser.photoUrl?.toString(),
                 isNew = true
             )
-            createUser(newUser).getOrThrow()
+            userRepository.createUser(newUser).getOrThrow()
             localAuthStateManager.saveAuthState(userId, firebaseUser.email, true)
             newUser
         } else {
@@ -59,11 +57,6 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             localAuthStateManager.saveAuthState(userId, firebaseUser.email, true)
             existingUser
         }
-    }
-
-    override suspend fun createUser(user: User): Result<Unit> = safeCall(errorLogger){
-        val userMap = userToMap(user)
-        usersCollection.document(user.id).set(userMap).await()
     }
 
     override suspend fun signOut() {
@@ -91,10 +84,4 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     override suspend fun getCurrentUserId(): String? {
         return localAuthStateManager.getCurrentUserId()
     }
-
-    override suspend fun isUserFullyRegistered(userId: String): Boolean = safeCall(errorLogger){
-        val snapshot = usersCollection.document(userId).get().await()
-        val user = snapshot.data?.let { mapToUser(it, userId) }
-        return user?.targetCalories != 0
-    }.getOrDefault(false)
 }

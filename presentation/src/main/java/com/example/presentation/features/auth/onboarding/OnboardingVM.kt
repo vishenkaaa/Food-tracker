@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.example.domain.manager.AuthStateManager
-import com.example.domain.model.MacroNutrients
+import com.example.domain.model.user.MacroNutrients
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.User
