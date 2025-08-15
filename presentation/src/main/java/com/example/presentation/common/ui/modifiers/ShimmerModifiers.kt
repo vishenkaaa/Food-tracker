@@ -1,4 +1,4 @@
-package com.example.presentation.extensions
+package com.example.presentation.common.ui.modifiers
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

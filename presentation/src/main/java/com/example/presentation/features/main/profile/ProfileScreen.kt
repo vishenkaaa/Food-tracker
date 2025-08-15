@@ -47,7 +47,7 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.extensions.displayName
-import com.example.presentation.extensions.shimmerEffect
+import com.example.presentation.common.ui.modifiers.shimmerEffect
 import com.example.presentation.features.main.profile.components.ProfileEditDialogs
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
@@ -70,7 +70,7 @@ fun ProfileRoute(
         onLogoutConfirmation = viewModel::onLogoutConfirmation,
         onDeleteAccountClick = onDeleteAccount,
         onRetry = { viewModel.loadUserProfile() },
-        onErrorConsume = viewModel::consumeError,
+        onErrorConsume = viewModel::clearErrors,
         onEditClick = viewModel::onEditClick
     )
 

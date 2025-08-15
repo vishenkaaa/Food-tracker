@@ -50,10 +50,6 @@ class ProfileVM @Inject constructor(
         }
     }
 
-    fun consumeError() {
-        clearErrors()
-    }
-
     fun onEditClick(dialogType: ProfileEditDialogType){
         val currentUser = _uiState.value.user
         _uiState.update { state ->

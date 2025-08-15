@@ -83,8 +83,13 @@
     <string name="attention">Попередження</string>
     <string name="delete_attention">Ви збираєтеся остаточно видалити свій обліковий запис. Ця дія незворотна, і всі ваші дані буде втрачено.\nВи впевнені, що бажаєте продовжити?</string>
     <string name="success_delete">Акаунт успішно видалено</string>
-    <string name="breakfast">Breakfast</string>
-    <string name="lunch">Lunch</string>
-    <string name="dinner">Dinner</string>
-    <string name="snack">Snack</string>
+    <string name="breakfast">Сніданок</string>
+    <string name="lunch">Обід</string>
+    <string name="dinner">Вечеря</string>
+    <string name="snack">Перекус</string>
+    <string name="carb">Вуглеводи</string>
+    <string name="protein">Білки</string>
+    <string name="fat">Жири</string>
+    <string name="g">%1$d г</string>
+    <string name="kcal">ккал</string>
 </resources>

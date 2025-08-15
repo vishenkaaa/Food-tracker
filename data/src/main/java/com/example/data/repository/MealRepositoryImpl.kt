@@ -10,6 +10,7 @@ import com.example.domain.repository.MealRepository
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 import javax.inject.Inject
 
 class MealRepositoryImpl @Inject constructor(
@@ -115,7 +116,7 @@ class MealRepositoryImpl @Inject constructor(
         val dinner = getDishesForMealType(userId, date, MealType.DINNER)
         val snacks = getDishesForMealType(userId, date, MealType.SNACKS)
 
-        return DailyMeals(breakfast, lunch, dinner, snacks)
+        return DailyMeals(date = LocalDate.parse(date), breakfast, lunch, dinner, snacks)
     }
 
     private suspend fun getDishesForMealType(

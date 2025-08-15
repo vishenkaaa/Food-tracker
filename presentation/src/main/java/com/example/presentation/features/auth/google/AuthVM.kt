@@ -56,10 +56,6 @@ class AuthVM @Inject constructor(
             }
         }
     }
-
-    fun consumeError() {
-        clearErrors()
-    }
 }
 
 sealed class AuthState {

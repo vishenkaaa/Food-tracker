@@ -14,12 +14,20 @@ open class BaseViewModel : ViewModel() {
     private val _baseUiState = MutableStateFlow(BaseUiState())
     val baseUiState: StateFlow<BaseUiState> = _baseUiState.asStateFlow()
 
+    private var lastRetryAction: (() -> Unit)? = null
+
     protected open fun handleLoading(isLoading: Boolean) {
         _baseUiState.update { it.copy(isLoading = isLoading) }
     }
 
-    protected open fun handleUnexpectedError(e: Throwable, context: Context? = null) {
+    protected open fun handleUnexpectedError(
+        e: Throwable,
+        context: Context? = null,
+        retryAction: (() -> Unit)? = null
+    ) {
         e.printStackTrace()
+
+        lastRetryAction = retryAction
 
         if (context != null && !hasInternet(context)) {
             _baseUiState.update {
@@ -42,7 +50,12 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
-    protected open fun clearErrors() {
+    fun retryLastAction() {
+        clearErrors()
+        lastRetryAction?.invoke()
+    }
+
+    open fun clearErrors() {
         _baseUiState.update {
             it.copy(
                 unexpectedError = null,
