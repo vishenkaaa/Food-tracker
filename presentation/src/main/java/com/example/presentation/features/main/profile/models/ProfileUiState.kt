@@ -6,17 +6,17 @@ import com.example.domain.model.user.User
 import com.example.domain.model.user.UserActivityLevel
 import java.time.LocalDate
 
-    data class ProfileUiState(
-        val user: User? = null,
-        val showLogoutDialog: Boolean = false,
-        val editDialogType: ProfileEditDialogType? = null,
+data class ProfileUiState(
+    val user: User? = null,
+    val showLogoutDialog: Boolean = false,
+    val editDialogType: ProfileEditDialogType? = null,
 
-        val tempGender: Gender? = null,
-        val tempGoal: Goal? = null,
-        val tempActivityLevel: UserActivityLevel? = null,
-        val tempWeightChange: String = "",
-        val tempCurrentWeight: String = "",
-        val tempHeight: String = "",
-        val tempBirthDate: LocalDate? = null,
-        val tempCaloriesGoal: String = ""
-    )
+    val tempGender: Gender? = null,
+    val tempGoal: Goal? = null,
+    val tempActivityLevel: UserActivityLevel? = null,
+    val tempWeightChange: String = "",
+    val tempCurrentWeight: String = "",
+    val tempHeight: String = "",
+    val tempBirthDate: LocalDate? = null,
+    val tempCaloriesGoal: String = ""
+)

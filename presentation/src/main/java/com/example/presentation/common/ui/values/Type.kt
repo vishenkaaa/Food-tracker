@@ -66,6 +66,16 @@ val headline2: TextStyle
         color = MaterialTheme.colorScheme.onBackground
     )
 
+val headline3: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
 val subtitle1: TextStyle
     @Composable
     get() = TextStyle(
@@ -83,6 +93,16 @@ val subtitle2: TextStyle
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 21.sp,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
+val subtitle3: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
 
@@ -106,6 +126,16 @@ val body2: TextStyle
         color = MaterialTheme.colorScheme.onBackground
     )
 
+val body3: TextStyle
+    @Composable
+    get() = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
 val Typography: Typography
     @Composable
     get() = Typography(
@@ -114,10 +144,13 @@ val Typography: Typography
         displaySmall = display3,
         headlineLarge = headline1,
         headlineMedium = headline2,
+        headlineSmall = headline3,
         titleLarge = subtitle1,
         titleMedium = subtitle2,
+        titleSmall = subtitle3,
         bodyLarge = body1,
-        bodyMedium = body2
+        bodyMedium = body2,
+        bodySmall = body3
     )
 
 val DatePickerTypography: Typography

@@ -18,6 +18,7 @@ class UserRepositoryImpl @Inject constructor(
 
     companion object {
         private const val USERS_KEY = "users"
+        private const val TARGET_CALORIES_KEY = "targetCalories"
     }
 
     private val usersCollection = firestore.collection(USERS_KEY)
@@ -25,6 +26,16 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun createUser(user: User): Result<Unit> = safeCall(errorLogger){
         val userMap = userToMap(user)
         usersCollection.document(user.id).set(userMap).await()
+    }
+
+    override suspend fun getTargetCalories(userId: String): Result<Int> = safeCall(errorLogger) {
+        val snapshot = usersCollection.document(userId).get().await()
+        if (!snapshot.exists()) {
+            throw Exception("User not found")
+        }
+
+        val targetCalories = (snapshot[TARGET_CALORIES_KEY] as? Number)?.toInt() ?: 0
+        targetCalories
     }
 
     override suspend fun getUser(userId: String): Result<User> = safeCall(errorLogger) {

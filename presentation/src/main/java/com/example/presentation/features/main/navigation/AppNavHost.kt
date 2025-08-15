@@ -125,8 +125,13 @@ private fun NavGraphBuilder.mainGraph(
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
-        composable<MainGraph.Dairy> {
-            DiaryRoute()
+        composable<MainGraph.Dairy> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Graphs.Main>()
+            }
+            DiaryRoute(
+                viewModel = hiltViewModel(parentEntry)
+            )
         }
 
         composable<MainGraph.Statistics> {

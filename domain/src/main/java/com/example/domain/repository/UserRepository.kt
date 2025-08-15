@@ -7,4 +7,5 @@ interface UserRepository {
     suspend fun getUser(userId: String): Result<User>
     suspend fun updateUserInfo(user: User): Result<Unit>
     suspend fun isUserFullyRegistered(userId: String): Boolean
+    suspend fun getTargetCalories(userId: String): Result<Int>
 }

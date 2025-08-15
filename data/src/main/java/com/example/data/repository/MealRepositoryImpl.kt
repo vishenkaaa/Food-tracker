@@ -92,7 +92,6 @@ class MealRepositoryImpl @Inject constructor(
             .document(userId)
             .collection(DIARY_KEY)
 
-        // Отримуємо всі документи (дати) в проміжку
         val datesSnapshot = diaryRef
             .whereGreaterThanOrEqualTo(FieldPath.documentId(), startDate)
             .whereLessThanOrEqualTo(FieldPath.documentId(), endDate)
@@ -101,7 +100,6 @@ class MealRepositoryImpl @Inject constructor(
 
         val mealsMap = mutableMapOf<String, DailyMeals>()
 
-        // Для кожної дати отримуємо всі прийоми їжі
         for (dateDocument in datesSnapshot.documents) {
             val date = dateDocument.id
             val dailyMeals = getDailyMealsForDate(userId, date)
