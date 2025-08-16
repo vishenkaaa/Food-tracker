@@ -10,7 +10,7 @@ data class DiaryScreenUIState(
     val weekStart: LocalDate = LocalDate.now().with(DayOfWeek.MONDAY),
     val caloriesConsumed: Int = 0,
     val caloriesTarget: Int = 0,
-    val carbs: Int = 0,
+    val carb: Int = 0,
     val protein: Int = 0,
     val fat: Int = 0,
 
@@ -21,16 +21,3 @@ data class DiaryScreenUIState(
     val dinnerNutrition: NutritionData = NutritionData(),
     val snacksNutrition: NutritionData = NutritionData()
 )
-
-fun DiaryScreenUIState.getNutritionForMealType(mealType: MealType): NutritionData {
-    return when (mealType) {
-        MealType.BREAKFAST -> breakfastNutrition
-        MealType.LUNCH -> lunchNutrition
-        MealType.DINNER -> dinnerNutrition
-        MealType.SNACKS -> snacksNutrition
-    }
-}
-
-fun DiaryScreenUIState.getMealsForDate(date: LocalDate): DailyMeals? {
-    return weekMeals.find { it.date == date }
-}

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -51,34 +52,14 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainVM by viewModels()
     private var onBackPressClickTime: Long? = null
-    private var navHostController: NavHostController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        super.onCreate(savedInstanceState)
+
         viewModel.checkUserState()
-
-        onBackPressedDispatcher.addCallback(this) {
-            val navController = navHostController ?: return@addCallback
-
-            if (navController.currentDestination?.route == navController.graph.startDestinationRoute) {
-                val currentTime = System.currentTimeMillis()
-                val interval = currentTime - (onBackPressClickTime ?: 0)
-
-                if (interval < 2000) {
-                    finish()
-                } else {
-                    onBackPressClickTime = currentTime
-                    Toast.makeText(this@MainActivity, getString(R.string.all_exit), Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                navController.popBackStack()
-            }
-        }
-
         setupSplashScreen(splashScreen)
         setContent()
     }
@@ -104,10 +85,14 @@ class MainActivity : ComponentActivity() {
                     addOnDestinationChangedListener { _, destination, _ ->
                         shouldShowBottomBar = viewModel.isDestinationInMainGraph(destination.route)
                     }
-                    navHostController = this
                 }
 
             val userAuthState = viewModel.userAuthState.collectAsStateWithLifecycle()
+
+            BackHandler(
+                enabled = true,
+                onBack = { handleBackPress(navController) }
+            )
 
             FoodTrackTheme {
                 Surface(
@@ -145,6 +130,22 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+    }
+
+    private fun handleBackPress(navController: NavHostController) {
+        if (navController.currentDestination?.route == navController.graph.startDestinationRoute) {
+            val currentTime = System.currentTimeMillis()
+            val interval = currentTime - (onBackPressClickTime ?: 0)
+
+            if (interval < 2000) {
+                finish()
+            } else {
+                onBackPressClickTime = currentTime
+                Toast.makeText(this, getString(R.string.all_exit), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            navController.popBackStack()
         }
     }
 }

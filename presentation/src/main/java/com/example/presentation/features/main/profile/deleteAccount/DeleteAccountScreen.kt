@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.deleteAccount
+package com.example.presentation.features.main.profile.deleteAccount
 
 import android.widget.Toast
 import androidx.compose.foundation.background

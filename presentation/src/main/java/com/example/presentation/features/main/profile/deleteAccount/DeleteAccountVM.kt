@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.deleteAccount
+package com.example.presentation.features.main.profile.deleteAccount
 
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager

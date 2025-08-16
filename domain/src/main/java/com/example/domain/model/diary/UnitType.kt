@@ -1,5 +1,8 @@
 package com.example.domain.model.diary
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class UnitType(val value: String) {
     GRAM("g"),
     MILLILITER("ml"),

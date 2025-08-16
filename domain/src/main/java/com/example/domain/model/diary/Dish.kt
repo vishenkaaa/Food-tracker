@@ -1,5 +1,7 @@
 package com.example.domain.model.diary
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Dish(
     val id: String,
     val title: String,

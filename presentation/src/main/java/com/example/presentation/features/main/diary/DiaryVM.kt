@@ -3,15 +3,14 @@ package com.example.presentation.features.main.diary
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.diary.DailyMeals
-import com.example.domain.model.diary.Dish
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.features.main.diary.extensions.calculateMealNutrition
+import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
-import com.example.presentation.features.main.diary.models.MealNutritionData
 import com.example.presentation.features.main.diary.models.NutritionData
-import com.example.presentation.features.main.diary.models.getMealsForDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +37,7 @@ class DiaryVM @Inject constructor(
         loadInitialData()
     }
 
-    fun loadInitialData() {
+    private fun loadInitialData() {
         viewModelScope.launch {
             handleLoading(true)
             try {
@@ -125,12 +124,12 @@ class DiaryVM @Inject constructor(
         val dailyMeals = _uiState.value.getMealsForDate(selectedDate) ?: DailyMeals(date = selectedDate)
 
         val dayNutrition = calculateDayNutrition(dailyMeals)
-        val mealNutrition = calculateMealNutrition(dailyMeals)
+        val mealNutrition = dailyMeals.calculateMealNutrition()
 
         _uiState.update { currentState ->
             currentState.copy(
                 caloriesConsumed = dayNutrition.calories,
-                carbs = dayNutrition.carbs,
+                carb = dayNutrition.carb,
                 protein = dayNutrition.protein,
                 fat = dayNutrition.fat,
                 breakfastNutrition = mealNutrition.breakfast,
@@ -152,27 +151,7 @@ class DiaryVM @Inject constructor(
         return allDishes.fold(NutritionData()) { total, dish ->
             NutritionData(
                 calories = total.calories + dish.kcal,
-                carbs = total.carbs + dish.carb,
-                protein = total.protein + dish.protein,
-                fat = total.fat + dish.fats
-            )
-        }
-    }
-
-    private fun calculateMealNutrition(dailyMeals: DailyMeals): MealNutritionData {
-        return MealNutritionData(
-            breakfast = calculateMealNutritionForDishes(dailyMeals.breakfast),
-            lunch = calculateMealNutritionForDishes(dailyMeals.lunch),
-            dinner = calculateMealNutritionForDishes(dailyMeals.dinner),
-            snacks = calculateMealNutritionForDishes(dailyMeals.snacks)
-        )
-    }
-
-    private fun calculateMealNutritionForDishes(dishes: List<Dish>): NutritionData {
-        return dishes.fold(NutritionData()) { total, dish ->
-            NutritionData(
-                calories = total.calories + dish.kcal,
-                carbs = total.carbs + dish.carb,
+                carb = total.carb + dish.carb,
                 protein = total.protein + dish.protein,
                 fat = total.fat + dish.fats
             )

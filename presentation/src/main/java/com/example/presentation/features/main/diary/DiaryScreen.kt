@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
@@ -46,9 +48,13 @@ import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.icon
 import com.example.presentation.common.ui.modifiers.shimmerEffect
 import com.example.presentation.common.ui.modifiers.softShadow
+import com.example.presentation.features.main.diary.components.MacroNutrientItemShimmer
+import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
+import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
+import com.example.presentation.features.main.diary.extensions.getDishesForMealType
+import com.example.presentation.features.main.diary.extensions.getMealsForDate
+import com.example.presentation.features.main.diary.extensions.getNutritionForMealType
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
-import com.example.presentation.features.main.diary.models.getMealsForDate
-import com.example.presentation.features.main.diary.models.getNutritionForMealType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -57,7 +63,7 @@ import java.time.format.TextStyle
 @Composable
 fun DiaryRoute(
     viewModel: DiaryVM = hiltViewModel(),
-    onNavigateToMealDetails: (MealType, LocalDate) -> Unit = { _, _ -> },
+    onNavigateToOpenMeal: (MealType, List<Dish>, LocalDate, Int) -> Unit = { _, _, _, _ -> },
     onNavigateToAddMeal: (MealType, LocalDate) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,8 +75,13 @@ fun DiaryRoute(
         onPreviousWeek = { viewModel.onPreviousWeek() },
         onNextWeek = { viewModel.onNextWeek() },
         onDateSelected = viewModel::onDateSelected,
-        onMealItemClick = { mealType ->
-            onNavigateToMealDetails(mealType, uiState.selectedDate)
+        onMealItemClick = { mealType, dishes ->
+            onNavigateToOpenMeal(
+                mealType,
+                dishes,
+                uiState.selectedDate,
+                uiState.caloriesTarget
+            )
         },
         onAddMealClick = { mealType ->
             onNavigateToAddMeal(mealType, uiState.selectedDate)
@@ -87,7 +98,7 @@ fun DiaryScreen(
     onPreviousWeek: () -> Unit,
     onNextWeek: () -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    onMealItemClick: (MealType) -> Unit = {},
+    onMealItemClick: (MealType, List<Dish>) -> Unit,
     onAddMealClick: (MealType) -> Unit = {},
     onErrorConsume: () -> Unit,
     onConnectionRetry: () -> Unit
@@ -122,7 +133,7 @@ fun DiaryScreen(
                 else CaloriesProgressSection(
                     caloriesConsumed = uiState.caloriesConsumed,
                     caloriesTarget = uiState.caloriesTarget,
-                    carbs = uiState.carbs,
+                    carb = uiState.carb,
                     protein = uiState.protein,
                     fat = uiState.fat
                 )
@@ -136,6 +147,9 @@ fun DiaryScreen(
                     onMealItemClick = onMealItemClick,
                     onAddMealClick = onAddMealClick
                 )
+            }
+
+            item {
                 Spacer(Modifier.height(90.dp))
             }
         }
@@ -151,7 +165,7 @@ fun DiaryScreen(
 @Composable
 fun MealsSection(
     uiState: DiaryScreenUIState,
-    onMealItemClick: (MealType) -> Unit,
+    onMealItemClick: (MealType, List<Dish>) -> Unit,
     onAddMealClick: (MealType) -> Unit
 ) {
     Column(
@@ -160,13 +174,19 @@ fun MealsSection(
     ) {
         MealType.entries.forEach { mealType ->
             val nutrition = uiState.getNutritionForMealType(mealType)
+            val dishes = uiState.getDishesForMealType(uiState.selectedDate, mealType)
             MealItem(
                 mealType = mealType,
                 calories = nutrition.calories,
-                carbs = nutrition.carbs,
+                carb = nutrition.carb,
                 protein = nutrition.protein,
                 fat = nutrition.fat,
-                onItemClick = { onMealItemClick(mealType) },
+                onItemClick = {
+                    if (dishes.isEmpty())
+                        onAddMealClick(mealType)
+                    else
+                        onMealItemClick(mealType, dishes)
+                },
                 onAddClick = { onAddMealClick(mealType) }
             )
         }
@@ -189,7 +209,7 @@ fun MealsSectionShimmer() {
 fun MealItem(
     mealType: MealType,
     calories: Int,
-    carbs: Int,
+    carb: Int,
     protein: Int,
     fat: Int,
     onItemClick: () -> Unit,
@@ -234,7 +254,7 @@ fun MealItem(
                 Spacer(Modifier.width(12.dp))
                 if (calories != 0)
                     Text(
-                        text = "$calories kcal",
+                        text = stringResource(R.string.kcal_value, calories),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -258,9 +278,8 @@ fun MealItem(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    MacroNutrientsItem(stringResource(R.string.carb), carbs)
-                    MacroNutrientsItem(stringResource(R.string.protein), protein)
-                    MacroNutrientsItem(stringResource(R.string.fat), fat)
+                    MacroNutrientsSmallSection(protein, fat, carb)
+
                     Spacer(Modifier.weight(1f))
 
                     Icon(
@@ -295,32 +314,11 @@ fun MealItemShimmer() {
     }
 }
 
-
-@Composable
-fun MacroNutrientsItem(
-    type: String,
-    value: Int
-) {
-    Row {
-        Text(
-            text = type,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.secondary
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(
-            text = stringResource(R.string.g, value),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
 @Composable
 fun CaloriesProgressSection(
     caloriesConsumed: Int,
     caloriesTarget: Int,
-    carbs: Int,
+    carb: Int,
     protein: Int,
     fat: Int
 ) {
@@ -371,25 +369,7 @@ fun CaloriesProgressSection(
 
         Spacer(modifier = Modifier.height(22.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            MacroNutrientItem(
-                label = stringResource(R.string.carb),
-                value = stringResource(R.string.g, carbs),
-            )
-
-            MacroNutrientItem(
-                label = stringResource(R.string.protein),
-                value = stringResource(R.string.g, protein),
-            )
-
-            MacroNutrientItem(
-                label = stringResource(R.string.fat),
-                value = stringResource(R.string.g, fat),
-            )
-        }
+        MacroNutrientsBigSection(protein, fat, carb)
     }
 }
 
@@ -415,45 +395,6 @@ fun CaloriesProgressSectionShimmer() {
             MacroNutrientItemShimmer()
             MacroNutrientItemShimmer()
         }
-    }
-}
-
-@Composable
-fun MacroNutrientItem(
-    label: String,
-    value: String
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.secondary
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-@Composable
-fun MacroNutrientItemShimmer() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .shimmerEffect()
-    ) {
-        Box(
-            modifier = Modifier
-                .width(50.dp)
-                .height(48.dp)
-        )
     }
 }
 
@@ -606,7 +547,7 @@ fun CalendarHeader(
 
     Row(
         modifier = Modifier
-            .padding(top = 45.dp)
+            .statusBarsPadding()
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

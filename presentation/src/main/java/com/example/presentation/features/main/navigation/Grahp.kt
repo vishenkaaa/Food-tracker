@@ -1,5 +1,7 @@
 package com.example.presentation.features.main.navigation
 
+import com.example.domain.model.diary.Dish
+import com.example.domain.model.diary.MealType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,4 +41,11 @@ sealed class MainGraph {
 
     @Serializable
     data object DeleteAccount : MainGraph()
+
+    @Serializable
+    data class OpenMeal(
+        val mealType: MealType,
+        val date: String,
+        val targetCalories: Int
+    ) : MainGraph()
 }

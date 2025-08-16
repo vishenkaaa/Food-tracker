@@ -92,4 +92,5 @@
     <string name="fat">Жири</string>
     <string name="g">%1$d г</string>
     <string name="kcal">ккал</string>
+    <string name="kcal_value">%1$d kcal</string>
 </resources>
