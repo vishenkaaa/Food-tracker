@@ -14,14 +14,14 @@ import javax.inject.Singleton
 class CameraPermissionManager @Inject constructor(
     @ApplicationContext private val context: Context
 ){
-    companion object{
-        val REQUIRED_PERMISSIONS = buildList {
-            add((Manifest.permission.CAMERA))
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                add(Manifest.permission.READ_MEDIA_IMAGES)
+    companion object {
+        val REQUIRED_STORAGE_PERMISSION =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                Manifest.permission.READ_MEDIA_IMAGES
             else
-                add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }.toTypedArray()
+                Manifest.permission.READ_EXTERNAL_STORAGE
+
+        val REQUIRED_CAMERA_PERMISSION = Manifest.permission.CAMERA
     }
 
     fun hasCameraPermission(): Boolean{
@@ -39,18 +39,6 @@ class CameraPermissionManager @Inject constructor(
             ContextCompat.checkSelfPermission(
                 context, Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun hasAllPermissions(): Boolean{
-        return REQUIRED_PERMISSIONS.all { permission ->
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    fun getMissingPermissions(): List<String>{
-        return REQUIRED_PERMISSIONS.filter { permission ->
-            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
-        }
     }
 
     fun isCameraAvailable(): Boolean{

@@ -8,7 +8,5 @@ class CheckCameraPermissionUseCase @Inject constructor(
 ) {
     fun hasCameraPermission(): Boolean = cameraRepository.hasCameraPermission()
     fun hasStoragePermission(): Boolean = cameraRepository.hasStoragePermission()
-    fun hasAllPermissions(): Boolean = cameraRepository.hasAllPermissions()
-    fun getMissingPermissions(): List<String> = cameraRepository.getMissingPermissions()
     fun isCameraAvailable(): Boolean = cameraRepository.isCameraAvailable()
 }

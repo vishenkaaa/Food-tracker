@@ -46,6 +46,7 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.softShadow
 import com.example.presentation.extensions.displayName
@@ -92,7 +93,7 @@ fun OpenMealScreen(
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
-            OpenMealHeader(
+            LeftAlignedHeader(
                 mealType = uiState.mealType,
                 onNavigateBack = onNavigateBack
             )
@@ -153,36 +154,6 @@ fun OpenMealScreen(
                 Spacer(modifier = Modifier.height(80.dp))
             }
         }
-    }
-}
-
-@Composable
-fun OpenMealHeader(
-    mealType: MealType,
-    onNavigateBack: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onNavigateBack) {
-            Icon(
-                painter = painterResource(R.drawable.back),
-                contentDescription = "Back",
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        Text(
-            text = mealType.displayName(),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(start = 8.dp)
-        )
     }
 }
 

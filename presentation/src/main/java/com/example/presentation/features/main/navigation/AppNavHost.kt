@@ -28,6 +28,7 @@ import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.diary.DiaryRoute
+import com.example.presentation.features.main.diary.addMeals.cameraAI.AddMealAIRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
@@ -147,7 +148,23 @@ private fun NavGraphBuilder.mainGraph(
                             targetCalories = targetCalories
                         )
                     )
+                },
+                onNavigateToAddMeal = { mealType, date ->
+                    navController.navigate(
+                        MainGraph.AddMealAI(
+                            mealType = mealType,
+                            date = date.toString(),
+                        )
+                    )
                 }
+            )
+        }
+
+        composable<MainGraph.AddMealAI> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
+            AddMealAIRoute(
+                mealType = args.mealType,
+                date = LocalDate.parse(args.date),
             )
         }
 

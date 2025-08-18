@@ -17,12 +17,6 @@ class CameraRepositoryImpl @Inject constructor(
     override fun hasStoragePermission(): Boolean =
         cameraPermissionManager.hasStoragePermission()
 
-    override fun hasAllPermissions(): Boolean =
-        cameraPermissionManager.hasAllPermissions()
-
-    override fun getMissingPermissions(): List<String> =
-        cameraPermissionManager.getMissingPermissions()
-
     override fun isCameraAvailable(): Boolean =
         cameraPermissionManager.isCameraAvailable()
 

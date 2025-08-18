@@ -3,12 +3,15 @@ package com.example.presentation.features.main.diary
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.diary.DailyMeals
+import com.example.domain.model.diary.MealType
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
+import com.example.domain.usecase.camera.CheckCameraPermissionUseCase
 import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.diary.extensions.calculateMealNutrition
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
+import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
 import com.example.presentation.features.main.diary.models.NutritionData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,9 +30,13 @@ class DiaryVM @Inject constructor(
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getTargetCaloriesUseCase: GetTargetCaloriesUseCase,
     private val getMealsForDateRangeUseCase: GetMealsForDateRangeUseCase,
+    private val checkCameraPermissionUseCase: CheckCameraPermissionUseCase
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(DiaryScreenUIState())
     val uiState: StateFlow<DiaryScreenUIState> = _uiState.asStateFlow()
+
+    private val _cameraPermissionState = MutableStateFlow(CameraPermissionState())
+    val cameraPermissionState: StateFlow<CameraPermissionState> = _cameraPermissionState.asStateFlow()
 
     private var currentTargetCalories: Int = 0
 
@@ -51,6 +58,48 @@ class DiaryVM @Inject constructor(
                 handleLoading(false)
             }
         }
+    }
+
+    fun checkCameraPermission() {
+        val granted = checkCameraPermissionUseCase.hasCameraPermission() &&
+                checkCameraPermissionUseCase.isCameraAvailable()
+        _cameraPermissionState.update {
+            it.copy(
+                hasPermission = granted,
+                permanentlyDenied = if (granted) false else it.permanentlyDenied
+            )
+        }
+    }
+
+    fun requestCameraPermissions(mealType: MealType) {
+        _cameraPermissionState.update {
+            it.copy(
+                shouldRequest = true,
+                pendingMealType = mealType
+            )
+        }
+    }
+
+    fun onCameraPermissionResult(granted: Boolean, permanentlyDenied: Boolean) {
+        val available = checkCameraPermissionUseCase.isCameraAvailable()
+        _cameraPermissionState.update {
+            it.copy(
+                shouldRequest = false,
+                hasPermission = granted && available,
+                permanentlyDenied = permanentlyDenied
+            )
+        }
+        if (!granted) {
+            clearPendingNavigation()
+        }
+    }
+
+    fun resetCameraPermissionRequest() {
+        _cameraPermissionState.update { it.copy(shouldRequest = false) }
+    }
+
+    fun clearPendingNavigation() {
+        _cameraPermissionState.update { it.copy(pendingMealType = null) }
     }
 
     fun onDateSelected(date: LocalDate) {

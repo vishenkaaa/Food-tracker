@@ -1,5 +1,10 @@
 package com.example.presentation.features.main.diary
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -26,15 +31,18 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.diary.Dish
@@ -55,11 +63,24 @@ import com.example.presentation.features.main.diary.extensions.getDishesForMealT
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.extensions.getNutritionForMealType
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 
+fun Context.findActivity(): Activity {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    throw IllegalStateException("Context does not contain an Activity")
+}
+
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DiaryRoute(
     viewModel: DiaryVM = hiltViewModel(),
@@ -68,6 +89,33 @@ fun DiaryRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
+    val cameraPermissionState by viewModel.cameraPermissionState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val cameraPermissionLauncher = rememberPermissionState(
+        permission = Manifest.permission.CAMERA
+    ) { granted ->
+        val permanentlyDenied = !granted && !ActivityCompat.shouldShowRequestPermissionRationale(
+            context.findActivity(),
+            Manifest.permission.CAMERA
+        )
+        viewModel.onCameraPermissionResult(granted, permanentlyDenied)
+    }
+
+    LaunchedEffect(cameraPermissionState.shouldRequest) {
+        if (cameraPermissionState.shouldRequest) {
+            cameraPermissionLauncher.launchPermissionRequest()
+            viewModel.resetCameraPermissionRequest()
+        }
+    }
+
+    LaunchedEffect(cameraPermissionState.hasPermission, cameraPermissionState.pendingMealType) {
+        if (cameraPermissionState.hasPermission && cameraPermissionState.pendingMealType != null) {
+            onNavigateToAddMeal(cameraPermissionState.pendingMealType!!, uiState.selectedDate)
+            viewModel.clearPendingNavigation()
+        }
+    }
+
 
     DiaryScreen(
         uiState = uiState,
@@ -84,7 +132,22 @@ fun DiaryRoute(
             )
         },
         onAddMealClick = { mealType ->
-            onNavigateToAddMeal(mealType, uiState.selectedDate)
+            viewModel.checkCameraPermission()
+            when {
+                cameraPermissionState.hasPermission -> {
+                    onNavigateToAddMeal(mealType, uiState.selectedDate)
+                }
+                cameraPermissionState.permanentlyDenied -> {
+                    Toast.makeText(
+                        context,
+                        "Щоб додати, увімкніть доступ до камери в налаштуваннях",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                else -> {
+                    viewModel.requestCameraPermissions(mealType)
+                }
+            }
         },
         onErrorConsume = { viewModel.clearErrors() },
         onConnectionRetry = { viewModel.retryLastAction() }
