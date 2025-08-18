@@ -1,32 +1,36 @@
 package com.example.data.di
 
+import com.example.data.repository.CameraRepositoryImpl
 import com.example.data.repository.MealRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
-import com.example.domain.logger.ErrorLogger
+import com.example.domain.repository.CameraRepository
 import com.example.domain.repository.MealRepository
 import com.example.domain.repository.UserRepository
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+abstract class RepositoryModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideUserRepository(
-        firestore: FirebaseFirestore,
-        errorLogger: ErrorLogger
-    ): UserRepository = UserRepositoryImpl(firestore, errorLogger)
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideMealRepository(
-        firestore: FirebaseFirestore,
-        errorLogger: ErrorLogger
-    ): MealRepository = MealRepositoryImpl(firestore, errorLogger)
+    abstract fun bindMealRepository(
+        mealRepositoryImpl: MealRepositoryImpl
+    ): MealRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCameraRepository(
+        cameraRepositoryImpl: CameraRepositoryImpl
+    ): CameraRepository
 }
