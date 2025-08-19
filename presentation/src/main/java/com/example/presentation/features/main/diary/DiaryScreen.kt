@@ -1,9 +1,6 @@
 package com.example.presentation.features.main.diary
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -51,14 +48,15 @@ import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.RoundedCircularProgress
+import com.example.presentation.common.ui.modifiers.shimmerEffect
+import com.example.presentation.common.ui.modifiers.softShadow
 import com.example.presentation.common.utils.getAppLocale
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.icon
-import com.example.presentation.common.ui.modifiers.shimmerEffect
-import com.example.presentation.common.ui.modifiers.softShadow
 import com.example.presentation.features.main.diary.components.MacroNutrientItemShimmer
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
+import com.example.presentation.features.main.diary.extensions.findActivity
 import com.example.presentation.features.main.diary.extensions.getDishesForMealType
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.extensions.getNutritionForMealType
@@ -69,16 +67,6 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-
-fun Context.findActivity(): Activity {
-    var ctx = this
-    while (ctx is ContextWrapper) {
-        if (ctx is Activity) return ctx
-        ctx = ctx.baseContext
-    }
-    throw IllegalStateException("Context does not contain an Activity")
-}
-
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -134,9 +122,7 @@ fun DiaryRoute(
         onAddMealClick = { mealType ->
             viewModel.checkCameraPermission()
             when {
-                cameraPermissionState.hasPermission -> {
-                    onNavigateToAddMeal(mealType, uiState.selectedDate)
-                }
+                cameraPermissionState.hasPermission -> onNavigateToAddMeal(mealType, uiState.selectedDate)
                 cameraPermissionState.permanentlyDenied -> {
                     Toast.makeText(
                         context,
@@ -144,9 +130,7 @@ fun DiaryRoute(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                else -> {
-                    viewModel.requestCameraPermissions(mealType)
-                }
+                else -> viewModel.requestCameraPermissions(mealType)
             }
         },
         onErrorConsume = { viewModel.clearErrors() },

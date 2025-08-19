@@ -1,24 +1,28 @@
 package com.example.presentation.features.main.diary.addMeals.cameraAI
 
+import android.content.Context
 import android.net.Uri
 import androidx.camera.view.PreviewView
+import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.camera.CapturePhotoUseCase
 import com.example.domain.usecase.camera.CheckCameraPermissionUseCase
 import com.example.domain.usecase.camera.ReleaseCameraUseCase
 import com.example.domain.usecase.camera.ToggleFlashUseCase
+import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.camera.CameraService
+import com.example.presentation.features.main.diary.addMeals.cameraAI.models.AddMealAIUiState
+import com.example.presentation.features.main.diary.addMeals.cameraAI.models.StoragePermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.core.net.toUri
-import com.example.presentation.features.main.diary.addMeals.cameraAI.models.CameraAIUiState
 
 @HiltViewModel
 class AddMealAIVM @Inject constructor(
@@ -26,14 +30,78 @@ class AddMealAIVM @Inject constructor(
     private val capturePhotoUseCase: CapturePhotoUseCase,
     private val toggleFlashUseCase: ToggleFlashUseCase,
     private val releaseCameraUseCase: ReleaseCameraUseCase,
-    private val cameraService: CameraService
+    private val cameraService: CameraService,
+    @ApplicationContext private val context: Context
 ) : BaseViewModel() {
 
-    private val _uiState = MutableStateFlow(CameraAIUiState())
-    val uiState: StateFlow<CameraAIUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AddMealAIUiState())
+    val uiState: StateFlow<AddMealAIUiState> = _uiState.asStateFlow()
 
-    init {
-        checkPermissions()
+    private val _storagePermissionState = MutableStateFlow(StoragePermissionState())
+    val storagePermissionState: StateFlow<StoragePermissionState> = _storagePermissionState.asStateFlow()
+
+    fun handleStorageAccess() {
+        checkStoragePermissions()
+        val currentState = _storagePermissionState.value
+
+        when {
+            currentState.hasPermission -> {
+                _storagePermissionState.update {
+                    it.copy(shouldOpenGallery = true)
+                }
+            }
+            currentState.permanentlyDenied -> {
+                handleError(Exception(context.getString(R.string.error_storage_permission_required)))
+            }
+            else -> requestStoragePermissions()
+        }
+    }
+
+    fun onPhotoSelectedFromGallery(uri: Uri) {
+        _uiState.update {
+            it.copy(
+                capturedPhotoUri = uri,
+            )
+        }
+    }
+
+    fun resetGalleryOpenRequest() {
+        _storagePermissionState.update {
+            it.copy(shouldOpenGallery = false)
+        }
+    }
+
+    private fun checkStoragePermissions(){
+        val granted = checkCameraPermissionUseCase.hasStoragePermission()
+
+        _storagePermissionState.update {
+            it.copy(
+                hasPermission = granted,
+                permanentlyDenied = if (granted) false else it.permanentlyDenied
+            )
+        }
+    }
+
+    private fun requestStoragePermissions() {
+        _storagePermissionState.update {
+            it.copy(
+                shouldRequest = true,
+            )
+        }
+    }
+
+    fun onStoragePermissionResult(granted: Boolean, permanentlyDenied: Boolean) {
+        _storagePermissionState.update {
+            it.copy(
+                shouldRequest = false,
+                hasPermission = granted,
+                permanentlyDenied = permanentlyDenied
+            )
+        }
+    }
+
+    fun resetStoragePermissionRequest() {
+        _storagePermissionState.update { it.copy(shouldRequest = false) }
     }
 
     fun initializeCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
@@ -41,74 +109,59 @@ class AddMealAIVM @Inject constructor(
             handleLoading(true)
 
             if (!checkCameraPermissionUseCase.hasCameraPermission()) {
-                _uiState.value = _uiState.value.copy(
-                    error = "Camera permissions not granted"
-                )
+                handleError(Exception(context.getString(R.string.error_camera_permission_required)))
                 return@launch
             }
 
             cameraService.initializeCamera(lifecycleOwner, previewView)
                 .onSuccess {
-                    handleLoading(false)
-                    _uiState.value = _uiState.value.copy(
-                        isCameraReady = true,
-                        hasFlashUnit = toggleFlashUseCase.hasFlashUnit()
-                    )
+                    _uiState.update {
+                        it.copy(
+                            isCameraReady = true,
+                            hasFlashUnit = toggleFlashUseCase.hasFlashUnit()
+                        )
+                    }
+                } 
+                .onFailure {
+                    handleError(Exception(context.getString(R.string.error_camera_init_failed)), context) {
+                        initializeCamera(lifecycleOwner, previewView)
+                    }
                 }
-                .onFailure { exception ->
-                    handleLoading(false)
-                    _uiState.value = _uiState.value.copy(
-                        error = exception.message ?: "Failed to initialize camera"
-                    )
-                }
+                .also { handleLoading(false) }
         }
     }
 
-    fun capturePhoto() {
+    fun capturePhoto() { 
+        if (!_uiState.value.isCameraReady) {
+            handleError(Exception(context.getString(R.string.error_camera_not_ready)))
+            return
+        }
+
         viewModelScope.launch {
             handleLoading(true)
-            _uiState.value = _uiState.value.copy(error = null)
 
             capturePhotoUseCase()
                 .onSuccess { filePath ->
                     val uri = filePath.toUri()
-                    handleLoading(false)
-                    _uiState.value = _uiState.value.copy(
-                        capturedPhotoUri = uri
-                    )
+                    _uiState.update { it.copy(capturedPhotoUri = uri) }
                 }
-                .onFailure { exception ->
-                    handleLoading(false)
-                    _uiState.value = _uiState.value.copy(
-                        error = exception.message ?: "Failed to capture photo"
-                    )
+                .onFailure {
+                    handleError(Exception(context.getString(R.string.error_capture_failed)))
                 }
+                .also { handleLoading(false) }
         }
     }
 
     fun toggleFlash() {
+        if (!_uiState.value.hasFlashUnit) return
+
         toggleFlashUseCase()
             .onSuccess {
-                _uiState.value = _uiState.value.copy(
-                    isFlashOn = !_uiState.value.isFlashOn
-                )
+                _uiState.update { it.copy(isFlashOn = !it.isFlashOn) }
             }
-            .onFailure { exception ->
-                _uiState.value = _uiState.value.copy(
-                    error = exception.message ?: "Failed to toggle flash"
-                )
+            .onFailure {
+                handleError(Exception(context.getString(R.string.error_flash_toggle_failed)))
             }
-    }
-
-    private fun checkPermissions(){
-        val hasPermissions = checkCameraPermissionUseCase.hasCameraPermission()
-        val isAvailable = checkCameraPermissionUseCase.isCameraAvailable()
-
-        _uiState.update {
-            it.copy(
-                hasPermissions = hasPermissions && isAvailable
-            )
-        }
     }
 
     override fun onCleared() {

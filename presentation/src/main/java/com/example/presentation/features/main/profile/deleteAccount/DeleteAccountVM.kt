@@ -27,7 +27,7 @@ class DeleteAccountVM @Inject constructor(
                     _showToast.emit(Unit)
                     handleLoading(false)
                 }.onFailure { error ->
-                    handleUnexpectedError(error)
+                    handleError(error)
                 }
         }
     }

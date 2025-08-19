@@ -17,7 +17,7 @@ fun HandleError(
 ) {
 
     when {
-        baseUiState.isConnectionError -> {
+        baseUiState.isConnectionError || onConnectionRetry!=null -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter

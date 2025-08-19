@@ -20,12 +20,12 @@ fun MacroNutrientsSmallSection(protein: Int, fat: Int, carbs: Int){
             protein
         )
         MacroNutrientSmallItem(
-            stringResource(R.string.fat),
-            fat
-        )
-        MacroNutrientSmallItem(
             stringResource(R.string.carb),
             carbs
+        )
+        MacroNutrientSmallItem(
+            stringResource(R.string.fat),
+            fat
         )
     }
 }

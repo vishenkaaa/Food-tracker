@@ -20,13 +20,13 @@ fun MacroNutrientsBigSection(protein: Int, fat: Int, carbs: Int){
         )
 
         MacroNutrientBigItem(
-            label = stringResource(R.string.fat),
-            value = stringResource(R.string.g, fat)
+            label = stringResource(R.string.carb),
+            value = stringResource(R.string.g, carbs)
         )
 
         MacroNutrientBigItem(
-            label = stringResource(R.string.carb),
-            value = stringResource(R.string.g, carbs)
+            label = stringResource(R.string.fat),
+            value = stringResource(R.string.g, fat)
         )
     }
 }

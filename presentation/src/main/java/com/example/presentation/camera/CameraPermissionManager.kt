@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.security.Permissions
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,8 +19,6 @@ class CameraPermissionManager @Inject constructor(
                 Manifest.permission.READ_MEDIA_IMAGES
             else
                 Manifest.permission.READ_EXTERNAL_STORAGE
-
-        val REQUIRED_CAMERA_PERMISSION = Manifest.permission.CAMERA
     }
 
     fun hasCameraPermission(): Boolean{

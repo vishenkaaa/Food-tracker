@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,10 +20,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,7 +46,6 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.softShadow
-import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
 import java.time.LocalDate
@@ -61,7 +57,7 @@ fun OpenMealRoute(
     dishes: List<Dish>,
     date: LocalDate,
     targetCalories: Int,
-    onNavigateBack: () -> Unit = {},
+    onBackPressed: () -> Unit,
     onNavigateToAddDish: (MealType, LocalDate) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,7 +70,7 @@ fun OpenMealRoute(
     OpenMealScreen(
         uiState = uiState,
         baseUiState = baseUiState,
-        onNavigateBack = onNavigateBack,
+        onBackPressed = onBackPressed,
         onAddDishClick = { onNavigateToAddDish(mealType, date) },
         onEditDish = { dish -> viewModel.onEditDish(dish) },
         onRemoveDish = { dish -> viewModel.onRemoveDish(dish) }
@@ -85,7 +81,7 @@ fun OpenMealRoute(
 fun OpenMealScreen(
     uiState: OpenMealUIState,
     baseUiState: BaseUiState,
-    onNavigateBack: () -> Unit,
+    onBackPressed: () -> Unit,
     onAddDishClick: () -> Unit,
     onEditDish: (Dish) -> Unit,
     onRemoveDish: (Dish) -> Unit
@@ -95,7 +91,7 @@ fun OpenMealScreen(
         topBar = {
             LeftAlignedHeader(
                 mealType = uiState.mealType,
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onBackPressed
             )
         },
         floatingActionButton = {

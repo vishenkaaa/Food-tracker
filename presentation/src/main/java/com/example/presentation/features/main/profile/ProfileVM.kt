@@ -45,7 +45,7 @@ class ProfileVM @Inject constructor(
                     handleLoading(false)
                 }
                 .onFailure { error ->
-                    handleUnexpectedError(error)
+                    handleError(error)
                 }
         }
     }
@@ -113,7 +113,7 @@ class ProfileVM @Inject constructor(
                     handleLoading(false)
                 }
                 .onFailure { error ->
-                    handleUnexpectedError(error)
+                    handleError(error)
                     onDialogDismiss()
                 }
         }

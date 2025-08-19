@@ -20,7 +20,7 @@ open class BaseViewModel : ViewModel() {
         _baseUiState.update { it.copy(isLoading = isLoading) }
     }
 
-    protected open fun handleUnexpectedError(
+    protected open fun handleError(
         e: Throwable,
         context: Context? = null,
         retryAction: (() -> Unit)? = null

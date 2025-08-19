@@ -8,6 +8,7 @@ import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.camera.CheckCameraPermissionUseCase
 import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
+import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.diary.extensions.calculateMealNutrition
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
@@ -30,7 +31,7 @@ class DiaryVM @Inject constructor(
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getTargetCaloriesUseCase: GetTargetCaloriesUseCase,
     private val getMealsForDateRangeUseCase: GetMealsForDateRangeUseCase,
-    private val checkCameraPermissionUseCase: CheckCameraPermissionUseCase
+    private val checkCameraPermissionUseCase: CheckCameraPermissionUseCase,
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(DiaryScreenUIState())
     val uiState: StateFlow<DiaryScreenUIState> = _uiState.asStateFlow()
@@ -48,12 +49,12 @@ class DiaryVM @Inject constructor(
         viewModelScope.launch {
             handleLoading(true)
             try {
-                val userId = getCurrentUserIdUseCase() ?: throw Exception("User not authenticated")
+                val userId = getCurrentUserIdUseCase() ?: throw Exception(context.getString(R.string.user_not_authenticated))
                 loadTargetCalories(userId)
                 loadWeekData(userId, _uiState.value.weekStart)
                 calculateSelectedDateNutrition(_uiState.value.selectedDate)
             } catch (e: Exception) {
-                handleUnexpectedError(e, context, { loadInitialData() })
+                handleError(e, context, { loadInitialData() })
             } finally {
                 handleLoading(false)
             }
@@ -123,7 +124,7 @@ class DiaryVM @Inject constructor(
         viewModelScope.launch {
             handleLoading(true)
             try {
-                val userId = getCurrentUserIdUseCase() ?: throw Exception("User not authenticated")
+                val userId = getCurrentUserIdUseCase() ?: throw Exception(context.getString(R.string.user_not_authenticated))
                 loadWeekData(userId, weekStart)
 
                 val selectedDate = _uiState.value.selectedDate
@@ -135,7 +136,7 @@ class DiaryVM @Inject constructor(
                 _uiState.update { it.copy(selectedDate = newSelectedDate) }
                 calculateSelectedDateNutrition(newSelectedDate)
             } catch (e: Exception) {
-                handleUnexpectedError(e, context, retryAction)
+                handleError(e, context, retryAction)
             } finally {
                 handleLoading(false)
             }
@@ -149,7 +150,7 @@ class DiaryVM @Inject constructor(
                 _uiState.update { it.copy(caloriesTarget = calories) }
             },
             onFailure = { e ->
-               handleUnexpectedError(e, context)
+               handleError(e, context)
             }
         )
     }
@@ -164,7 +165,7 @@ class DiaryVM @Inject constructor(
                 _uiState.update { it.copy(weekMeals = weekMealsList) }
             },
             onFailure = { e ->
-                handleUnexpectedError(e, context)
+                handleError(e, context)
             }
         )
     }

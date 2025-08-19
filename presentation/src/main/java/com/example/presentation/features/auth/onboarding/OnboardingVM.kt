@@ -207,10 +207,10 @@ class OnboardingVM @Inject constructor(
 
                 updateUserInfoUseCase.invoke(userWithCalculations)
                     .onFailure { exception ->
-                        handleUnexpectedError(exception, context)
+                        handleError(exception, context)
                     }
             } catch (e: Exception) {
-                handleUnexpectedError(e, context)
+                handleError(e, context)
             } finally {
                 handleLoading(isLoading = false)
             }

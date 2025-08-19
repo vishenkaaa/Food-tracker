@@ -165,6 +165,7 @@ private fun NavGraphBuilder.mainGraph(
             AddMealAIRoute(
                 mealType = args.mealType,
                 date = LocalDate.parse(args.date),
+                onBackPressed = { navController.popBackStack() }
             )
         }
 
@@ -189,9 +190,14 @@ private fun NavGraphBuilder.mainGraph(
                 dishes = dishes,
                 date = LocalDate.parse(args.date),
                 targetCalories = args.targetCalories,
-                onNavigateBack = { navController.popBackStack() },
+                onBackPressed = { navController.popBackStack() },
                 onNavigateToAddDish = { mealType, date ->
-                    // TODO Navigate to add dish screen
+                    navController.navigate(
+                        MainGraph.AddMealAI(
+                            mealType = mealType,
+                            date = date.toString(),
+                        )
+                    )
                 }
             )
         }

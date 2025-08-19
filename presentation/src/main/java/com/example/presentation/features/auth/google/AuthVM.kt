@@ -45,11 +45,11 @@ class AuthVM @Inject constructor(
                     }
                 } else {
                     val exception = result.exceptionOrNull() ?: Exception(context.getString(R.string.unknown_error))
-                    handleUnexpectedError(exception)
+                    handleError(exception)
                     _state.value = AuthState.Error(exception.message ?: context.getString(R.string.unknown_error))
                 }
             } catch (e: Exception) {
-                handleUnexpectedError(e, context)
+                handleError(e, context)
                 _state.value = AuthState.Error(e.message ?: context.getString(R.string.unknown_error))
             } finally {
                 handleLoading(false)

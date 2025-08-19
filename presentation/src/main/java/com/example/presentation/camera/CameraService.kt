@@ -115,7 +115,12 @@ class CameraService @Inject constructor(
             )
 
             val currentTorchState = camera.cameraInfo.torchState.value
-            val newTorchState = currentTorchState != TorchState.ON
+
+            val newTorchState = when (currentTorchState) {
+                TorchState.ON -> false
+                TorchState.OFF -> true
+                else -> return Result.failure(IllegalStateException("Torch state unknown"))
+            }
 
             camera.cameraControl.enableTorch(newTorchState)
             Result.success(Unit)
