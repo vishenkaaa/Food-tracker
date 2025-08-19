@@ -99,5 +99,7 @@
     <string name="error_camera_not_ready">Камера не готова</string>
     <string name="error_capture_failed">Не вдалося зробити фото</string>
     <string name="error_flash_toggle_failed">Не вдалося змінити стан спалаху</string>
+    <string name="error_flash_not_available">На цьому пристрої немає ліхтарика</string>
     <string name="user_not_authenticated">Користувач не авторизований</string>
+    <string name="error_loading_data">Не вдалося завантажити дані профілю</string>
 </resources>

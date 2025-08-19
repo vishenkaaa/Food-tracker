@@ -1,5 +1,6 @@
 package com.example.presentation.features.main.profile
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.user.Gender
@@ -12,6 +13,7 @@ import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +28,8 @@ class ProfileVM @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val signOutUseCase: SignOutUseCase,
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
-    private val authStateManager: AuthStateManager
+    private val authStateManager: AuthStateManager,
+    @ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -45,7 +48,7 @@ class ProfileVM @Inject constructor(
                     handleLoading(false)
                 }
                 .onFailure { error ->
-                    handleError(error)
+                    handleError(error, context) { loadUserProfile() }
                 }
         }
     }
@@ -113,7 +116,7 @@ class ProfileVM @Inject constructor(
                     handleLoading(false)
                 }
                 .onFailure { error ->
-                    handleError(error)
+                    handleError(error, context) { saveDialogChanges() }
                     onDialogDismiss()
                 }
         }

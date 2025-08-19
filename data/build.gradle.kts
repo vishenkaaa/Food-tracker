@@ -4,6 +4,7 @@ plugins {
 
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -15,6 +16,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField(
+            "String",
+            "OPENAI_API_KEY",
+            "\"${project.findProperty("OPENAI_API_KEY") ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -32,6 +39,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -58,4 +69,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
     implementation(libs.firebase.crashlytics)
+
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.serialization.json)
 }

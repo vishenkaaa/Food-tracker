@@ -1,6 +1,7 @@
 package com.example.presentation.features.main.diary
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
@@ -54,7 +55,8 @@ class DiaryVM @Inject constructor(
                 loadWeekData(userId, _uiState.value.weekStart)
                 calculateSelectedDateNutrition(_uiState.value.selectedDate)
             } catch (e: Exception) {
-                handleError(e, context, { loadInitialData() })
+                handleError(Exception(context.getString(R.string.error_loading_data)), context) { loadInitialData() }
+                Log.e("DiaryVM", "loadInitialData: ", e)
             } finally {
                 handleLoading(false)
             }
@@ -136,26 +138,29 @@ class DiaryVM @Inject constructor(
                 _uiState.update { it.copy(selectedDate = newSelectedDate) }
                 calculateSelectedDateNutrition(newSelectedDate)
             } catch (e: Exception) {
-                handleError(e, context, retryAction)
+                handleError(Exception(context.getString(R.string.error_loading_data)), context) { retryAction() }
+                Log.e("DiaryVM", "loadNewWeek: ", e)
             } finally {
                 handleLoading(false)
             }
         }
     }
 
-    private suspend fun loadTargetCalories(userId: String) {
+    private suspend fun loadTargetCalories(userId: String): Result<Unit> {
         getTargetCaloriesUseCase(userId).fold(
             onSuccess = { calories ->
                 currentTargetCalories = calories
                 _uiState.update { it.copy(caloriesTarget = calories) }
+                return Result.success(Unit)
             },
             onFailure = { e ->
-               handleError(e, context)
+                Log.e("DiaryVM", "loadTargetCalories: ", e)
+                return Result.failure(e)
             }
         )
     }
 
-    private suspend fun loadWeekData(userId: String, weekStart: LocalDate) {
+    private suspend fun loadWeekData(userId: String, weekStart: LocalDate): Result<Unit> {
         val weekEnd = weekStart.plusDays(6)
         val startDateStr = weekStart.toString()
         val endDateStr = weekEnd.toString()
@@ -163,9 +168,11 @@ class DiaryVM @Inject constructor(
         getMealsForDateRangeUseCase(userId, startDateStr, endDateStr).fold(
             onSuccess = { weekMealsList ->
                 _uiState.update { it.copy(weekMeals = weekMealsList) }
+                return Result.success(Unit)
             },
             onFailure = { e ->
-                handleError(e, context)
+                Log.e("DiaryVM", "loadWeekData: ", e)
+                return Result.failure(e)
             }
         )
     }

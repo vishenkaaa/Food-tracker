@@ -1,10 +1,8 @@
 package com.example.presentation.features.main.diary.addMeals.cameraAI.models
 
-import android.net.Uri
-
 data class AddMealAIUiState(
     val isCameraReady: Boolean = false,
-    val capturedPhotoUri: Uri? = null,
+    val capturedPhotoUri: String? = null,
     val isFlashOn: Boolean = false,
     val hasFlashUnit: Boolean = false
 )

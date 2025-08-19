@@ -38,10 +38,6 @@ class OpenMealVM @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun onAddDishClick() {
-        // TODO: Navigate to add dish screen
-    }
-
     fun onEditDish(dish: Dish) {
         // TODO: Open edit
     }

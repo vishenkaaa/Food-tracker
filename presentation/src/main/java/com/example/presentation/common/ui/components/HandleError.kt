@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
+import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 
 @Composable
@@ -15,12 +18,11 @@ fun HandleError(
     onErrorConsume: (() -> Unit)? = null,
     onConnectionRetry: (() -> Unit)? = null
 ) {
-
     when {
-        baseUiState.isConnectionError || onConnectionRetry!=null -> {
+        baseUiState.isConnectionError -> {
             Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomCenter
+                modifier = modifier.fillMaxSize().zIndex(10f),
+                contentAlignment = Alignment.BottomCenter,
             ) {
                 ConnectionErrorSnackBar(
                     onErrorDismissed = { onErrorConsume?.invoke() },
@@ -31,10 +33,15 @@ fun HandleError(
 
         baseUiState.unexpectedError?.isNotBlank() == true -> {
             Box(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize().zIndex(10f),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                ErrorSnackbar(error = baseUiState.unexpectedError.toString())
+                ErrorSnackBar(
+                    error = baseUiState.unexpectedError.toString(),
+                    actionLabel = if (onConnectionRetry != null) stringResource(R.string.retry) else null,
+                    onErrorConsumed = onConnectionRetry,
+                    onErrorDismissed = onErrorConsume
+                )
             }
         }
     }

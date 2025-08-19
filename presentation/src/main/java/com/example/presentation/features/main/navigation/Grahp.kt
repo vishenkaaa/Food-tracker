@@ -49,6 +49,13 @@ sealed class MainGraph {
     ) : MainGraph()
 
     @Serializable
+    data class DishLoading(
+        val mealType: MealType,
+        val date: String,
+        val imgUri: String
+    ) : MainGraph()
+
+    @Serializable
     data class OpenMeal(
         val mealType: MealType,
         val date: String,

@@ -53,6 +53,7 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.camera.CameraPermissionManager
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
+import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.features.main.diary.addMeals.cameraAI.models.AddMealAIUiState
 import com.example.presentation.features.main.diary.extensions.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -65,6 +66,7 @@ fun AddMealAIRoute(
     mealType: MealType,
     date: LocalDate,
     onBackPressed: () -> Unit,
+    onNavigateToAnalyze: (String) -> Unit,
     viewModel: AddMealAIVM = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -75,8 +77,7 @@ fun AddMealAIRoute(
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        if(uri!=null) viewModel.onPhotoSelectedFromGallery(uri)
-
+        if(uri!=null) viewModel.onPhotoSelectedFromGallery(uri.toString())
     }
 
     val galleryPermissionLauncher = rememberPermissionState(
@@ -106,6 +107,11 @@ fun AddMealAIRoute(
             galleryLauncher.launch("image/*")
             viewModel.resetGalleryOpenRequest()
         }
+    }
+
+    LaunchedEffect(uiState.capturedPhotoUri) {
+        if(uiState.capturedPhotoUri!=null)
+            onNavigateToAnalyze(uiState.capturedPhotoUri!!)
     }
 
     AddMealAIScreen(
@@ -180,6 +186,7 @@ fun AddMealAIScreen(
                 )
             }
         }
+        LoadingBackground(baseUiState.isLoading)
         HandleError(
             baseUiState = baseUiState,
             onErrorConsume = onErrorConsume,

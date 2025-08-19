@@ -1,9 +1,7 @@
 package com.example.presentation.features.main.diary.addMeals.cameraAI
 
 import android.content.Context
-import android.net.Uri
 import androidx.camera.view.PreviewView
-import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.camera.CapturePhotoUseCase
@@ -57,7 +55,7 @@ class AddMealAIVM @Inject constructor(
         }
     }
 
-    fun onPhotoSelectedFromGallery(uri: Uri) {
+    fun onPhotoSelectedFromGallery(uri: String) {
         _uiState.update {
             it.copy(
                 capturedPhotoUri = uri,
@@ -142,8 +140,7 @@ class AddMealAIVM @Inject constructor(
 
             capturePhotoUseCase()
                 .onSuccess { filePath ->
-                    val uri = filePath.toUri()
-                    _uiState.update { it.copy(capturedPhotoUri = uri) }
+                    _uiState.update { it.copy(capturedPhotoUri = filePath) }
                 }
                 .onFailure {
                     handleError(Exception(context.getString(R.string.error_capture_failed)))
@@ -153,7 +150,10 @@ class AddMealAIVM @Inject constructor(
     }
 
     fun toggleFlash() {
-        if (!_uiState.value.hasFlashUnit) return
+        if (!_uiState.value.hasFlashUnit){
+            handleError(Exception(context.getString(R.string.error_flash_not_available)))
+            return
+        }
 
         toggleFlashUseCase()
             .onSuccess {

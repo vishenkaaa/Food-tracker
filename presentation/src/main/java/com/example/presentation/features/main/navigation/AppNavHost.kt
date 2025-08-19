@@ -4,8 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -26,12 +24,13 @@ import com.example.domain.manager.UserAuthState
 import com.example.domain.model.diary.Dish
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
-import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.diary.DiaryRoute
 import com.example.presentation.features.main.diary.addMeals.cameraAI.AddMealAIRoute
+import com.example.presentation.features.main.diary.addMeals.dishLoading.DishLoadingRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
+import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -165,6 +164,24 @@ private fun NavGraphBuilder.mainGraph(
             AddMealAIRoute(
                 mealType = args.mealType,
                 date = LocalDate.parse(args.date),
+                onNavigateToAnalyze = { imgUri ->
+                    navController.navigate(
+                    MainGraph.DishLoading(
+                        mealType = args.mealType,
+                        date = args.date,
+                        imgUri = imgUri
+                    )
+                )},
+                onBackPressed = { navController.popBackStack() }
+            )
+        }
+
+        composable<MainGraph.DishLoading> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.DishLoading>()
+            DishLoadingRoute(
+                mealType = args.mealType,
+                date = LocalDate.parse(args.date),
+                imgUri = args.imgUri,
                 onBackPressed = { navController.popBackStack() }
             )
         }
