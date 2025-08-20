@@ -25,12 +25,13 @@ import com.example.domain.model.diary.Dish
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
-import com.example.presentation.features.main.diary.addMeals.cameraAI.AddMealAIRoute
-import com.example.presentation.features.main.diary.addMeals.dishLoading.DishLoadingRoute
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.AddMealAIRoute
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading.DishLoadingRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
 import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
+import com.example.presentation.features.main.statistics.StatisticsRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -220,12 +221,11 @@ private fun NavGraphBuilder.mainGraph(
         }
 
         composable<MainGraph.Statistics> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Statistics Screen")
+                backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Graphs.Main>()
             }
+            StatisticsRoute(hiltViewModel(parentEntry))
         }
 
         composable<MainGraph.Profile> { backStackEntry ->

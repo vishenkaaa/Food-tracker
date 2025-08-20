@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.addMeals.cameraAI
+package com.example.presentation.features.main.diary.addMeals.addMealsAI
 
 import android.content.Context
 import androidx.camera.view.PreviewView
@@ -11,8 +11,8 @@ import com.example.domain.usecase.camera.ToggleFlashUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.camera.CameraService
-import com.example.presentation.features.main.diary.addMeals.cameraAI.models.AddMealAIUiState
-import com.example.presentation.features.main.diary.addMeals.cameraAI.models.StoragePermissionState
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.AddMealAIUiState
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.StoragePermissionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

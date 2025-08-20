@@ -4,7 +4,7 @@ import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
-import com.example.presentation.features.main.diary.models.NutritionData
+import com.example.domain.model.diary.NutritionData
 import java.time.LocalDate
 
 fun DiaryScreenUIState.getNutritionForMealType(mealType: MealType): NutritionData {

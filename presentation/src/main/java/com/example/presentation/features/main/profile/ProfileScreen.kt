@@ -45,6 +45,7 @@ import com.example.domain.model.user.User
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.CenterAlignedHeader
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.extensions.displayName
@@ -111,7 +112,7 @@ fun ProfileScreen(
                 .padding(horizontal = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            ProfileHeader()
+            CenterAlignedHeader(stringResource(R.string.profile))
 
             if (isLoading || hasError) ProfileUserCardShimmer()
             else ProfileUserCard(uiState.user!!)
@@ -158,23 +159,6 @@ private fun Divider() {
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.onBackground.copy(0.2f))
     )
-}
-
-@Composable
-private fun ProfileHeader() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = stringResource(R.string.profile),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(vertical = 18.dp)
-        )
-    }
 }
 
 @Composable

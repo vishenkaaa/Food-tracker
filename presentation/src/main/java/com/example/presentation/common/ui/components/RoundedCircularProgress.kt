@@ -1,5 +1,6 @@
 package com.example.presentation.common.ui.components
 import androidx.compose.foundation.Canvas
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -15,8 +16,8 @@ fun RoundedCircularProgress(
     progress: Float,
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
-    progressColor: Color = Color.Blue,
-    trackColor: Color = Color.Gray
+    progressColor: Color = MaterialTheme.colorScheme.primary,
+    trackColor: Color = MaterialTheme.colorScheme.surface
 ) {
     Canvas(modifier = modifier) {
         val strokeWidthPx = strokeWidth.toPx()

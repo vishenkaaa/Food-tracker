@@ -1,7 +1,7 @@
 package com.example.presentation.features.main.diary.models
 
 import com.example.domain.model.diary.DailyMeals
-import com.example.domain.model.diary.MealType
+import com.example.domain.model.diary.NutritionData
 import java.time.DayOfWeek
 import java.time.LocalDate
 

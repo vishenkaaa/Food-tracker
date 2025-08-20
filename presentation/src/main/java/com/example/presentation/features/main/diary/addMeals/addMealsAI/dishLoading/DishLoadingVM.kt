@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.addMeals.dishLoading
+package com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading
 
 import android.content.Context
 import android.util.Log

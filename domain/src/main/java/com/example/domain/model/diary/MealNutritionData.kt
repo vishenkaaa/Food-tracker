@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.models
+package com.example.domain.model.diary
 
 data class MealNutritionData(
     val breakfast: NutritionData = NutritionData(),

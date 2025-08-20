@@ -104,7 +104,6 @@ fun DiaryRoute(
         }
     }
 
-
     DiaryScreen(
         uiState = uiState,
         baseUiState = baseUiState,
@@ -126,7 +125,7 @@ fun DiaryRoute(
                 cameraPermissionState.permanentlyDenied -> {
                     Toast.makeText(
                         context,
-                        "Щоб додати, увімкніть доступ до камери в налаштуваннях",
+                        context.getString(R.string.request_camera_permission),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -385,8 +384,6 @@ fun CaloriesProgressSection(
                     .clip(RoundedCornerShape(150.dp))
                     .background(MaterialTheme.colorScheme.primary.copy(0.05f)),
                 strokeWidth = 20.dp,
-                progressColor = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surface
             )
 
             Column(

@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.addMeals.dishLoading
+package com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement

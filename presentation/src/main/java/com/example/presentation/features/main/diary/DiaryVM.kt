@@ -11,11 +11,11 @@ import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
-import com.example.presentation.features.main.diary.extensions.calculateMealNutrition
+import com.example.domain.extension.calculateMealNutrition
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
-import com.example.presentation.features.main.diary.models.NutritionData
+import com.example.domain.model.diary.NutritionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

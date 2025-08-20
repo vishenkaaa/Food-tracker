@@ -181,8 +181,6 @@ fun OpenMealNutritionSection(
                     .fillMaxSize()
                     .clip(RoundedCornerShape(150.dp)) ,
                 strokeWidth = 16.dp,
-                progressColor = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surface
             )
 
             Column(

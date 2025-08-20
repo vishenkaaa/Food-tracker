@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.addMeals.cameraAI
+package com.example.presentation.features.main.diary.addMeals.addMealsAI
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -54,7 +54,7 @@ import com.example.presentation.camera.CameraPermissionManager
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.LoadingBackground
-import com.example.presentation.features.main.diary.addMeals.cameraAI.models.AddMealAIUiState
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.AddMealAIUiState
 import com.example.presentation.features.main.diary.extensions.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState

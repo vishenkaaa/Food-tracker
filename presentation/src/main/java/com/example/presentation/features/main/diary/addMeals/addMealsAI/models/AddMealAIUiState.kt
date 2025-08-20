@@ -1,4 +1,4 @@
-package com.example.presentation.features.main.diary.addMeals.cameraAI.models
+package com.example.presentation.features.main.diary.addMeals.addMealsAI.models
 
 data class AddMealAIUiState(
     val isCameraReady: Boolean = false,
