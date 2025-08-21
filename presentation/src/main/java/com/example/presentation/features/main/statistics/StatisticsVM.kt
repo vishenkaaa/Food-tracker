@@ -1,6 +1,7 @@
 package com.example.presentation.features.main.statistics
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.statistics.NutritionStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +36,7 @@ class StatisticsVM @Inject constructor(
 
     fun onPeriodSelected(period: StatisticsPeriod) {
         _uiState.update { it.copy(selectedPeriod = period) }
-        if (period != StatisticsPeriod.WEEK) loadStatistics() //TODO Remove check
+        loadStatistics()
     }
 
     fun loadStatistics() {
@@ -49,8 +52,11 @@ class StatisticsVM @Inject constructor(
             }
 
             val result = getNutritionStatisticsUseCase(
-                currentUserId,
-                _uiState.value.selectedPeriod
+                userId = currentUserId,
+                period = _uiState.value.selectedPeriod,
+                weekStart = if (_uiState.value.selectedPeriod == StatisticsPeriod.WEEK) {
+                    _uiState.value.weekStart
+                } else null
             )
 
             result.fold(
@@ -68,9 +74,22 @@ class StatisticsVM @Inject constructor(
             )
         }
     }
+
+    fun onPreviousWeek() {
+        val newWeekStart = _uiState.value.weekStart.minusWeeks(1)
+        _uiState.update { it.copy(weekStart = newWeekStart) }
+        loadStatistics()
+    }
+
+    fun onNextWeek() {
+        val newWeekStart = _uiState.value.weekStart.plusWeeks(1)
+        _uiState.update { it.copy(weekStart = newWeekStart) }
+        loadStatistics()
+    }
 }
 
 data class StatisticsUiState(
     val selectedPeriod: StatisticsPeriod = StatisticsPeriod.TODAY,
-    val nutritionStatistics: NutritionStatistics? = null
+    val nutritionStatistics: NutritionStatistics? = null,
+    val weekStart: LocalDate = LocalDate.now().with(DayOfWeek.MONDAY)
 )

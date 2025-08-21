@@ -2,11 +2,14 @@ package com.example.domain.usecase.meal
 
 import com.example.domain.extension.calculateMealNutrition
 import com.example.domain.extension.getTotalNutrition
+import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
 import com.example.domain.model.statistics.DailyNutritionStatistics
+import com.example.domain.model.statistics.DayStatistics
 import com.example.domain.model.statistics.MealStatistics
 import com.example.domain.model.statistics.NutritionStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
+import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import java.time.LocalDate
 import javax.inject.Inject
@@ -17,7 +20,8 @@ class GetNutritionStatisticsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         userId: String,
-        period: StatisticsPeriod
+        period: StatisticsPeriod,
+        weekStart: LocalDate? = null
     ): Result<NutritionStatistics> {
         return try {
             val targetCaloriesResult = getTargetCaloriesUseCase(userId)
@@ -38,12 +42,54 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                     getDailyStatistics(userId, yesterdayDate, targetCalories)
                 }
                 StatisticsPeriod.WEEK -> {
-                    TODO()
+                    getWeeklyStatistics(userId, weekStart!!, targetCalories)
                 }
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private suspend fun getWeeklyStatistics(
+        userId: String,
+        weekStart: LocalDate,
+        targetCalories: Int
+    ): Result<NutritionStatistics> {
+        return try {
+            val dayStatistics = mutableListOf<DayStatistics>()
+
+            for (i in 0..6) {
+                val currentDate = weekStart.plusDays(i.toLong())
+                val mealsResult = getMealsForDateUseCase(userId, currentDate.toString())
+
+                val totalCalories = if (mealsResult.isSuccess) {
+                    val dailyMeals = mealsResult.getOrThrow()
+                    calculateDayCalories(dailyMeals)
+                } else 0
+
+                dayStatistics.add(
+                    DayStatistics(
+                        date = currentDate,
+                        calories = totalCalories
+                    )
+                )
+            }
+
+            val weeklyStatistics = WeeklyNutritionStatistics(
+                targetCalories = targetCalories,
+                dayStatistics = dayStatistics,
+                weekStart = weekStart
+            )
+
+            Result.success(NutritionStatistics.Weekly(weeklyStatistics))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private fun calculateDayCalories(dailyMeals: DailyMeals): Int {
+        val allDishes = dailyMeals.breakfast + dailyMeals.lunch + dailyMeals.dinner + dailyMeals.snacks
+        return allDishes.sumOf { it.kcal }
     }
 
     private suspend fun getDailyStatistics(
