@@ -5,12 +5,17 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealNutritionData
 import com.example.domain.model.diary.NutritionData
 
-fun DailyMeals.getTotalCalories(): Int {
-    val mealNutrition = this.calculateMealNutrition()
-    return mealNutrition.breakfast.calories +
-            mealNutrition.lunch.calories +
-            mealNutrition.dinner.calories +
-            mealNutrition.snacks.calories
+fun DailyMeals.calculateDayNutrition(): NutritionData {
+    val allDishes = this.breakfast + this.lunch + this.dinner + this.snacks
+
+    return allDishes.fold(NutritionData()) { total, dish ->
+        NutritionData(
+            calories = total.calories + dish.kcal,
+            carb = total.carb + dish.carb,
+            protein = total.protein + dish.protein,
+            fat = total.fat + dish.fats
+        )
+    }
 }
 
 fun DailyMeals.getTotalNutrition(): NutritionData {

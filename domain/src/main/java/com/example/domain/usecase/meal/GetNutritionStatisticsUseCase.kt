@@ -1,9 +1,11 @@
 package com.example.domain.usecase.meal
 
+import com.example.domain.extension.calculateDayNutrition
 import com.example.domain.extension.calculateMealNutrition
 import com.example.domain.extension.getTotalNutrition
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
+import com.example.domain.model.diary.NutritionData
 import com.example.domain.model.statistics.DailyNutritionStatistics
 import com.example.domain.model.statistics.DayStatistics
 import com.example.domain.model.statistics.MealStatistics
@@ -62,34 +64,52 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 val currentDate = weekStart.plusDays(i.toLong())
                 val mealsResult = getMealsForDateUseCase(userId, currentDate.toString())
 
-                val totalCalories = if (mealsResult.isSuccess) {
+                val dayNutrition = if (mealsResult.isSuccess) {
                     val dailyMeals = mealsResult.getOrThrow()
-                    calculateDayCalories(dailyMeals)
-                } else 0
+                    dailyMeals.calculateDayNutrition()
+                } else {
+                    NutritionData(0, 0, 0, 0)
+                }
 
                 dayStatistics.add(
                     DayStatistics(
                         date = currentDate,
-                        calories = totalCalories
+                        calories = dayNutrition.calories,
+                        carbs = dayNutrition.carb,
+                        protein = dayNutrition.protein,
+                        fat = dayNutrition.fat
                     )
                 )
             }
 
+            val averageCalories = dayStatistics.map { it.calories }.average().toInt()
+            val averageCarbs = dayStatistics.map { it.carbs }.average().toInt()
+            val averageProtein = dayStatistics.map { it.protein }.average().toInt()
+            val averageFat = dayStatistics.map { it.fat }.average().toInt()
+
+            val maxCalories = dayStatistics.maxOfOrNull { it.calories } ?: 0
+            val maxCarbs = dayStatistics.maxOfOrNull { it.carbs } ?: 0
+            val maxProtein = dayStatistics.maxOfOrNull { it.protein } ?: 0
+            val maxFat = dayStatistics.maxOfOrNull { it.fat } ?: 0
+
             val weeklyStatistics = WeeklyNutritionStatistics(
                 targetCalories = targetCalories,
                 dayStatistics = dayStatistics,
-                weekStart = weekStart
+                weekStart = weekStart,
+                averageCalories = averageCalories,
+                averageCarbs = averageCarbs,
+                averageProtein = averageProtein,
+                averageFat = averageFat,
+                maxCalories = maxCalories,
+                maxCarbs = maxCarbs,
+                maxProtein = maxProtein,
+                maxFat = maxFat
             )
 
             Result.success(NutritionStatistics.Weekly(weeklyStatistics))
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
-
-    private fun calculateDayCalories(dailyMeals: DailyMeals): Int {
-        val allDishes = dailyMeals.breakfast + dailyMeals.lunch + dailyMeals.dinner + dailyMeals.snacks
-        return allDishes.sumOf { it.kcal }
     }
 
     private suspend fun getDailyStatistics(

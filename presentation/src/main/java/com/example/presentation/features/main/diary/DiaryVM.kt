@@ -3,6 +3,7 @@ package com.example.presentation.features.main.diary
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.example.domain.extension.calculateDayNutrition
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
@@ -180,7 +181,7 @@ class DiaryVM @Inject constructor(
     private fun calculateSelectedDateNutrition(selectedDate: LocalDate) {
         val dailyMeals = _uiState.value.getMealsForDate(selectedDate) ?: DailyMeals(date = selectedDate)
 
-        val dayNutrition = calculateDayNutrition(dailyMeals)
+        val dayNutrition = dailyMeals.calculateDayNutrition()
         val mealNutrition = dailyMeals.calculateMealNutrition()
 
         _uiState.update { currentState ->
@@ -202,16 +203,5 @@ class DiaryVM @Inject constructor(
         return !date.isBefore(weekStart) && !date.isAfter(weekEnd)
     }
 
-    private fun calculateDayNutrition(dailyMeals: DailyMeals): NutritionData {
-        val allDishes = dailyMeals.breakfast + dailyMeals.lunch + dailyMeals.dinner + dailyMeals.snacks
 
-        return allDishes.fold(NutritionData()) { total, dish ->
-            NutritionData(
-                calories = total.calories + dish.kcal,
-                carb = total.carb + dish.carb,
-                protein = total.protein + dish.protein,
-                fat = total.fat + dish.fats
-            )
-        }
-    }
 }

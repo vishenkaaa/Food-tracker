@@ -1,6 +1,10 @@
 package com.example.presentation.features.main.statistics.componets
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,7 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,16 +27,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.example.domain.model.statistics.DayStatistics
 import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.presentation.R
-import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.common.utils.getAppLocale
+import com.example.presentation.features.main.statistics.models.ChartNutrientInfo
+import com.himanshoe.charty.common.ChartColor
+import com.himanshoe.charty.common.asSolidChartColor
+import com.himanshoe.charty.pie.PieChart
+import com.himanshoe.charty.pie.model.PieChartData
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -61,31 +77,313 @@ fun WeeklyStatisticsTab(
     onPreviousWeek: () -> Unit = {},
     onNextWeek: () -> Unit = {},
 ) {
-    if (loading) {
-       LoadingBackground(loading)
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+    ) {
+        item {
+            WeekNavigation(
+                weekStart = statistics.weekStart,
+                onPreviousWeek = onPreviousWeek,
+                onNextWeek = onNextWeek
+            )
+        }
+
+        item {
+            WeeklyBarChart(
+                days = statistics.dayStatistics,
+                targetCalories = statistics.targetCalories
+            )
+        }
+
+        item {
+            WeeklyNutritionAverage(
+                statistics = statistics
+            )
+        }
+
+        item {
+            MacronutrientPieChart(
+                carbs = statistics.averageCarbs,
+                protein = statistics.averageProtein,
+                fat = statistics.averageFat
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+    }
+}
+
+@SuppressLint("DefaultLocale")
+@Composable
+fun WeeklyNutritionAverage(
+    statistics: WeeklyNutritionStatistics,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(R.string.weekly_average),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .padding(top = 24.dp, bottom = 16.dp)
+                .fillMaxWidth()
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            item {
-                WeekNavigation(
-                    weekStart = statistics.weekStart,
-                    onPreviousWeek = onPreviousWeek,
-                    onNextWeek = onNextWeek
-                )
+            val caloriePercentage = if (statistics.targetCalories > 0) {
+                (statistics.averageCalories.toFloat() / statistics.targetCalories * 100).coerceAtMost(100f)
+            } else 0f
+
+            NutritionPill(
+                value = statistics.averageCalories.toString(),
+                label = stringResource(R.string.calories),
+                fillPercentage = caloriePercentage / 100f
+            )
+
+            val carbPercentage = if (statistics.maxCarbs > 0) {
+                statistics.averageCarbs.toFloat() / statistics.maxCarbs
+            } else 0f
+
+            NutritionPill(
+                value = statistics.averageCarbs.toString(),
+                label = stringResource(R.string.carb),
+                fillPercentage = carbPercentage
+            )
+
+            val fatPercentage = if (statistics.maxFat > 0) {
+                statistics.averageFat.toFloat() / statistics.maxFat
+            } else 0f
+
+            NutritionPill(
+                value = statistics.averageFat.toString(),
+                label = stringResource(R.string.fat),
+                fillPercentage = fatPercentage
+            )
+
+            val proteinPercentage = if (statistics.maxProtein > 0) {
+                statistics.averageProtein.toFloat() / statistics.maxProtein
+            } else 0f
+
+            NutritionPill(
+                value = statistics.averageProtein.toString(),
+                label = stringResource(R.string.protein),
+                fillPercentage = proteinPercentage
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+}
+
+@Composable
+fun NutritionPill(
+    value: String,
+    label: String,
+    fillPercentage: Float,
+    modifier: Modifier = Modifier
+) {
+    val itemHeight = 160.dp
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = 54.dp, height = itemHeight)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(40.dp)
+                    )
+            )
+
+            val fillHeight = (itemHeight * fillPercentage.coerceIn(0f, 1f))
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .size(width = 54.dp, height = fillHeight)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(40.dp)
+                    )
+            )
+
+            val circleSize = 38.dp
+            val paddingFromTop = 8.dp
+            val minGreenHeightForTopPosition = circleSize + paddingFromTop
+
+            val circleModifier = if (fillHeight >= minGreenHeightForTopPosition) {
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = fillHeight - circleSize - paddingFromTop)
+                    .size(circleSize)
+            } else {
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = paddingFromTop)
+                    .size(circleSize)
             }
 
-            item {
-                WeeklyBarChart(
-                    days = statistics.dayStatistics,
-                    targetCalories = statistics.targetCalories
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = circleModifier
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = CircleShape
+                    )
+            ) {
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
                 )
             }
+        }
 
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+fun provideNutrients(
+    carbs: Int,
+    protein: Int,
+    fat: Int
+): List<ChartNutrientInfo> {
+    val isDark = isSystemInDarkTheme()
+    val total = carbs + protein + fat
+
+    if (total <= 0) return emptyList()
+
+    val carbsPercent = (carbs.toFloat() / total * 100).toInt()
+    val proteinPercent = (protein.toFloat() / total * 100).toInt()
+    val fatPercent = (fat.toFloat() / total * 100).toInt()
+
+    val carbsColor = if (isDark) Color(0xFFE55367) else Color(0xFFFF003A)
+    val proteinColor = if (isDark) Color(0xFF05285F) else Color(0xFF0099FF)
+    val fatColor = if (isDark) Color(0xFFEDBF30) else Color(0xFFFDC900)
+
+    fun nutrient(
+        label: String,
+        grams: Int,
+        percent: Int,
+        baseColor: Color
+    ): ChartNutrientInfo {
+        val chartColor = if (isDark) {
+            baseColor.asSolidChartColor()
+        } else {
+            baseColor.copy(0.2f).asSolidChartColor()
+        }
+
+        val legendColor = if (isDark) baseColor else baseColor.copy(0.2f)
+
+        return ChartNutrientInfo(label, grams, percent, chartColor, legendColor)
+    }
+
+    return listOf(
+        nutrient(stringResource(R.string.carb), carbs, carbsPercent, carbsColor),
+        nutrient(stringResource(R.string.protein), protein, proteinPercent, proteinColor),
+        nutrient(stringResource(R.string.fat), fat, fatPercent, fatColor)
+    )
+}
+
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+fun MacronutrientPieChart(
+    carbs: Int,
+    protein: Int,
+    fat: Int,
+    modifier: Modifier = Modifier
+) {
+    val nutrients = provideNutrients(carbs, protein, fat)
+    if (nutrients.isEmpty()) return
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val boxSize = screenWidth * 0.6f
+
+    val isDark = isSystemInDarkTheme()
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PieChart(
+            modifier = Modifier.size(boxSize),
+            data = { nutrients.map {
+                PieChartData(it.percent.toFloat(), it.chartColor,
+                    label = "${it.percent}%",
+                    labelColor = if (isDark) Color.White.asSolidChartColor() else it.chartColor) } },
+            isDonutChart = false,
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(end = 8.dp)
+        ) {
+            nutrients.forEach { nutrient ->
+                LegendItem(
+                    color = nutrient.legendColor,
+                    label = nutrient.label,
+                    percentage = nutrient.percent,
+                    grams = nutrient.grams
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun LegendItem(
+    color: Color,
+    label: String,
+    percentage: Int,
+    grams: Int,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .height(18.dp)
+                .width(36.dp)
+                .background(color = color, shape = CircleShape)
+        )
+
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.grams_format, grams),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }
@@ -195,7 +493,7 @@ fun WeeklyBarChart(
                 color = MaterialTheme.colorScheme.onBackground,
                 textSize = 12.sp,
                 typeface = ResourcesCompat.getFont(LocalContext.current, R.font.gilroy_regular)!!
-                ),
+            ),
             valueFormatter = CartesianValueFormatter { _, v, _ ->
                 daysOfWeek.getOrNull(v.toInt()) ?: ""
             }
@@ -210,7 +508,7 @@ fun WeeklyBarChart(
 
     Column {
         Text(
-            text = "Weekly Overview",
+            text = stringResource(R.string.weekly_overview),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier

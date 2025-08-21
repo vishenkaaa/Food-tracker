@@ -108,4 +108,5 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose:2.1.3")
     implementation("com.patrykandpatrick.vico:compose-m3:2.1.3")
     implementation("com.patrykandpatrick.vico:core:2.1.3")
+    implementation("com.himanshoe:charty:2.0.1")
 }

@@ -107,4 +107,6 @@
     <string name="week">Тиждень</string>
     <string name="nutrition_statistics">Статистика харчування</string>
     <string name="request_camera_permission">Щоб додати, увімкніть доступ до камери в налаштуваннях</string>
+    <string name="weekly_average">Середнє за тиждень</string>
+    <string name="weekly_overview">Огляд за тиждень</string>
 </resources>
