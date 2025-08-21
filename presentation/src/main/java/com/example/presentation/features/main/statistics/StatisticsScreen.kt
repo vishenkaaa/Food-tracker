@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.domain.model.statistics.DailyNutritionStatistics
 import com.example.domain.model.statistics.NutritionStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
 import com.example.presentation.R
@@ -29,8 +28,11 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CenterAlignedHeader
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.features.main.statistics.componets.DailyStatisticsTab
+import com.example.presentation.features.main.statistics.componets.DailyStatisticsTabShimmer
 import com.example.presentation.features.main.statistics.componets.StatisticsTabRow
 import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTab
+import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTabShimmer
+import com.example.presentation.features.main.statistics.models.StatisticsUiState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,10 +41,14 @@ fun StatisticsRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
+    val isDailyLoading by viewModel.isDailyLoading.collectAsStateWithLifecycle()
+    val isWeeklyLoading by viewModel.isWeeklyLoading.collectAsStateWithLifecycle()
 
     StatisticsScreen(
         uiState = uiState,
         baseUiState = baseUiState,
+        isDailyLoading = isDailyLoading,
+        isWeeklyLoading = isWeeklyLoading,
         onPeriodSelected = viewModel::onPeriodSelected,
         onPreviousWeek = viewModel::onPreviousWeek,
         onNextWeek = viewModel::onNextWeek,
@@ -55,6 +61,8 @@ fun StatisticsRoute(
 fun StatisticsScreen(
     uiState: StatisticsUiState,
     baseUiState: BaseUiState,
+    isDailyLoading: Boolean,
+    isWeeklyLoading: Boolean,
     onPeriodSelected: (StatisticsPeriod) -> Unit,
     onPreviousWeek: () -> Unit,
     onNextWeek: () -> Unit,
@@ -116,33 +124,23 @@ fun StatisticsScreen(
                 when (StatisticsPeriod.entries[page]) {
                     StatisticsPeriod.TODAY,
                     StatisticsPeriod.YESTERDAY -> {
-                        if (baseUiState.isLoading) {
+                        if (isDailyLoading || uiState.dailyStatistics == null)
+                            DailyStatisticsTabShimmer()
+                        else
                             DailyStatisticsTab(
-                                statistics = DailyNutritionStatistics(),
-                                loading = true
+                                statistics = uiState.dailyStatistics
                             )
-                        } else if (uiState.nutritionStatistics is NutritionStatistics.Daily) {
-                            DailyStatisticsTab(
-                                statistics = uiState.nutritionStatistics.data,
-                                loading = false
-                            )
-                        }
                     }
 
                     StatisticsPeriod.WEEK -> {
-                        if (baseUiState.isLoading) {
-                            DailyStatisticsTab(
-                                statistics = DailyNutritionStatistics(),
-                                loading = true
-                            )
-                        } else if (uiState.nutritionStatistics is NutritionStatistics.Weekly) {
+                        if (isWeeklyLoading || uiState.weeklyStatistics == null)
+                            WeeklyStatisticsTabShimmer()
+                        else
                             WeeklyStatisticsTab(
-                                statistics = uiState.nutritionStatistics.data,
-                                loading = false,
-                                onPreviousWeek = { onPreviousWeek() },
-                                onNextWeek = { onNextWeek() }
+                                statistics = uiState.weeklyStatistics,
+                                onPreviousWeek = onPreviousWeek,
+                                onNextWeek = onNextWeek
                             )
-                        }
                     }
                 }
             }

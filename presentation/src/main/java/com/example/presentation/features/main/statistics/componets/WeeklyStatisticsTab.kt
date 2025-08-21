@@ -41,7 +41,6 @@ import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.presentation.R
 import com.example.presentation.common.utils.getAppLocale
 import com.example.presentation.features.main.statistics.models.ChartNutrientInfo
-import com.himanshoe.charty.common.ChartColor
 import com.himanshoe.charty.common.asSolidChartColor
 import com.himanshoe.charty.pie.PieChart
 import com.himanshoe.charty.pie.model.PieChartData

@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -37,7 +35,6 @@ import com.example.domain.model.statistics.MealStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
 import com.example.presentation.R
 import com.example.presentation.common.ui.components.RoundedCircularProgress
-import com.example.presentation.common.ui.modifiers.shimmerEffect
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
 
@@ -52,18 +49,11 @@ fun DailyStatisticsTab(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            if (loading) DailyNutritionCircularProgressShimmer()
-            else DailyNutritionCircularProgress(statistics = statistics)
-        }
-
-        if (loading) {
-            items(4) {
-                MealStatisticsItemShimmer()
-            }
+            DailyNutritionCircularProgress(statistics = statistics)
         }
 
         items(statistics.mealStatistics) { mealStat ->
-            if(!loading) MealStatisticsItem(mealStatistics = mealStat)
+            MealStatisticsItem(mealStatistics = mealStat)
         }
 
         item {
@@ -113,26 +103,6 @@ fun MealStatisticsItem(
         Spacer(modifier = Modifier.height(8.dp))
 
         MacroNutrientsSmallSection(mealStatistics.protein, mealStatistics.fat, mealStatistics.carbs)
-    }
-}
-
-@Composable
-fun MealStatisticsItemShimmer() {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .shimmerEffect()
-        )
     }
 }
 
@@ -214,40 +184,6 @@ fun DailyNutritionCircularProgress(
                 )
             }
         }
-    }
-}
-
-
-@Composable
-fun DailyNutritionCircularProgressShimmer(
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        ){
-            Text(
-                text = "",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .width(180.dp)
-                    .height(30.dp)
-                    .shimmerEffect(),
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(150.dp))
-                .size(161.dp)
-                .shimmerEffect(),
-        )
     }
 }
 
