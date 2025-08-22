@@ -114,4 +114,9 @@
     <string name="delete_meal_title">Видалення страви</string>
     <string name="delete_meal_message">Ви впевнені, що хочете видалити цю страву? Цю дію не можна скасувати</string>
     <string name="delete">Видалити</string>
+    <string name="failed_to_update_dish">Сталась помилка під час оновлення</string>
+    <string name="unit_gram">г</string>
+    <string name="unit_milliliter">мл</string>
+    <string name="unit_liter">л</string>
+    <string name="unit_piece">шт</string>
 </resources>

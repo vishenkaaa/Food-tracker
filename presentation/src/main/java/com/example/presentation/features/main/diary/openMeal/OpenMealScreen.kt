@@ -51,10 +51,12 @@ import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.ConfirmationDialog
+import com.example.presentation.common.ui.components.EditDishBottomSheet
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.softShadow
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
@@ -84,7 +86,9 @@ fun OpenMealRoute(
         baseUiState = baseUiState,
         onBackPressed = onBackPressed,
         onAddDishClick = { onNavigateToAddDish(mealType, date) },
-        onEditDish = { dish -> viewModel.onEditDish(dish, diaryVM) },
+        onEditDish = { dish -> viewModel.onEditDish(dish) },
+        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, diaryVM) },
+        onEditDishDismiss = { viewModel.onEditDishDismiss() },
         onDeleteDish = viewModel::requestDeleteConfirmation,
         onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
         onErrorConsume = { viewModel.clearErrors() },
@@ -99,6 +103,8 @@ fun OpenMealScreen(
     onBackPressed: () -> Unit,
     onAddDishClick: () -> Unit,
     onEditDish: (Dish) -> Unit,
+    onSaveEditedDish: (Dish, MealType) -> Unit,
+    onEditDishDismiss: () -> Unit,
     onDeleteConfirmationResult: (Boolean) -> Unit,
     onDeleteDish: (String) -> Unit,
     onErrorConsume: () -> Unit,
@@ -181,6 +187,15 @@ fun OpenMealScreen(
             onConfirm = { onDeleteConfirmationResult(true) },
             onDismiss = { onDeleteConfirmationResult(false) }
         )
+
+        if (uiState.showEditDishDialog && uiState.dishToEdit != null) {
+            EditDishBottomSheet(
+                dish = uiState.dishToEdit,
+                mealType = uiState.mealType,
+                onSave = onSaveEditedDish,
+                onDismiss = onEditDishDismiss
+            )
+        }
 
         HandleError(
             baseUiState = baseUiState,
@@ -388,7 +403,7 @@ private fun DishCard(
                 }
 
                 Text(
-                    text = stringResource(R.string.g, dish.amount),
+                    text = "${dish.amount} ${dish.unit.displayName()}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(start = 8.dp)

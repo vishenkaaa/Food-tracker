@@ -13,8 +13,10 @@ private val LightColorScheme
     get() = lightColorScheme(
         primary = Green, // акцентний
         onPrimary = White, // на акцентному
+        primaryContainer = Color(0xFFDBE5D7), // колір контейнера
         secondary = DarkGreen30, // світло сірий текст
         onSecondary = DarkGreen60, // темніший сірий текст
+        secondaryContainer = LightBackground,
         surface = Green30, // не заповнений прогрес
         onSurface = DarkGreen50, // не вибраний текст
         surfaceVariant = Color.Black.copy(0.20f), // тінь
@@ -33,8 +35,10 @@ private val DarkColorScheme
     get() = darkColorScheme(
         primary = Green,
         onPrimary = White,
+        primaryContainer = DarkBackground,
         secondary = White.copy(0.8f),
         onSecondary = White.copy(0.6f),
+        secondaryContainer = DarkContainer,
         surface = Green30,
         onSurface = White.copy(0.4f),
         surfaceVariant = Color.Black.copy(0.20f),

@@ -58,18 +58,42 @@ class MealRepositoryImpl @Inject constructor(
     override suspend fun updateDishInMeal(
         userId: String,
         date: String,
-        mealType: MealType,
+        originalMealType: MealType,
+        newMealType: MealType,
         dish: Dish
     ): Result<Unit> = safeCall(errorLogger) {
-        val dishMap = DishModelMapper.dishToMap(dish)
-        firestore.collection(USERS_KEY)
-            .document(userId)
-            .collection(DIARY_KEY)
-            .document(date)
-            .collection(mealType.value)
-            .document(dish.id)
-            .update(dishMap)
-            .await()
+
+        if (originalMealType != newMealType) {
+            firestore.runTransaction { transaction ->
+                val userDiaryRef = firestore.collection(USERS_KEY)
+                    .document(userId)
+                    .collection(DIARY_KEY)
+                    .document(date)
+
+                val originalDishRef = userDiaryRef
+                    .collection(originalMealType.value)
+                    .document(dish.id)
+
+                val newDishRef = userDiaryRef
+                    .collection(newMealType.value)
+                    .document(dish.id)
+
+                transaction.delete(originalDishRef)
+
+                val dishMap = DishModelMapper.dishToMap(dish)
+                transaction.set(newDishRef, dishMap)
+            }.await()
+        } else {
+            val dishMap = DishModelMapper.dishToMap(dish)
+            firestore.collection(USERS_KEY)
+                .document(userId)
+                .collection(DIARY_KEY)
+                .document(date)
+                .collection(originalMealType.value)
+                .document(dish.id)
+                .update(dishMap)
+                .await()
+        }
     }
 
     override suspend fun getMealsByDate(userId: String, date: String): Result<DailyMeals> = safeCall(errorLogger) {

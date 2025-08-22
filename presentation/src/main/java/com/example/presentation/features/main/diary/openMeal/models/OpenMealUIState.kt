@@ -5,6 +5,9 @@ import com.example.domain.model.diary.MealType
 import java.time.LocalDate
 
 data class OpenMealUIState(
+    val showEditDishDialog: Boolean = false,
+    val dishToEdit: Dish? = null,
+
     val showDeleteMealDialog: Boolean = false,
     val dishIdToDelete: String? = null,
 
