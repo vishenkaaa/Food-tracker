@@ -101,7 +101,8 @@
     <string name="error_flash_toggle_failed">Не вдалося змінити стан спалаху</string>
     <string name="error_flash_not_available">На цьому пристрої немає ліхтарика</string>
     <string name="user_not_authenticated">Користувач не авторизований</string>
-    <string name="error_loading_data">Не вдалося завантажити дані профілю</string>
+    <string name="error_loading_profile_data">Не вдалося завантажити дані профілю</string>
+    <string name="error_loading_data">Сталася помилка під час завантаження даних</string>
     <string name="today">Сьогодні</string>
     <string name="yesterday">Вчора</string>
     <string name="week">Тиждень</string>
@@ -109,4 +110,8 @@
     <string name="request_camera_permission">Щоб додати, увімкніть доступ до камери в налаштуваннях</string>
     <string name="weekly_average">Середнє за тиждень</string>
     <string name="weekly_overview">Огляд за тиждень</string>
+    <string name="failed_to_remove_the_dish">Не вдалося видалити страву</string>
+    <string name="delete_meal_title">Видалення страви</string>
+    <string name="delete_meal_message">Ви впевнені, що хочете видалити цю страву? Цю дію не можна скасувати</string>
+    <string name="delete">Видалити</string>
 </resources>

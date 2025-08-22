@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.domain.extension.calculateDayNutrition
+import com.example.domain.extension.calculateMealNutrition
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
@@ -12,11 +13,9 @@ import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
-import com.example.domain.extension.calculateMealNutrition
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
-import com.example.domain.model.diary.NutritionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +57,24 @@ class DiaryVM @Inject constructor(
             } catch (e: Exception) {
                 handleError(Exception(context.getString(R.string.error_loading_data)), context) { loadInitialData() }
                 Log.e("DiaryVM", "loadInitialData: ", e)
+            } finally {
+                handleLoading(false)
+            }
+        }
+    }
+
+    fun refreshData() {
+        viewModelScope.launch {
+            handleLoading(true)
+            try {
+                val userId = getCurrentUserIdUseCase() ?: return@launch
+                loadWeekData(userId, _uiState.value.weekStart)
+                calculateSelectedDateNutrition(_uiState.value.selectedDate)
+            } catch (e: Exception) {
+                handleError(Exception(context.getString(R.string.error_loading_data)), context){
+                    refreshData()
+                }
+                Log.e("DiaryVM", "refreshData: ", e)
             } finally {
                 handleLoading(false)
             }
@@ -202,6 +219,4 @@ class DiaryVM @Inject constructor(
         val weekEnd = weekStart.plusDays(6)
         return !date.isBefore(weekStart) && !date.isAfter(weekEnd)
     }
-
-
 }

@@ -50,15 +50,20 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.ConfirmationDialog
+import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.softShadow
+import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
+import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
 import java.time.LocalDate
 
 @Composable
 fun OpenMealRoute(
+    diaryVM: DiaryVM = hiltViewModel(),
     viewModel: OpenMealVM = hiltViewModel(),
     mealType: MealType,
     dishes: List<Dish>,
@@ -79,8 +84,11 @@ fun OpenMealRoute(
         baseUiState = baseUiState,
         onBackPressed = onBackPressed,
         onAddDishClick = { onNavigateToAddDish(mealType, date) },
-        onEditDish = { dish -> viewModel.onEditDish(dish) },
-        onRemoveDish = { dish -> viewModel.onRemoveDish(dish) }
+        onEditDish = { dish -> viewModel.onEditDish(dish, diaryVM) },
+        onDeleteDish = viewModel::requestDeleteConfirmation,
+        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
+        onErrorConsume = { viewModel.clearErrors() },
+        onRetry = { viewModel.retryLastAction() }
     )
 }
 
@@ -91,72 +99,94 @@ fun OpenMealScreen(
     onBackPressed: () -> Unit,
     onAddDishClick: () -> Unit,
     onEditDish: (Dish) -> Unit,
-    onRemoveDish: (Dish) -> Unit
+    onDeleteConfirmationResult: (Boolean) -> Unit,
+    onDeleteDish: (String) -> Unit,
+    onErrorConsume: () -> Unit,
+    onRetry: () -> Unit,
 ) {
-    Scaffold(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-        topBar = {
-            LeftAlignedHeader(
-                mealType = uiState.mealType,
-                onNavigateBack = onBackPressed
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddDishClick,
+    Box {
+
+        Scaffold(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            topBar = {
+                LeftAlignedHeader(
+                    mealType = uiState.mealType,
+                    onNavigateBack = onBackPressed
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = onAddDishClick,
+                    modifier = Modifier
+                        .size(70.dp),
+                    shape = RoundedCornerShape(50.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 0.dp
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.big_plus),
+                        contentDescription = "Add dish",
+                        Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center
+        ) { padding ->
+            LazyColumn(
                 modifier = Modifier
-                    .size(70.dp),
-                shape = RoundedCornerShape(50.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 0.dp
-                )
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding()
+                ),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.big_plus),
-                    contentDescription = "Add dish",
-                    Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(
-                top = padding.calculateTopPadding(),
-                bottom = padding.calculateBottomPadding()
-            ),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            item {
-                OpenMealNutritionSection(
-                    calories = uiState.calories,
-                    targetCalories = uiState.targetCalories,
-                    carb = uiState.carbs,
-                    protein = uiState.protein,
-                    fat = uiState.fat
-                )
-            }
+                item {
+                    OpenMealNutritionSection(
+                        calories = uiState.calories,
+                        targetCalories = uiState.targetCalories,
+                        carb = uiState.carbs,
+                        protein = uiState.protein,
+                        fat = uiState.fat
+                    )
+                }
 
-            items(
-                items = uiState.dishes,
-                key = { it.id }
-            ) { dish ->
-                SwipeDishItem(
-                    dish = dish,
-                    onEdit = { onEditDish(dish) },
-                    onRemove = { onRemoveDish(dish) }
-                )
-            }
+                items(
+                    items = uiState.dishes,
+                    key = { it.id }
+                ) { dish ->
+                    SwipeDishItem(
+                        dish = dish,
+                        onEdit = { onEditDish(dish) },
+                        onRemove = { onDeleteDish(dish.id) }
+                    )
+                }
 
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
+
+        ConfirmationDialog(
+            visible = uiState.showDeleteMealDialog,
+            title = stringResource(R.string.delete_meal_title),
+            message = stringResource(R.string.delete_meal_message),
+            confirmButtonText = stringResource(R.string.delete),
+            dismissButtonText = stringResource(R.string.cancel),
+            onConfirm = { onDeleteConfirmationResult(true) },
+            onDismiss = { onDeleteConfirmationResult(false) }
+        )
+
+        HandleError(
+            baseUiState = baseUiState,
+            onErrorConsume = onErrorConsume,
+            onConnectionRetry = onRetry
+        )
     }
 }
 
@@ -205,12 +235,14 @@ fun OpenMealNutritionSection(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(
-                            style = MaterialTheme.typography.bodyLarge.toSpanStyle().copy(color = MaterialTheme.colorScheme.onBackground)
+                            style = MaterialTheme.typography.bodyLarge.toSpanStyle()
+                                .copy(color = MaterialTheme.colorScheme.onBackground)
                         ) {
                             append(calories.toString())
                         }
                         withStyle(
-                            style = MaterialTheme.typography.titleSmall.toSpanStyle().copy(color = MaterialTheme.colorScheme.onBackground)
+                            style = MaterialTheme.typography.titleSmall.toSpanStyle()
+                                .copy(color = MaterialTheme.colorScheme.onBackground)
                         ) {
                             append(" " + stringResource(R.string.kcal))
                         }
@@ -239,10 +271,12 @@ fun SwipeDishItem(
                 onRemove()
                 dismissState.snapTo(SwipeToDismissBoxValue.Settled)
             }
+
             SwipeToDismissBoxValue.StartToEnd -> {
                 onEdit()
                 dismissState.snapTo(SwipeToDismissBoxValue.Settled)
             }
+
             SwipeToDismissBoxValue.Settled -> Unit
         }
     }

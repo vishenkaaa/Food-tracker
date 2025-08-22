@@ -4,13 +4,10 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -25,6 +22,7 @@ import com.example.domain.model.diary.Dish
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
+import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.AddMealAIRoute
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading.DishLoadingRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
@@ -127,6 +125,8 @@ private fun NavGraphBuilder.loginGraph(
 private fun NavGraphBuilder.mainGraph(
     navController: NavController
 ) {
+    val DISHES_KEY = "dishes"
+
     navigation<Graphs.Main>(
         startDestination = MainGraph.Dairy,
         enterTransition = { fadeIn() },
@@ -139,7 +139,7 @@ private fun NavGraphBuilder.mainGraph(
             DiaryRoute(
                 viewModel = hiltViewModel(parentEntry),
                 onNavigateToOpenMeal = { mealType, dishes, date, targetCalories ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set("dishes", dishes)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(DISHES_KEY, dishes)
 
                     navController.navigate(
                         MainGraph.OpenMeal(
@@ -202,8 +202,15 @@ private fun NavGraphBuilder.mainGraph(
             },
         ) { backStackEntry ->
             val args = backStackEntry.toRoute<MainGraph.OpenMeal>()
-            val dishes = navController.previousBackStackEntry?.savedStateHandle?.get<List<Dish>>("dishes") ?: listOf()
+            val dishes = navController.previousBackStackEntry?.savedStateHandle?.get<List<Dish>>(DISHES_KEY) ?: listOf()
+
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Graphs.Main>()
+            }
+            val diaryVM = hiltViewModel<DiaryVM>(parentEntry)
+
             OpenMealRoute(
+                diaryVM = diaryVM,
                 mealType = args.mealType,
                 dishes = dishes,
                 date = LocalDate.parse(args.date),
