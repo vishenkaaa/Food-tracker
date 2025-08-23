@@ -463,6 +463,8 @@ fun CalendarSection(
     onDateSelected: (LocalDate) -> Unit
 ) {
     val locale = remember { getAppLocale() }
+    val today = remember { LocalDate.now() }
+
     val daysOfWeek = remember {
         listOf(
             DayOfWeek.MONDAY,
@@ -491,7 +493,8 @@ fun CalendarSection(
                         meals.dinner.isNotEmpty() ||
                         meals.snacks.isNotEmpty()
             } ?: false
-            val enabled = !baseUiState.isLoading
+            val isFutureDate = date.isAfter(today)
+            val enabled = !baseUiState.isLoading && !isFutureDate
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 DayItem(
                     dayOfWeek = dayName,
@@ -522,8 +525,8 @@ fun DayItem(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.background,
             disabledContainerColor = if (!isSystemInDarkTheme()) Color(0xFFEEEEEE) else Color(
-                0xFF444444
-            )
+                0xFF3D3D3D
+            ),
         ),
         enabled = enabled,
         elevation = CardDefaults.elevatedCardElevation(
@@ -545,8 +548,10 @@ fun DayItem(
             Text(
                 text = dayOfWeek,
                 style = MaterialTheme.typography.bodySmall,
-                color = if (selected) MaterialTheme.colorScheme.onPrimary
-                else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = when {
+                    selected && enabled -> MaterialTheme.colorScheme.onPrimary
+                    else -> MaterialTheme.colorScheme.onBackground
+                },
                 modifier = Modifier
                     .padding(top = 8.dp)
             )
@@ -563,10 +568,10 @@ fun DayItem(
                 Text(
                     text = day.toString(),
                     style = MaterialTheme.typography.titleSmall,
-                    color = if (selected)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.onBackground
+                    color = when {
+                        selected && enabled -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.onBackground
+                    },
                 )
 
                 if (!selected && notEmpty) {
