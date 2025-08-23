@@ -38,7 +38,7 @@ fun RoundedCircularProgress(
         if (sweepAngle > 0) {
             drawArc(
                 color = progressColor,
-                startAngle = -88f,
+                startAngle = -90f,
                 sweepAngle = -sweepAngle,
                 useCenter = false,
                 topLeft = Offset(

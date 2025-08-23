@@ -2,6 +2,9 @@ package com.example.presentation.features.main.diary
 
 import android.Manifest
 import android.widget.Toast
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -377,8 +380,17 @@ fun CaloriesProgressSection(
         ) {
             val progress = (caloriesConsumed.toFloat() / caloriesTarget.toFloat()).coerceIn(0f, 1f)
 
+            val animatedProgress by animateFloatAsState(
+                targetValue = progress,
+                animationSpec = tween(
+                    durationMillis = 800,
+                    easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
+                ),
+                label = "progress_animation"
+            )
+
             RoundedCircularProgress(
-                progress = progress,
+                progress = animatedProgress,
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(150.dp))
