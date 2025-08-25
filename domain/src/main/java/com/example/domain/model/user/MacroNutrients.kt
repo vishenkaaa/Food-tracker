@@ -1,7 +1,7 @@
 package com.example.domain.model.user
 
 data class MacroNutrients(
-    val proteins: Int = 0,
-    val carbs: Int = 0,
-    val fats: Int = 0
+    val proteins: Float = 0f,
+    val carbs: Float = 0f,
+    val fats: Float = 0f
 )

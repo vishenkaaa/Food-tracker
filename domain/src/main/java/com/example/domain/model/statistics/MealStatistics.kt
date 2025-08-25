@@ -5,8 +5,8 @@ import com.example.domain.model.diary.MealType
 data class MealStatistics(
     val mealType: MealType,
     val calories: Int,
-    val carbs: Int,
-    val protein: Int,
-    val fat: Int,
-    val percentage: Float
+    val carbs: Float,
+    val protein: Float,
+    val fat: Float,
+    val percentage: Int
 )

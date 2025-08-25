@@ -198,7 +198,7 @@ fun BmiCard(
 
 @Composable
 fun MacroNutrientsCard(
-    value: Int,
+    value: Float,
     name: String,
     icon: Painter,
     modifier: Modifier = Modifier

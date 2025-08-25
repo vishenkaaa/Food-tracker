@@ -17,7 +17,7 @@ data class OpenMealUIState(
     val targetCalories: Int = 0,
 
     val calories: Int = 0,
-    val carbs: Int = 0,
-    val protein: Int = 0,
-    val fat: Int = 0,
+    val carbs: Float = 0f,
+    val protein: Float = 0f,
+    val fat: Float = 0f,
 )

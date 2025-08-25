@@ -10,9 +10,9 @@ data class DiaryScreenUIState(
     val weekStart: LocalDate = LocalDate.now().with(DayOfWeek.MONDAY),
     val caloriesConsumed: Int = 0,
     val caloriesTarget: Int = 0,
-    val carb: Int = 0,
-    val protein: Int = 0,
-    val fat: Int = 0,
+    val carb: Float = 0f,
+    val protein: Float = 0f,
+    val fat: Float = 0f,
 
     val weekMeals: List<DailyMeals> = emptyList(),
 

@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 
 @Composable
-fun MacroNutrientsSmallSection(protein: Int, fat: Int, carbs: Int){
+fun MacroNutrientsSmallSection(protein: Float, fat: Float, carbs: Float){
     Row(
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.fillMaxWidth()

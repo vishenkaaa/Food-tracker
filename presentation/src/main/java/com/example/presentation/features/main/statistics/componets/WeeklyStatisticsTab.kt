@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -264,63 +265,19 @@ fun NutritionPill(
     }
 }
 
-@Composable
-fun provideNutrients(
-    carbs: Int,
-    protein: Int,
-    fat: Int
-): List<ChartNutrientInfo> {
-    val isDark = isSystemInDarkTheme()
-    val total = carbs + protein + fat
-
-    if (total <= 0) return emptyList()
-
-    val carbsPercent = (carbs.toFloat() / total * 100).toInt()
-    val proteinPercent = (protein.toFloat() / total * 100).toInt()
-    val fatPercent = (fat.toFloat() / total * 100).toInt()
-
-    val carbsColor = if (isDark) Color(0xFFE55367) else Color(0xFFFF003A)
-    val proteinColor = if (isDark) Color(0xFF05285F) else Color(0xFF0099FF)
-    val fatColor = if (isDark) Color(0xFFEDBF30) else Color(0xFFFDC900)
-
-    fun nutrient(
-        label: String,
-        grams: Int,
-        percent: Int,
-        baseColor: Color
-    ): ChartNutrientInfo {
-        val chartColor = if (isDark) {
-            baseColor.asSolidChartColor()
-        } else {
-            baseColor.copy(0.2f).asSolidChartColor()
-        }
-
-        val legendColor = if (isDark) baseColor else baseColor.copy(0.2f)
-
-        return ChartNutrientInfo(label, grams, percent, chartColor, legendColor)
-    }
-
-    return listOf(
-        nutrient(stringResource(R.string.carb), carbs, carbsPercent, carbsColor),
-        nutrient(stringResource(R.string.protein), protein, proteinPercent, proteinColor),
-        nutrient(stringResource(R.string.fat), fat, fatPercent, fatColor)
-    )
-}
-
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun MacronutrientPieChart(
-    carbs: Int,
-    protein: Int,
-    fat: Int,
+    carbs: Float,
+    protein: Float,
+    fat: Float,
     modifier: Modifier = Modifier
 ) {
-    val nutrients = provideNutrients(carbs, protein, fat)
+    val nutrients = createNutrients(carbs, protein, fat)
     if (nutrients.isEmpty()) return
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val boxSize = screenWidth * 0.6f
-
     val isDark = isSystemInDarkTheme()
 
     Row(
@@ -330,10 +287,16 @@ fun MacronutrientPieChart(
     ) {
         PieChart(
             modifier = Modifier.size(boxSize),
-            data = { nutrients.map {
-                PieChartData(it.percent.toFloat(), it.chartColor,
-                    label = "${it.percent}%",
-                    labelColor = if (isDark) Color.White.asSolidChartColor() else it.chartColor) } },
+            data = {
+                nutrients.map { nutrient ->
+                    PieChartData(
+                        value = nutrient.percent.toFloat(),
+                        color = nutrient.chartColor(isDark),
+                        label = "${nutrient.percent}%",
+                        labelColor = nutrient.labelColor(isDark)
+                    )
+                }
+            },
             isDonutChart = false,
         )
 
@@ -343,7 +306,7 @@ fun MacronutrientPieChart(
         ) {
             nutrients.forEach { nutrient ->
                 LegendItem(
-                    color = nutrient.legendColor,
+                    color = nutrient.legendColor(isDark),
                     label = nutrient.label,
                     percentage = nutrient.percent,
                     grams = nutrient.grams
@@ -354,11 +317,66 @@ fun MacronutrientPieChart(
 }
 
 @Composable
+private fun createNutrients(
+    carbs: Float,
+    protein: Float,
+    fat: Float
+): List<ChartNutrientInfo> {
+    val total = carbs + protein + fat
+    if (total <= 0) return emptyList()
+
+    val isDark = isSystemInDarkTheme()
+    val carbsColor = if (isDark) Color(0xFFE55367) else Color(0xFFFF003A)
+    val proteinColor = if (isDark) Color(0xFF05285F) else Color(0xFF0099FF)
+    val fatColor = if (isDark) Color(0xFFEDBF30) else Color(0xFFFDC900)
+
+    val percentages = calculateCorrectedPercentages(listOf(carbs, protein, fat), total)
+
+    return listOf(
+        ChartNutrientInfo(
+            label = stringResource(R.string.carb),
+            grams = carbs,
+            percent = percentages[0],
+            color = carbsColor
+        ),
+        ChartNutrientInfo(
+            label = stringResource(R.string.protein),
+            grams = protein,
+            percent = percentages[1],
+            color = proteinColor
+        ),
+        ChartNutrientInfo(
+            label = stringResource(R.string.fat),
+            grams = fat,
+            percent = percentages[2],
+            color = fatColor
+        )
+    )
+}
+
+private fun calculateCorrectedPercentages(values: List<Float>, total: Float): List<Int> {
+    if (total <= 0) return List(values.size) { 0 }
+
+    val rawPercentages = values.map { (it / total * 100).toInt() }
+    val currentSum = rawPercentages.sum()
+
+    return if (currentSum != 100) {
+        val difference = 100 - currentSum
+        val maxIndex = values.indices.maxByOrNull { values[it] } ?: 0
+        rawPercentages.mapIndexed { index, percent ->
+            if (index == maxIndex) percent + difference else percent
+        }
+    } else {
+        rawPercentages
+    }
+}
+
+@Composable
 fun LegendItem(
     color: Color,
     label: String,
     percentage: Int,
-    grams: Int,
+    grams: Float,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

@@ -10,26 +10,29 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.domain.model.statistics.NutritionStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CenterAlignedHeader
 import com.example.presentation.common.ui.components.HandleError
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.statistics.componets.DailyStatisticsTab
 import com.example.presentation.features.main.statistics.componets.DailyStatisticsTabShimmer
-import com.example.presentation.features.main.statistics.componets.StatisticsTabRow
 import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTab
 import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTabShimmer
 import com.example.presentation.features.main.statistics.models.StatisticsUiState
@@ -151,5 +154,36 @@ fun StatisticsScreen(
             onErrorConsume = onErrorConsume,
             onConnectionRetry = onRetry
         )
+    }
+}
+
+
+@Composable
+fun StatisticsTabRow(
+    selectedTab: StatisticsPeriod,
+    onTabSelected: (StatisticsPeriod) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    PrimaryTabRow(
+        selectedTabIndex = StatisticsPeriod.entries.indexOf(selectedTab),
+        containerColor = Color.Transparent,
+        divider = { },
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+    ) {
+        StatisticsPeriod.entries.forEach { tab ->
+            Tab(
+                selected = selectedTab == tab,
+                onClick = { onTabSelected(tab) },
+                text = {
+                    Text(
+                        text = tab.displayName(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (selectedTab == tab) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.secondary
+                    )
+                }
+            )
+        }
     }
 }

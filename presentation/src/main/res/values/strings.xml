@@ -45,7 +45,7 @@
     <string name="calories_format">%1$d Ккал</string>
     <string name="daily_calories_recommendation">Рекомендована денна калорійність\nдля досягнення ваших цілей</string>
     <string name="bmi_format">Індекс маси тіла: %.2f</string>
-    <string name="grams_format">%1$d г</string>
+    <string name="grams_format">%.1f г</string>
     <string name="underweight">Недостатня вага</string>
     <string name="normal_weight">Нормальна вага</string>
     <string name="overweight">Надлишкова вага</string>
@@ -90,7 +90,6 @@
     <string name="carb">Вуглеводи</string>
     <string name="protein">Білки</string>
     <string name="fat">Жири</string>
-    <string name="g">%1$d г</string>
     <string name="kcal">ккал</string>
     <string name="kcal_value">%1$d ккал</string>
     <string name="error_storage_permission_required">Щоб відкрити галерею, увімкніть доступ до зображень в налаштуваннях</string>

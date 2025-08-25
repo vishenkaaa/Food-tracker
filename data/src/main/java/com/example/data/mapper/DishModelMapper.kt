@@ -1,7 +1,6 @@
 package com.example.data.mapper
 
 import com.example.domain.model.diary.Dish
-import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.UnitType
 
 object DishModelMapper {
@@ -35,10 +34,10 @@ object DishModelMapper {
             title = data[DISH_TITLE_KEY] as? String ?: "",
             img = data[DISH_IMG_KEY] as? String ?: "",
             kcal = (data[DISH_KCAL_KEY] as? Number)?.toInt() ?: 0,
-            carb = (data[DISH_CARB_KEY] as? Number)?.toInt() ?: 0,
-            protein = (data[DISH_PROTEIN_KEY] as? Number)?.toInt() ?: 0,
-            fats = (data[DISH_FATS_KEY] as? Number)?.toInt() ?: 0,
-            amount = (data[DISH_AMOUNT_KEY] as? Number)?.toInt() ?: 0,
+            carb = (data[DISH_CARB_KEY] as? Number)?.toFloat() ?: 0f,
+            protein = (data[DISH_PROTEIN_KEY] as? Number)?.toFloat() ?: 0f,
+            fats = (data[DISH_FATS_KEY] as? Number)?.toFloat() ?: 0f,
+            amount = (data[DISH_AMOUNT_KEY] as? Number)?.toFloat() ?: 0f,
             unit = data[DISH_UNIT_KEY]?.toString()?.let {
                 UnitType.fromValue(it)
             } ?: UnitType.GRAM

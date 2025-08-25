@@ -6,9 +6,9 @@ import java.time.LocalDate
 data class DayStatistics(
     val date: LocalDate,
     val calories: Int,
-    val carbs: Int = 0,
-    val protein: Int = 0,
-    val fat: Int = 0
+    val carbs: Float = 0f,
+    val protein: Float = 0f,
+    val fat: Float = 0f
 )
 
 data class WeeklyNutritionStatistics(
@@ -16,11 +16,11 @@ data class WeeklyNutritionStatistics(
     val dayStatistics: List<DayStatistics>,
     val weekStart: LocalDate = LocalDate.now().with(DayOfWeek.MONDAY),
     val averageCalories: Int = 0,
-    val averageCarbs: Int = 0,
-    val averageProtein: Int = 0,
-    val averageFat: Int = 0,
+    val averageCarbs: Float = 0f,
+    val averageProtein: Float = 0f,
+    val averageFat: Float = 0f,
     val maxCalories: Int = 0,
-    val maxCarbs: Int = 0,
-    val maxProtein: Int = 0,
-    val maxFat: Int = 0
+    val maxCarbs: Float = 0f,
+    val maxProtein: Float = 0f,
+    val maxFat: Float = 0f
 )

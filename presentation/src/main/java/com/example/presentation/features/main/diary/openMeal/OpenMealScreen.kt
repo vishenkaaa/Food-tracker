@@ -214,9 +214,9 @@ fun OpenMealScreen(
 fun OpenMealNutritionSection(
     calories: Int,
     targetCalories: Int,
-    carb: Int,
-    protein: Int,
-    fat: Int
+    carb: Float,
+    protein: Float,
+    fat: Float
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

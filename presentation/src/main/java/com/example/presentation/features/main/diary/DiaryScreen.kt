@@ -258,9 +258,9 @@ fun MealsSectionShimmer() {
 fun MealItem(
     mealType: MealType,
     calories: Int,
-    carb: Int,
-    protein: Int,
-    fat: Int,
+    carb: Float,
+    protein: Float,
+    fat: Float,
     onItemClick: () -> Unit,
     onAddClick: () -> Unit
 ) {
@@ -367,9 +367,9 @@ fun MealItemShimmer() {
 fun CaloriesProgressSection(
     caloriesConsumed: Int,
     caloriesTarget: Int,
-    carb: Int,
-    protein: Int,
-    fat: Int
+    carb: Float,
+    protein: Float,
+    fat: Float
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

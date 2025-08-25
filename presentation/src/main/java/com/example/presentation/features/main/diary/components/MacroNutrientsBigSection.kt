@@ -9,24 +9,24 @@ import androidx.compose.ui.res.stringResource
 import com.example.presentation.R
 
 @Composable
-fun MacroNutrientsBigSection(protein: Int, fat: Int, carbs: Int){
+fun MacroNutrientsBigSection(protein: Float, fat: Float, carbs: Float){
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         MacroNutrientBigItem(
             label = stringResource(R.string.protein),
-            value = stringResource(R.string.g, protein)
+            value = stringResource(R.string.grams_format, protein)
         )
 
         MacroNutrientBigItem(
             label = stringResource(R.string.carb),
-            value = stringResource(R.string.g, carbs)
+            value = stringResource(R.string.grams_format, carbs)
         )
 
         MacroNutrientBigItem(
             label = stringResource(R.string.fat),
-            value = stringResource(R.string.g, fat)
+            value = stringResource(R.string.grams_format, fat)
         )
     }
 }

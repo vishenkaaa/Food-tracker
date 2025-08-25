@@ -66,9 +66,9 @@ data class User(
         val fatCalories = dailyCalories * fatPercent
 
         // Конвертація калорій в грами
-        val proteins = (proteinCalories / proteinCaloriesPerGram).toInt()
-        val carbs = (carbCalories / carbCaloriesPerGram).toInt()
-        val fats = (fatCalories / fatCaloriesPerGram).toInt()
+        val proteins = (proteinCalories / proteinCaloriesPerGram).toFloat()
+        val carbs = (carbCalories / carbCaloriesPerGram).toFloat()
+        val fats = (fatCalories / fatCaloriesPerGram).toFloat()
 
         return MacroNutrients(
             proteins = proteins,

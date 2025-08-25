@@ -7,9 +7,9 @@ data class Dish(
     val title: String = "",
     val img: String = "",
     val kcal: Int = 0,
-    val carb: Int = 0,
-    val protein: Int = 0,
-    val fats: Int = 0,
-    val amount: Int = 0,
+    val carb: Float = 0f,
+    val protein: Float = 0f,
+    val fats: Float = 0f,
+    val amount: Float = 0f,
     val unit: UnitType = UnitType.GRAM,
 )

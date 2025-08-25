@@ -3,7 +3,7 @@ package com.example.domain.usecase.meal
 import com.example.domain.extension.calculateDayNutrition
 import com.example.domain.extension.calculateMealNutrition
 import com.example.domain.extension.getTotalNutrition
-import com.example.domain.model.diary.DailyMeals
+import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.diary.MealType
 import com.example.domain.model.diary.NutritionData
 import com.example.domain.model.statistics.DailyNutritionStatistics
@@ -15,6 +15,8 @@ import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class GetNutritionStatisticsUseCase @Inject constructor(
     private val getMealsForDateUseCase: GetMealsForDateUseCase,
@@ -68,7 +70,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                     val dailyMeals = mealsResult.getOrThrow()
                     dailyMeals.calculateDayNutrition()
                 } else {
-                    NutritionData(0, 0, 0, 0)
+                    NutritionData(0, 0f, 0f, 0f)
                 }
 
                 dayStatistics.add(
@@ -83,14 +85,14 @@ class GetNutritionStatisticsUseCase @Inject constructor(
             }
 
             val averageCalories = dayStatistics.map { it.calories }.average().toInt()
-            val averageCarbs = dayStatistics.map { it.carbs }.average().toInt()
-            val averageProtein = dayStatistics.map { it.protein }.average().toInt()
-            val averageFat = dayStatistics.map { it.fat }.average().toInt()
+            val averageCarbs = dayStatistics.map { it.carbs }.average().toFloat().roundTo1Decimal()
+            val averageProtein = dayStatistics.map { it.protein }.average().toFloat().roundTo1Decimal()
+            val averageFat = dayStatistics.map { it.fat }.average().toFloat().roundTo1Decimal()
 
             val maxCalories = dayStatistics.maxOfOrNull { it.calories } ?: 0
-            val maxCarbs = dayStatistics.maxOfOrNull { it.carbs } ?: 0
-            val maxProtein = dayStatistics.maxOfOrNull { it.protein } ?: 0
-            val maxFat = dayStatistics.maxOfOrNull { it.fat } ?: 0
+            val maxCarbs = dayStatistics.maxOfOrNull { it.carbs } ?: 0f
+            val maxProtein = dayStatistics.maxOfOrNull { it.protein } ?: 0f
+            val maxFat = dayStatistics.maxOfOrNull { it.fat } ?: 0f
 
             val weeklyStatistics = WeeklyNutritionStatistics(
                 targetCalories = targetCalories,
@@ -129,6 +131,18 @@ class GetNutritionStatisticsUseCase @Inject constructor(
 
         val totalCalories = totalNutrition.calories
 
+        val calorieValues = listOf(
+            mealNutrition.breakfast.calories.toFloat(),
+            mealNutrition.lunch.calories.toFloat(),
+            mealNutrition.dinner.calories.toFloat(),
+            mealNutrition.snacks.calories.toFloat()
+        )
+
+        val correctedPercentages = calculateCorrectedPercentages(
+            calorieValues,
+            totalCalories.toFloat()
+        )
+
         val mealStats = listOf(
             MealStatistics(
                 mealType = MealType.BREAKFAST,
@@ -136,7 +150,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 carbs = mealNutrition.breakfast.carb,
                 protein = mealNutrition.breakfast.protein,
                 fat = mealNutrition.breakfast.fat,
-                percentage = if (totalCalories > 0) mealNutrition.breakfast.calories.toFloat() / totalCalories else 0f
+                percentage = correctedPercentages[0]
             ),
             MealStatistics(
                 mealType = MealType.LUNCH,
@@ -144,7 +158,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 carbs = mealNutrition.lunch.carb,
                 protein = mealNutrition.lunch.protein,
                 fat = mealNutrition.lunch.fat,
-                percentage = if (totalCalories > 0) mealNutrition.lunch.calories.toFloat() / totalCalories else 0f
+                percentage = correctedPercentages[1]
             ),
             MealStatistics(
                 mealType = MealType.DINNER,
@@ -152,7 +166,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 carbs = mealNutrition.dinner.carb,
                 protein = mealNutrition.dinner.protein,
                 fat = mealNutrition.dinner.fat,
-                percentage = if (totalCalories > 0) mealNutrition.dinner.calories.toFloat() / totalCalories else 0f
+                percentage = correctedPercentages[2]
             ),
             MealStatistics(
                 mealType = MealType.SNACKS,
@@ -160,7 +174,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 carbs = mealNutrition.snacks.carb,
                 protein = mealNutrition.snacks.protein,
                 fat = mealNutrition.snacks.fat,
-                percentage = if (totalCalories > 0) mealNutrition.snacks.calories.toFloat() / totalCalories else 0f
+                percentage = correctedPercentages[3]
             )
         )
 
@@ -174,5 +188,39 @@ class GetNutritionStatisticsUseCase @Inject constructor(
         )
 
         return Result.success(NutritionStatistics.Daily(dailyStats))
+    }
+
+    private fun calculateCorrectedPercentages(values: List<Float>, total: Float): List<Int> {
+        if (total <= 0 || values.all { it <= 0 }) return List(values.size) { 0 }
+
+        val exactPercentages = values.map { (it / total * 100) }
+
+        val roundedPercentages = exactPercentages.map { it.roundToInt() }.toMutableList()
+        val currentSum = roundedPercentages.sum()
+
+        if (currentSum == 100) return roundedPercentages
+
+        val difference = 100 - currentSum
+
+        val remainders = exactPercentages.mapIndexed { index, exact ->
+            index to (exact - roundedPercentages[index])
+        }
+
+        val sortedByRemainders = if (difference > 0) {
+            remainders.sortedByDescending { it.second }.map { it.first }
+        } else {
+            remainders.sortedBy { it.second }.map { it.first }
+        }
+
+        for (i in 0 until abs(difference)) {
+            val indexToAdjust = sortedByRemainders[i % sortedByRemainders.size]
+            if (difference > 0) {
+                roundedPercentages[indexToAdjust] += 1
+            } else {
+                roundedPercentages[indexToAdjust] -= 1
+            }
+        }
+
+        return roundedPercentages
     }
 }

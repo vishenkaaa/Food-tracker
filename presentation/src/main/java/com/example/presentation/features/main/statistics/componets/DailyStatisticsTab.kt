@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.statistics.DailyNutritionStatistics
 import com.example.domain.model.statistics.MealStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
@@ -37,6 +38,7 @@ import com.example.presentation.R
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
+import kotlin.math.roundToInt
 
 @Composable
 fun DailyStatisticsTab(
@@ -87,7 +89,7 @@ fun MealStatisticsItem(
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${(mealStatistics.percentage * 100).toInt()}%",
+                    text = "${mealStatistics.percentage}%",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
@@ -123,7 +125,7 @@ private fun LinearCaloriesProgress(mealStatistics: MealStatistics) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth(mealStatistics.percentage)
+                .fillMaxWidth(mealStatistics.percentage / 100 .toFloat())
                 .background(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(8.dp)
@@ -166,7 +168,7 @@ fun DailyNutritionCircularProgress(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "${(statistics.progress * 100).toInt()}%",
+                    text = "${(statistics.progress * 100).roundToInt()}%",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
@@ -178,41 +180,11 @@ fun DailyNutritionCircularProgress(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "kcal",
+                    text = stringResource(R.string.kcal),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun StatisticsTabRow(
-    selectedTab: StatisticsPeriod,
-    onTabSelected: (StatisticsPeriod) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    PrimaryTabRow(
-        selectedTabIndex = StatisticsPeriod.entries.indexOf(selectedTab),
-        containerColor = Color.Transparent,
-        divider = { },
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-    ) {
-        StatisticsPeriod.entries.forEach { tab ->
-            Tab(
-                selected = selectedTab == tab,
-                onClick = { onTabSelected(tab) },
-                text = {
-                    Text(
-                        text = tab.displayName(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (selectedTab == tab) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.secondary
-                    )
-                }
-            )
         }
     }
 }

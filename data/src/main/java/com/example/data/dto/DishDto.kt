@@ -6,10 +6,10 @@ import com.example.domain.model.diary.UnitType
 data class DishDto(
     val title: String,
     val kcal: Int,
-    val carb: Int,
-    val protein: Int,
-    val fats: Int,
-    val amount: Int,
+    val carb: Float,
+    val protein: Float,
+    val fats: Float,
+    val amount: Float,
     val unit: String
 )
 

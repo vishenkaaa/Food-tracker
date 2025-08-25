@@ -2,6 +2,7 @@ package com.example.presentation.features.main.diary.editDish
 
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.domain.model.diary.NutritionData
@@ -58,28 +59,28 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
 
     private fun calculateNutrition() {
         val currentState = _state.value
-        val currentAmount = currentState.amount.toDoubleOrNull()?: 0.0
-        val originalAmount = currentState.dish.amount.toDouble()
+        val currentAmount = currentState.amount.toFloatOrNull()?: 0f
+        val originalAmount = currentState.dish.amount.toFloat()
         val originalUnit = currentState.dish.unit
 
         val convertedAmount = when {
             currentState.selectedUnit == originalUnit -> currentAmount
 
             currentState.selectedUnit == UnitType.LITER && originalUnit == UnitType.MILLILITER ->
-                currentAmount * 1000.0
+                currentAmount * 1000f
             currentState.selectedUnit == UnitType.MILLILITER && originalUnit == UnitType.LITER ->
-                currentAmount / 1000.0
+                currentAmount / 1000f
 
             else -> currentAmount
         }
 
-        val ratio = if (originalAmount != 0.0) convertedAmount / originalAmount else 0.0
+        val ratio = if (originalAmount != 0f) convertedAmount / originalAmount else 0f
 
         val nutrition = NutritionData(
             calories = (currentState.dish.kcal * ratio).toInt(),
-            protein = (currentState.dish.protein * ratio).toInt(),
-            carb = (currentState.dish.carb * ratio).toInt(),
-            fat = (currentState.dish.fats * ratio).toInt()
+            protein = currentState.dish.protein * ratio,
+            carb = currentState.dish.carb * ratio,
+            fat = currentState.dish.fats * ratio
         )
 
         _state.update {
@@ -100,7 +101,7 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
 
     fun createUpdatedDish(): Dish? {
         val currentState = _state.value
-        val amount = currentState.amount.toIntOrNull() ?: 0
+        val amount = currentState.amount.toFloatOrNull()?.roundTo1Decimal() ?: 0f
         if(amount<1) {
             viewModelScope.launch {
                 _showToast.emit(Unit)
@@ -111,9 +112,9 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
             amount = amount,
             unit = currentState.selectedUnit,
             kcal = currentState.currentNutrition.calories,
-            protein = currentState.currentNutrition.protein,
-            carb = currentState.currentNutrition.carb,
-            fats = currentState.currentNutrition.fat
+            protein = currentState.currentNutrition.protein.roundTo1Decimal(),
+            carb = currentState.currentNutrition.carb.roundTo1Decimal(),
+            fats = currentState.currentNutrition.fat.roundTo1Decimal()
         )
     }
 }
@@ -123,6 +124,6 @@ data class EditDishState(
     val mealType: MealType = MealType.BREAKFAST,
     val amount: String = "",
     val selectedUnit: UnitType = UnitType.GRAM,
-    val currentNutrition: NutritionData = NutritionData(0, 0, 0, 0),
+    val currentNutrition: NutritionData = NutritionData(0, 0f, 0f, 0f),
     val availableUnits: List<UnitType> = emptyList()
 )

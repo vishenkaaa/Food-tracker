@@ -14,7 +14,7 @@ import com.example.presentation.R
 @Composable
 fun MacroNutrientSmallItem(
     type: String,
-    value: Int
+    value: Float
 ) {
     Row {
         Text(
@@ -24,7 +24,7 @@ fun MacroNutrientSmallItem(
         )
         Spacer(Modifier.width(12.dp))
         Text(
-            text = stringResource(R.string.g, value),
+            text = stringResource(R.string.grams_format, value),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
