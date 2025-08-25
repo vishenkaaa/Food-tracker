@@ -15,5 +15,6 @@ fun UnitType.displayName(): String {
         UnitType.MILLILITER -> stringResource(R.string.unit_milliliter)
         UnitType.LITER -> stringResource(R.string.unit_liter)
         UnitType.PIECE -> stringResource(R.string.unit_piece)
+        UnitType.KILOGRAM -> stringResource(R.string.unit_kilogram)
     }
 }

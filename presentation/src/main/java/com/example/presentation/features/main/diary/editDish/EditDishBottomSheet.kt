@@ -1,5 +1,7 @@
-package com.example.presentation.common.ui.components
+package com.example.presentation.features.main.diary.editDish
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,17 +38,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.domain.model.diary.NutritionData
 import com.example.domain.model.diary.UnitType
 import com.example.presentation.R
+import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.modifiers.softShadow
 import com.example.presentation.extensions.displayName
 
@@ -55,20 +62,20 @@ fun EditDishBottomSheet(
     dish: Dish,
     mealType: MealType,
     onSave: (Dish, MealType) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    viewModel: EditDishVM = hiltViewModel()
 ) {
-    var editedDish by remember { mutableStateOf(dish) }
-    var amount by remember { mutableStateOf(dish.amount.toString()) }
-    var selectedMealType by remember { mutableStateOf(mealType) }
-    var selectedUnit by remember { mutableStateOf(UnitType.fromValue(dish.unit.value) ?: UnitType.GRAM) }
+   val state = viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    val currentNutrition = remember {
-        NutritionData(
-            calories = dish.kcal,
-            protein = dish.protein,
-            carb = dish.carb,
-            fat = dish.fats
-        )
+    LaunchedEffect(dish, mealType) {
+        viewModel.initialize(dish, mealType)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.showToast.collect {
+            Toast.makeText(context, "Кількість має бути більшою за 0", Toast.LENGTH_SHORT).show()
+        }
     }
 
     ModalBottomSheet(
@@ -103,40 +110,31 @@ fun EditDishBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             AmountAndUnitRow(
-                amount = amount,
-                onAmountChange = { newValue ->
-                    if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
-                        amount = newValue
-                    }
-                },
-                selectedUnit = selectedUnit,
-                onUnitChange = { unit ->
-                    selectedUnit = unit
-                    editedDish = editedDish.copy(unit = unit)
-                }
+                amount = state.value.amount,
+                onAmountChange = viewModel::updateAmount,
+                selectedUnit = state.value.selectedUnit,
+                availableUnits = state.value.availableUnits,
+                onUnitChange = viewModel::updateUnit
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             MealTypeDropdown(
-                selectedMealType = selectedMealType,
-                onMealTypeChange = { selectedMealType = it }
+                selectedMealType = state.value.mealType,
+                onMealTypeChange = { viewModel.updateMealType(it) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            NutritionGrid(currentNutrition)
+            NutritionGrid(state.value.currentNutrition)
 
             Spacer(modifier = Modifier.height(32.dp))
 
             CustomButton(
                 text = stringResource(R.string.save),
                 onClick = {
-                    val updatedDish = editedDish.copy(
-                        amount = amount.toIntOrNull() ?: dish.amount,
-                        unit = selectedUnit,
-                    )
-                    onSave(updatedDish, selectedMealType)
+                    val updatedDish = viewModel.createUpdatedDish()
+                    if(updatedDish!=null) onSave(updatedDish, state.value.mealType)
                 }
             )
 
@@ -150,6 +148,7 @@ private fun AmountAndUnitRow(
     amount: String,
     onAmountChange: (String) -> Unit,
     selectedUnit: UnitType,
+    availableUnits: List<UnitType>,
     onUnitChange: (UnitType) -> Unit
 ) {
     Row(
@@ -160,7 +159,7 @@ private fun AmountAndUnitRow(
         StyledTextField(
             value = amount,
             onValueChange = onAmountChange,
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier.weight(0.3f),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Done
@@ -170,7 +169,8 @@ private fun AmountAndUnitRow(
         UnitDropdown(
             selectedUnit = selectedUnit,
             onUnitChange = onUnitChange,
-            modifier = Modifier.weight(0.8f)
+            modifier = Modifier.weight(0.7f),
+            availableUnits = availableUnits
         )
     }
 }
@@ -178,6 +178,7 @@ private fun AmountAndUnitRow(
 @Composable
 private fun UnitDropdown(
     selectedUnit: UnitType,
+    availableUnits: List<UnitType>,
     onUnitChange: (UnitType) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -188,7 +189,7 @@ private fun UnitDropdown(
         expanded = expanded,
         onExpandedChange = { expanded = it },
         modifier = modifier,
-        items = UnitType.entries,
+        items = availableUnits,
         itemText = { it.displayName() },
         onItemClick = { unit ->
             onUnitChange(unit)
@@ -244,7 +245,7 @@ private fun <T> StyledDropdownMenu(
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             trailingIcon = {
-                Icon(
+                if(items.size>1) Icon(
                     painter = painterResource(R.drawable.down_arrow),
                     contentDescription = "Dropdown arrow",
                     tint = Color.Unspecified,
@@ -255,41 +256,43 @@ private fun <T> StyledDropdownMenu(
             }
         )
 
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-        ) {
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = itemText(item),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground
+        if(items.size>1)
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { onExpandedChange(false) },
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            ) {
+                items.forEach { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = itemText(item),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        onClick = { onItemClick(item) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        colors = MenuDefaults.itemColors(
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            leadingIconColor = MaterialTheme.colorScheme.onBackground,
+                            trailingIconColor = MaterialTheme.colorScheme.onBackground,
                         )
-                    },
-                    onClick = { onItemClick(item) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    colors = MenuDefaults.itemColors(
-                        textColor = MaterialTheme.colorScheme.onBackground,
-                        leadingIconColor = MaterialTheme.colorScheme.onBackground,
-                        trailingIconColor = MaterialTheme.colorScheme.onBackground,
                     )
-                )
+                }
             }
-        }
     }
 }
 
 @Composable
 private fun StyledTextField(
     value: String,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null
@@ -301,6 +304,7 @@ private fun StyledTextField(
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onBackground
         ),
+        enabled = enabled,
         keyboardOptions = keyboardOptions,
         singleLine = true,
         trailingIcon = trailingIcon,
@@ -333,14 +337,14 @@ private fun NutritionGrid(nutrition: NutritionData) {
         ) {
             NutritionItem(
                 icon = painterResource(R.drawable.fire),
-                label = "Calories",
-                value = "${nutrition.calories}",
+                label = stringResource(R.string.calories),
+                value = stringResource(R.string.grams_format, nutrition.calories),
                 modifier = Modifier.weight(0.5f)
             )
             NutritionItem(
                 icon = painterResource(R.drawable.eggcrack),
-                label = "Protein",
-                value = "${nutrition.protein}g",
+                label = stringResource(R.string.protein),
+                value = stringResource(R.string.grams_format, nutrition.protein),
                 modifier = Modifier.weight(0.5f)
             )
         }
@@ -353,14 +357,14 @@ private fun NutritionGrid(nutrition: NutritionData) {
         ) {
             NutritionItem(
                 icon = painterResource(R.drawable.grains),
-                label = "Carb",
-                value = "${nutrition.carb}g",
+                label = stringResource(R.string.carb),
+                value = stringResource(R.string.grams_format, nutrition.carb),
                 modifier = Modifier.weight(0.5f)
             )
             NutritionItem(
                 icon = painterResource(R.drawable.avocado),
-                label = "Fat",
-                value = "${nutrition.fat}g",
+                label = stringResource(R.string.fat),
+                value = stringResource(R.string.grams_format, nutrition.fat),
                 modifier = Modifier.weight(0.5f)
             )
         }

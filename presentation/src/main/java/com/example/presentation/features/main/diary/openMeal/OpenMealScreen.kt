@@ -1,5 +1,6 @@
 package com.example.presentation.features.main.diary.openMeal
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -51,7 +52,7 @@ import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.ConfirmationDialog
-import com.example.presentation.common.ui.components.EditDishBottomSheet
+import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
@@ -79,6 +80,10 @@ fun OpenMealRoute(
 
     LaunchedEffect(mealType, dishes, date, targetCalories) {
         viewModel.initializeMeal(mealType, dishes, date, targetCalories)
+    }
+
+    BackHandler {
+        onBackPressed()
     }
 
     OpenMealScreen(

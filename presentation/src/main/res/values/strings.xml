@@ -116,6 +116,7 @@
     <string name="delete">Видалити</string>
     <string name="failed_to_update_dish">Сталась помилка під час оновлення</string>
     <string name="unit_gram">г</string>
+    <string name="unit_kilogram">кг</string>
     <string name="unit_milliliter">мл</string>
     <string name="unit_liter">л</string>
     <string name="unit_piece">шт</string>
