@@ -40,11 +40,11 @@ class GptRepositoryImpl @Inject constructor(
                         [
                           {
                             "title": "Dish name",
-                            "kcal": "Calories in kcal",
-                            "carb": "Carbohydrates in grams",
-                            "protein": "Protein in grams",
-                            "fats": "Fats in grams",
-                            "amount": "Quantity value",
+                            "kcal": "Calories in kcal (integer)",
+                            "carb": "Carbohydrates in grams (float, 1 decimal place)",
+                            "protein": "Protein in grams (float, 1 decimal place)",
+                            "fats": "Fats in grams (float, 1 decimal place)",
+                            "amount": "Quantity value (float, 1 decimal place)",
                             "unit": "Unit of measurement (g, ml, l, pcs)"
                           }
                         ]
@@ -55,7 +55,7 @@ class GptRepositoryImpl @Inject constructor(
                             ),
                             Content(
                                 type = "image_url",
-                                image_url = "data:image/jpeg;base64,$imageBase64"
+                                image_url = Content.ImageUrl("data:image/jpeg;base64,$imageBase64")
                             )
                         )
                     )
@@ -77,11 +77,18 @@ class GptRepositoryImpl @Inject constructor(
 
                 val body = response.body.string()
                 val jsonObject = JSONObject(body)
-                val content = jsonObject
+
+                val rawContent = jsonObject
                     .getJSONArray("choices")
                     .getJSONObject(0)
                     .getJSONObject("message")
                     .getString("content")
+
+                val content = rawContent
+                    .removePrefix("```json")
+                    .removePrefix("```")
+                    .removeSuffix("```")
+                    .trim()
 
                 val dishesDto = Json.decodeFromString<List<DishDto>>(content)
                 val dishes = dishesDto.map { it.toDish() }

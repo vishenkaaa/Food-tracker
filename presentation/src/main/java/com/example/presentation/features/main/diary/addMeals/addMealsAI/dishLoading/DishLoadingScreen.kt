@@ -1,6 +1,14 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,21 +20,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
+import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.HandleError
 import java.time.LocalDate
@@ -60,54 +75,71 @@ fun DishLoadingScreen(
     onErrorConsume: () -> Unit,
     onConnectionRetry: () -> Unit,
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val boxSize = screenWidth * 0.7f
-
     Box {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = imgUri,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(boxSize)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
-            )
+
+            RotatingLoadingIndicator()
 
             Spacer(Modifier.height(24.dp))
 
-            when {
-                baseUiState.isLoading -> {
-                    LinearProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(6.dp)
-                            .clip(RoundedCornerShape(3.dp))
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text("Аналізуємо фото…")
-                }
-
-                dishes.isEmpty() -> {
-                    Text("На фото не знайдено їжі", color = Color.Gray)
-                }
-
-                else -> {
-                    Text("Знайдено страви: ${dishes.size}")
-                }
-            }
+            Text(
+                text = stringResource(R.string.loading),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
 
         HandleError(
             baseUiState = baseUiState,
             onErrorConsume = onErrorConsume,
             onConnectionRetry = onConnectionRetry
+        )
+    }
+}
+
+@Composable
+private fun RotatingLoadingIndicator(
+    size: Dp = 80.dp,
+    duration: Int = 1500
+) {
+    val isDark = isSystemInDarkTheme()
+
+    val rotationAnimation by rememberInfiniteTransition(label = "rotation").animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = duration,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(size)
+    ) {
+        Image(
+            painter = if(isDark) painterResource(id = R.drawable.loading_dark)
+            else painterResource(id = R.drawable.loading_light),
+            contentDescription = "Loading",
+            modifier = Modifier
+                .fillMaxSize()
+                .rotate(rotationAnimation),
+        )
+
+        Text(
+            text = "AI",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
         )
     }
 }

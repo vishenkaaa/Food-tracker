@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Content(
     val type: String,
     val text: String? = null,
-    val image_url: String? = null
+    val image_url: ImageUrl? = null
 ){
     @Serializable
     data class ImageUrl(

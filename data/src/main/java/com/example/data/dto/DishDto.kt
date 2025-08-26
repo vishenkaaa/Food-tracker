@@ -2,7 +2,9 @@ package com.example.data.dto
 
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.UnitType
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DishDto(
     val title: String,
     val kcal: Int,
