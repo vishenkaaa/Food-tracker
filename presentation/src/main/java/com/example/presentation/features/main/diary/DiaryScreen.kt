@@ -6,7 +6,6 @@ import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -524,9 +523,7 @@ fun DayItem(
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.background,
-            disabledContainerColor = if (!isSystemInDarkTheme()) Color(0xFFEEEEEE) else Color(
-                0xFF3D3D3D
-            ),
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         enabled = enabled,
         elevation = CardDefaults.elevatedCardElevation(

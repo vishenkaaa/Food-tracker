@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -146,17 +147,16 @@ fun OpenMealScreen(
             },
             floatingActionButtonPosition = FabPosition.Center
         ) { padding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(
-                    top = padding.calculateTopPadding(),
-                    bottom = padding.calculateBottomPadding()
-                ),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                item {
+            if (uiState.dishes.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .padding(
+                            top = padding.calculateTopPadding(),
+                            bottom = padding.calculateBottomPadding()
+                        )
+                ) {
                     OpenMealNutritionSection(
                         calories = uiState.calories,
                         targetCalories = uiState.targetCalories,
@@ -164,21 +164,56 @@ fun OpenMealScreen(
                         protein = uiState.protein,
                         fat = uiState.fat
                     )
-                }
 
-                items(
-                    items = uiState.dishes,
-                    key = { it.id }
-                ) { dish ->
-                    SwipeDishItem(
-                        dish = dish,
-                        onEdit = { onEditDish(dish) },
-                        onRemove = { onDeleteDish(dish.id) }
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 80.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_dishes_added),
+                            color = MaterialTheme.colorScheme.secondary,
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    contentPadding = PaddingValues(
+                        top = padding.calculateTopPadding(),
+                        bottom = padding.calculateBottomPadding()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        OpenMealNutritionSection(
+                            calories = uiState.calories,
+                            targetCalories = uiState.targetCalories,
+                            carb = uiState.carbs,
+                            protein = uiState.protein,
+                            fat = uiState.fat
+                        )
+                    }
 
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
+                    items(
+                        items = uiState.dishes,
+                        key = { it.id }
+                    ) { dish ->
+                        SwipeDishItem(
+                            dish = dish,
+                            onEdit = { onEditDish(dish) },
+                            onRemove = { onDeleteDish(dish.id) }
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(80.dp))
+                    }
                 }
             }
         }

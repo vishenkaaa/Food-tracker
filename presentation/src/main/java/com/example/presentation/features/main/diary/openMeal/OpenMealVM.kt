@@ -71,53 +71,48 @@ class OpenMealVM @Inject constructor(
         }
     }
 
-    fun onSaveEditedDish(updatedDish: Dish, updatedMealType: MealType,  diaryVM: DiaryVM) {
+    fun onSaveEditedDish(updatedDish: Dish, updatedMealType: MealType, diaryVM: DiaryVM) {
         viewModelScope.launch {
             handleLoading(true)
-            val userId = getCurrentUserIdUseCase()
-            if (userId == null) {
-                handleError(Exception(context.getString(R.string.user_not_authenticated)))
-                handleLoading(false)
-                return@launch
-            }
 
-            updateDishInMealUseCase(
-                userId = userId,
-                date = uiState.value.date.toString(),
-                originalMealType = uiState.value.mealType,
-                newMealType = updatedMealType,
-                dish = updatedDish
-            ).fold(
-                onSuccess = {
-                    updateLocalDishes(updatedDish, updatedMealType)
-                    diaryVM.refreshData()
-                    onEditDishDismiss()
-                    handleLoading(false)
-                },
-                onFailure = {
-                    handleError(Exception(context.getString(R.string.failed_to_update_dish)), context)
-                    handleLoading(false)
-                }
-            )
+            try {
+                val userId = getCurrentUserIdUseCase()
+                    ?: throw Exception(context.getString(R.string.user_not_authenticated))
+
+                updateDishInMealUseCase(
+                    userId = userId,
+                    date = uiState.value.date.toString(),
+                    originalMealType = uiState.value.mealType,
+                    newMealType = updatedMealType,
+                    dish = updatedDish
+                ).fold(
+                    onSuccess = {
+                        updateLocalDishes(updatedDish, updatedMealType)
+                        diaryVM.refreshData()
+                        onEditDishDismiss()
+                    },
+                    onFailure = {
+                        handleError(Exception(context.getString(R.string.failed_to_update_dish)), context)
+                    }
+                )
+            } catch (e: Exception) {
+                handleError(e, context)
+            } finally {
+                handleLoading(false)
+            }
         }
     }
 
-    private fun updateLocalDishes(updatedDish: Dish, updatedMealType: MealType,) {
-        val updatedDishes = _uiState.value.dishes.map { dish ->
-            if (dish.id == updatedDish.id) updatedDish else dish
+    private fun updateLocalDishes(updatedDish: Dish, updatedMealType: MealType) {
+        val updatedDishes = if (updatedMealType != uiState.value.mealType) {
+            _uiState.value.dishes.filter { it.id != updatedDish.id }
+        } else {
+            _uiState.value.dishes.map { dish ->
+                if (dish.id == updatedDish.id) updatedDish else dish
+            }
         }
-        val nutritionForDishes = updatedDishes.calculateMealNutritionForDishes()
 
-        _uiState.update {
-            it.copy(
-                mealType = updatedMealType,
-                dishes = updatedDishes,
-                calories = nutritionForDishes.calories,
-                carbs = nutritionForDishes.carb,
-                protein = nutritionForDishes.protein,
-                fat = nutritionForDishes.fat
-            )
-        }
+        updateNutritionState(updatedDishes)
     }
 
     fun requestDeleteConfirmation(dishId: String) {
@@ -133,59 +128,59 @@ class OpenMealVM @Inject constructor(
         _uiState.update {
             it.copy(
                 showDeleteMealDialog = false,
+                dishIdToDelete = null
             )
         }
-        if (status) uiState.value.dishIdToDelete?.let { id -> onDeleteDish(id, diaryVM) }
+        if (status) uiState.value.dishIdToDelete?.let { id ->
+            onDeleteDish(id, diaryVM)
+        }
     }
 
     private fun onDeleteDish(dishId: String, diaryVM: DiaryVM) {
         viewModelScope.launch {
             handleLoading(true)
-            val userId = getCurrentUserIdUseCase()
-            if (userId == null) {
-                handleError(Exception(context.getString(R.string.user_not_authenticated)))
+
+            try {
+                val userId = getCurrentUserIdUseCase()
+                    ?: throw Exception(context.getString(R.string.user_not_authenticated))
+
+                removeDishFromMealUseCase(
+                    userId,
+                    uiState.value.date.toString(),
+                    uiState.value.mealType,
+                    dishId
+                ).fold(
+                    onSuccess = {
+                        deleteLocalDish(dishId)
+                        diaryVM.refreshData()
+                    },
+                    onFailure = {
+                        handleError(Exception(context.getString(R.string.failed_to_remove_the_dish)), context)
+                    }
+                )
+            } catch (e: Exception) {
+                handleError(e, context)
+            } finally {
                 handleLoading(false)
-                return@launch
             }
-
-            removeDishFromMealUseCase(userId, uiState.value.date.toString(), uiState.value.mealType, dishId).fold(
-                onSuccess = {
-                    updateDishes(dishId = dishId, diaryVM = diaryVM)
-                },
-                onFailure = {
-                    handleError(Exception(context.getString(R.string.failed_to_remove_the_dish)), context)
-                }
-            )
         }
-
-        val updatedDishes = _uiState.value.dishes.filter { it.id != dishId }
-        val nutritionForDishes = updatedDishes.calculateMealNutritionForDishes()
-        _uiState.update {
-            it.copy(
-                dishes = updatedDishes,
-                calories = nutritionForDishes.calories,
-                carbs = nutritionForDishes.carb,
-                protein = nutritionForDishes.protein,
-                fat = nutritionForDishes.fat
-            )
-        }
-
-        diaryVM.refreshData()
     }
 
-    private fun updateDishes(dishId: String, diaryVM: DiaryVM){
+    private fun deleteLocalDish(dishId: String) {
         val updatedDishes = _uiState.value.dishes.filter { it.id != dishId }
-        val nutritionForDishes = updatedDishes.calculateMealNutritionForDishes()
+        updateNutritionState(updatedDishes)
+    }
+
+    private fun updateNutritionState(dishes: List<Dish>) {
+        val nutritionForDishes = dishes.calculateMealNutritionForDishes()
         _uiState.update {
             it.copy(
-                dishes = updatedDishes,
+                dishes = dishes,
                 calories = nutritionForDishes.calories,
                 carbs = nutritionForDishes.carb,
                 protein = nutritionForDishes.protein,
                 fat = nutritionForDishes.fat
             )
         }
-
-        diaryVM.refreshData()
     }
 }

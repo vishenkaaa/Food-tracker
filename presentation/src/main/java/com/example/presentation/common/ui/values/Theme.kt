@@ -13,7 +13,7 @@ private val LightColorScheme
     get() = lightColorScheme(
         primary = Green, // акцентний
         onPrimary = White, // на акцентному
-        primaryContainer = Color(0xFFDBE5D7), // колір контейнера
+        primaryContainer = DisableLightContainer, // недоступний контейнер
         secondary = DarkGreen30, // світло сірий текст
         onSecondary = DarkGreen60, // темніший сірий текст
         secondaryContainer = LightBackground,
@@ -35,7 +35,7 @@ private val DarkColorScheme
     get() = darkColorScheme(
         primary = Green,
         onPrimary = White,
-        primaryContainer = DarkBackground,
+        primaryContainer = DisableDarkContainer,
         secondary = White.copy(0.8f),
         onSecondary = White.copy(0.6f),
         secondaryContainer = DarkContainer,

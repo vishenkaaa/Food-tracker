@@ -119,4 +119,6 @@
     <string name="unit_milliliter">мл</string>
     <string name="unit_liter">л</string>
     <string name="unit_piece">шт</string>
+    <string name="no_dishes_added">Жодної страви ще не додано</string>
+    <string name="amount_must_be_greater_than_zero">Кількість має бути більшою за 0</string>
 </resources>

@@ -74,7 +74,8 @@ fun EditDishBottomSheet(
 
     LaunchedEffect(Unit) {
         viewModel.showToast.collect {
-            Toast.makeText(context, "Кількість має бути більшою за 0", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,
+                context.getString(R.string.amount_must_be_greater_than_zero), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -124,7 +125,7 @@ fun EditDishBottomSheet(
                 onMealTypeChange = { viewModel.updateMealType(it) }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             NutritionGrid(state.value.currentNutrition)
 
@@ -322,8 +323,8 @@ private fun StyledTextField(
             unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
-            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background
         )
     )
 }
