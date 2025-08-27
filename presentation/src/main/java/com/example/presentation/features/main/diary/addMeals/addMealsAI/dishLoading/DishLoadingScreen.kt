@@ -23,6 +23,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,13 +53,18 @@ fun DishLoadingRoute(
     date: LocalDate,
     imgUri: String,
     onBackPressed: () -> Unit,
+    onNavigateToResults: (List<Dish>) -> Unit,
     viewModel: DishLoadingVM = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.loading) {
+        if (!uiState.loading) {
+            onNavigateToResults(uiState.dishes)
+        }
+    }
 
     DishLoadingScreen(
-        baseUiState = baseUiState,
         imgUri = imgUri,
         dishes = uiState.dishes,
         onErrorConsume = { viewModel.clearErrors() },
@@ -69,7 +75,6 @@ fun DishLoadingRoute(
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun DishLoadingScreen(
-    baseUiState: BaseUiState,
     imgUri: String,
     dishes: List<Dish>,
     onErrorConsume: () -> Unit,
@@ -93,12 +98,6 @@ fun DishLoadingScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-
-        HandleError(
-            baseUiState = baseUiState,
-            onErrorConsume = onErrorConsume,
-            onConnectionRetry = onConnectionRetry
-        )
     }
 }
 

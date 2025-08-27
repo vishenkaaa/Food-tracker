@@ -1,94 +1,115 @@
-package com.example.presentation.features.main.diary.openMeal
+package com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.ConfirmationDialog
+import com.example.presentation.common.ui.components.CustomButton
+import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
+import com.example.presentation.common.ui.modifiers.softShadow
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
+import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
 import com.example.presentation.features.main.diary.components.SwipeDishItem
-import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
 import java.time.LocalDate
 
 @Composable
-fun OpenMealRoute(
+fun ResultAIRoute(
     diaryVM: DiaryVM = hiltViewModel(),
-    viewModel: OpenMealVM = hiltViewModel(),
+    viewModel: ResultAIVM = hiltViewModel(),
+    imgUri: String,
     mealType: MealType,
     dishes: List<Dish>,
     date: LocalDate,
-    targetCalories: Int,
     onBackPressed: () -> Unit,
-    onNavigateToAddDish: (MealType, LocalDate) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(mealType, dishes, date, targetCalories) {
-        viewModel.initializeMeal(mealType, dishes, date, targetCalories)
+    LaunchedEffect(mealType, dishes, date) {
+        viewModel.initializeMeal(mealType, dishes, date, 0)
     }
 
-    OpenMealScreen(
+    ResultAIScreen(
+        imgUri = imgUri,
         uiState = uiState,
         baseUiState = baseUiState,
         onBackPressed = onBackPressed,
-        onAddDishClick = { onNavigateToAddDish(mealType, date) },
         onEditDish = { dish -> viewModel.onEditDish(dish) },
         onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, diaryVM) },
         onEditDishDismiss = { viewModel.onEditDishDismiss() },
         onDeleteDish = viewModel::requestDeleteConfirmation,
         onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
         onErrorConsume = { viewModel.clearErrors() },
-        onRetry = { viewModel.retryLastAction() }
+        onRetry = { viewModel.retryLastAction() },
+        onSave = { viewModel.onSaveDishes(diaryVM) }
     )
 }
 
 @Composable
-fun OpenMealScreen(
+fun ResultAIScreen(
+    imgUri: String,
     uiState: OpenMealUIState,
     baseUiState: BaseUiState,
     onBackPressed: () -> Unit,
-    onAddDishClick: () -> Unit,
     onEditDish: (Dish) -> Unit,
     onSaveEditedDish: (Dish, MealType) -> Unit,
     onEditDishDismiss: () -> Unit,
@@ -96,9 +117,9 @@ fun OpenMealScreen(
     onDeleteDish: (String) -> Unit,
     onErrorConsume: () -> Unit,
     onRetry: () -> Unit,
+    onSave: () -> Unit
 ) {
     Box {
-
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
@@ -107,26 +128,12 @@ fun OpenMealScreen(
                     onNavigateBack = onBackPressed
                 )
             },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = onAddDishClick,
-                    modifier = Modifier
-                        .size(70.dp),
-                    shape = RoundedCornerShape(50.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    elevation = FloatingActionButtonDefaults.elevation(
-                        defaultElevation = 0.dp
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.big_plus),
-                        contentDescription = "Add dish",
-                        Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Center
+            bottomBar = {
+                CustomButton(
+                    text = stringResource(R.string.save),
+                    modifier = Modifier.navigationBarsPadding().padding(bottom = 32.dp)
+                ) { onSave() }
+            }
         ) { padding ->
             if (uiState.dishes.isEmpty()) {
                 Column(
@@ -138,7 +145,8 @@ fun OpenMealScreen(
                             bottom = padding.calculateBottomPadding()
                         )
                 ) {
-                    OpenMealNutritionSection(
+                    NutritionSection(
+                        imgUri = imgUri,
                         calories = uiState.calories,
                         targetCalories = uiState.targetCalories,
                         carb = uiState.carbs,
@@ -148,12 +156,11 @@ fun OpenMealScreen(
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 80.dp),
+                            .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.no_dishes_added),
+                            text = "Не вдалось проаналізувати зображення",
                             color = MaterialTheme.colorScheme.secondary,
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center
@@ -172,7 +179,8 @@ fun OpenMealScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
-                        OpenMealNutritionSection(
+                        NutritionSection(
+                            imgUri = imgUri,
                             calories = uiState.calories,
                             targetCalories = uiState.targetCalories,
                             carb = uiState.carbs,
@@ -190,10 +198,6 @@ fun OpenMealScreen(
                             onEdit = { onEditDish(dish) },
                             onRemove = { onDeleteDish(dish.id) }
                         )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
             }
@@ -227,7 +231,8 @@ fun OpenMealScreen(
 }
 
 @Composable
-fun OpenMealNutritionSection(
+fun NutritionSection(
+    imgUri: String,
     calories: Int,
     targetCalories: Int,
     carb: Float,
@@ -238,28 +243,20 @@ fun OpenMealNutritionSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier.size(161.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            val progress = if (targetCalories > 0) {
-                (calories.toFloat() / targetCalories.toFloat()).coerceIn(0f, 1f)
-            } else {
-                0f
-            }
+        AsyncImage(
+            model = imgUri,
+            contentDescription = null,
+            modifier = Modifier
+                .size(161.dp)
+                .clip(RoundedCornerShape(150.dp)),
+            contentScale = ContentScale.Crop
+        )
 
-            RoundedCircularProgress(
-                progress = progress,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(150.dp)),
-                strokeWidth = 16.dp,
-            )
+        Spacer(Modifier.height(8.dp))
 
-            CaloriesDisplay(calories)
-        }
+        CaloriesDisplay(calories)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         MacroNutrientsBigSection(protein, fat, carb)
     }

@@ -56,17 +56,18 @@ class DishLoadingVM @Inject constructor(
                 .onSuccess { dishes ->
                     Log.d("DishLoadingVM", "GPT response: $dishes")
                     _uiState.update { it.copy(dishes = dishes) }
-                    if(dishes.isEmpty()) handleError(Exception("На фото не знайдено їжі"))
                 }
                 .onFailure { e ->
                     Log.e("DishLoadingVM", "GPT error", e)
-                    handleError(Exception("Не вдалося проаналізувати зображення"), context){ analyze(imgUri) }
                 }
-                .also { handleLoading(false) }
+                .also {
+                    _uiState.update { it.copy(loading = false) }
+                }
         }
     }
 }
 
 data class DishLoadingUiState(
     val dishes: List<Dish> = emptyList(),
+    val loading: Boolean = true
 )

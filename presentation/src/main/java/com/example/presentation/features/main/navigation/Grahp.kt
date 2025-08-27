@@ -1,6 +1,5 @@
 package com.example.presentation.features.main.navigation
 
-import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import kotlinx.serialization.Serializable
 
@@ -60,5 +59,12 @@ sealed class MainGraph {
         val mealType: MealType,
         val date: String,
         val targetCalories: Int
+    ) : MainGraph()
+
+    @Serializable
+    data class ResultAI(
+        val mealType: MealType,
+        val date: String,
+        val imgUri: String
     ) : MainGraph()
 }

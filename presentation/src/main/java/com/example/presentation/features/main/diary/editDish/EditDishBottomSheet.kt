@@ -217,7 +217,6 @@ private fun MealTypeDropdown(
             onMealTypeChange(mealType)
             expanded = false
         },
-        showRotatingIcon = true
     )
 }
 
@@ -231,7 +230,6 @@ private fun <T> StyledDropdownMenu(
     items: List<T>,
     itemText: @Composable (T) -> String,
     onItemClick: (T) -> Unit,
-    showRotatingIcon: Boolean = false
 ) {
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -250,9 +248,7 @@ private fun <T> StyledDropdownMenu(
                     painter = painterResource(R.drawable.down_arrow),
                     contentDescription = "Dropdown arrow",
                     tint = Color.Unspecified,
-                    modifier = if (showRotatingIcon) {
-                        Modifier.rotate(if (expanded) 180f else 0f)
-                    } else Modifier
+                    modifier = Modifier.rotate(if (expanded) 180f else 0f)
                 )
             }
         )

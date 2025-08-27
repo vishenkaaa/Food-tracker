@@ -25,6 +25,7 @@ import com.example.presentation.features.main.diary.DiaryRoute
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.AddMealAIRoute
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading.DishLoadingRoute
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI.ResultAIRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
@@ -160,33 +161,6 @@ private fun NavGraphBuilder.mainGraph(
             )
         }
 
-        composable<MainGraph.AddMealAI> { backStackEntry ->
-            val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
-            AddMealAIRoute(
-                mealType = args.mealType,
-                date = LocalDate.parse(args.date),
-                onNavigateToAnalyze = { imgUri ->
-                    navController.navigate(
-                    MainGraph.DishLoading(
-                        mealType = args.mealType,
-                        date = args.date,
-                        imgUri = imgUri
-                    )
-                )},
-                onBackPressed = { navController.popBackStack() }
-            )
-        }
-
-        composable<MainGraph.DishLoading> { backStackEntry ->
-            val args = backStackEntry.toRoute<MainGraph.DishLoading>()
-            DishLoadingRoute(
-                mealType = args.mealType,
-                date = LocalDate.parse(args.date),
-                imgUri = args.imgUri,
-                onBackPressed = { navController.popBackStack() }
-            )
-        }
-
         composable<MainGraph.OpenMeal>(
             enterTransition = {
                 slideIntoContainer(
@@ -224,6 +198,73 @@ private fun NavGraphBuilder.mainGraph(
                         )
                     )
                 }
+            )
+        }
+
+        composable<MainGraph.AddMealAI> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
+            AddMealAIRoute(
+                mealType = args.mealType,
+                date = LocalDate.parse(args.date),
+                onNavigateToAnalyze = { imgUri ->
+                    navController.navigate(
+                        MainGraph.DishLoading(
+                            mealType = args.mealType,
+                            date = args.date,
+                            imgUri = imgUri
+                        )
+                    ) {
+                        popUpTo<MainGraph.AddMealAI> {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackPressed = { navController.popBackStack() }
+            )
+        }
+
+        composable<MainGraph.DishLoading> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.DishLoading>()
+            DishLoadingRoute(
+                mealType = args.mealType,
+                date = LocalDate.parse(args.date),
+                imgUri = args.imgUri,
+                onBackPressed = { navController.popBackStack() },
+                onNavigateToResults = { dishes ->
+                    val parentEntry = navController.getBackStackEntry<Graphs.Main>()
+                    parentEntry.savedStateHandle[DISHES_KEY] = dishes
+
+                    navController.navigate(
+                        MainGraph.ResultAI(
+                            mealType = args.mealType,
+                            date = args.date,
+                            imgUri = args.imgUri
+                        )
+                    ) {
+                        popUpTo<MainGraph.DishLoading> {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable<MainGraph.ResultAI> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.ResultAI>()
+
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Graphs.Main>()
+            }
+            val dishes = parentEntry.savedStateHandle.get<List<Dish>>(DISHES_KEY) ?: listOf()
+            val diaryVM = hiltViewModel<DiaryVM>(parentEntry)
+
+            ResultAIRoute(
+                diaryVM = diaryVM,
+                mealType = args.mealType,
+                dishes = dishes,
+                date = LocalDate.parse(args.date),
+                onBackPressed = { navController.popBackStack() },
+                imgUri = args.imgUri,
             )
         }
 
