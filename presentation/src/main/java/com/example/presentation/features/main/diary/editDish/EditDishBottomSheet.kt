@@ -1,7 +1,6 @@
 package com.example.presentation.features.main.diary.editDish
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -72,20 +71,25 @@ fun EditDishBottomSheet(
         viewModel.initialize(dish, mealType)
     }
 
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.background,
         dragHandle = {
             Box(
-            modifier = Modifier
-                .padding(top = 20.dp, bottom = 15.dp)
-                .width(48.dp)
-                .height(4.dp)
-                .background(
-                    MaterialTheme.colorScheme.onBackground,
-                    RoundedCornerShape(2.dp)
-                )
-        )
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 15.dp)
+                    .width(48.dp)
+                    .height(4.dp)
+                    .background(
+                        MaterialTheme.colorScheme.onBackground,
+                        RoundedCornerShape(2.dp)
+                    )
+            )
         }
     ) {
         Column(

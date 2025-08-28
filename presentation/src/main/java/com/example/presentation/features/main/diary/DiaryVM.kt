@@ -16,6 +16,7 @@ import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
+import com.example.presentation.features.main.diary.models.NavigationDirection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,29 +132,38 @@ class DiaryVM @Inject constructor(
     fun onPreviousWeek() {
         val newWeekStart = _uiState.value.weekStart.minusWeeks(1)
         _uiState.update { it.copy(weekStart = newWeekStart) }
-        loadNewWeek(newWeekStart) {onPreviousWeek()}
+        loadNewWeek(newWeekStart, NavigationDirection.BACKWARD) { onPreviousWeek() }
     }
 
     fun onNextWeek() {
         val newWeekStart = _uiState.value.weekStart.plusWeeks(1)
         _uiState.update { it.copy(weekStart = newWeekStart) }
-        loadNewWeek(newWeekStart) {onNextWeek()}
+        loadNewWeek(newWeekStart, NavigationDirection.FORWARD) { onNextWeek() }
     }
 
-    private fun loadNewWeek(weekStart: LocalDate, retryAction: () -> Unit) {
+    private fun loadNewWeek(
+        weekStart: LocalDate,
+        direction: NavigationDirection,
+        retryAction: () -> Unit
+    ) {
         viewModelScope.launch {
             handleLoading(true)
             try {
+                val selectedDate = _uiState.value.selectedDate
+                val newSelectedDate = if (isDateInWeek(selectedDate, weekStart)) {
+                    selectedDate
+                } else {
+                    when (direction) {
+                        NavigationDirection.FORWARD -> weekStart
+                        NavigationDirection.BACKWARD -> weekStart.plusDays(6)
+                    }
+                }
+
+                _uiState.update { it.copy(selectedDate = newSelectedDate) }
+
                 val userId = getCurrentUserIdUseCase() ?: throw Exception(context.getString(R.string.user_not_authenticated))
                 loadWeekData(userId, weekStart)
 
-                val selectedDate = _uiState.value.selectedDate
-                val newSelectedDate = if (isDateInWeek(selectedDate, weekStart))
-                    selectedDate
-                else
-                    weekStart
-
-                _uiState.update { it.copy(selectedDate = newSelectedDate) }
                 calculateSelectedDateNutrition(newSelectedDate)
             } catch (e: Exception) {
                 handleError(Exception(context.getString(R.string.error_loading_data)), context) { retryAction() }

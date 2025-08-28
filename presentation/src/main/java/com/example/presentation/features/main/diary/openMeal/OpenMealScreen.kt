@@ -1,6 +1,8 @@
 package com.example.presentation.features.main.diary.openMeal
 
-import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -244,12 +246,19 @@ fun OpenMealNutritionSection(
         ) {
             val progress = if (targetCalories > 0) {
                 (calories.toFloat() / targetCalories.toFloat()).coerceIn(0f, 1f)
-            } else {
-                0f
-            }
+            } else 0f
+
+            val animatedProgress by animateFloatAsState(
+                targetValue = progress,
+                animationSpec = tween(
+                    durationMillis = 800,
+                    easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
+                ),
+                label = "progress_animation"
+            )
 
             RoundedCircularProgress(
-                progress = progress,
+                progress = animatedProgress,
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(150.dp)),

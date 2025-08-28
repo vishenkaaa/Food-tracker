@@ -73,7 +73,6 @@ fun AppNavHost(
     NavHost(
         modifier = modifier
             .fillMaxSize(),
-//            .padding(bottom = if (shouldShowBottomBar) 32.dp else 0.dp),
         navController = navController,
         startDestination = Graphs.IdleScreen
     ) {
@@ -274,11 +273,7 @@ private fun NavGraphBuilder.mainGraph(
         }
 
         composable<MainGraph.Statistics> {
-                backStackEntry ->
-            val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry<Graphs.Main>()
-            }
-            StatisticsRoute(hiltViewModel(parentEntry))
+            StatisticsRoute()
         }
 
         composable<MainGraph.Profile> { backStackEntry ->

@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -523,7 +524,8 @@ fun DayItem(
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.background,
-            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer
+            disabledContainerColor =  if (selected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.background,
         ),
         enabled = enabled,
         elevation = CardDefaults.elevatedCardElevation(
@@ -537,6 +539,7 @@ fun DayItem(
                 offsetX = 0.dp,
                 cornerRadius = 20.dp
             )
+            .alpha(if (enabled) 1f else 0.4f)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp),
