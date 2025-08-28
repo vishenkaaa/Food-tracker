@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.Locale
 import javax.inject.Inject
 
 class GptRepositoryImpl @Inject constructor(
@@ -23,6 +24,9 @@ class GptRepositoryImpl @Inject constructor(
 
     private val apiKey: String
         get() = BuildConfig.OPENAI_API_KEY
+
+    private val locale =  if (Locale.getDefault().language == "uk") "Ukrainian"
+    else "English"
 
     override suspend fun analyzeDishImage(imageBase64: String): Result<List<Dish>> {
         return try {
@@ -39,7 +43,8 @@ class GptRepositoryImpl @Inject constructor(
 
                         [
                           {
-                            "title": "Dish name",
+                            "id": "Unique string identifier (UUID v4)",
+                            "title": "Dish name $locale",
                             "kcal": "Calories in kcal (integer)",
                             "carb": "Carbohydrates in grams (float, 1 decimal place)",
                             "protein": "Protein in grams (float, 1 decimal place)",

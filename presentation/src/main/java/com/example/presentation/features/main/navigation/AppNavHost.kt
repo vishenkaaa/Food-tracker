@@ -263,7 +263,12 @@ private fun NavGraphBuilder.mainGraph(
                 mealType = args.mealType,
                 dishes = dishes,
                 date = LocalDate.parse(args.date),
-                onBackPressed = { navController.popBackStack() },
+                onBackPressed = {
+                    navController.navigate(MainGraph.Dairy) {
+                        popUpTo<Graphs.Main> { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
                 imgUri = args.imgUri,
             )
         }

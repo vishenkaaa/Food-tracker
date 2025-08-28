@@ -122,4 +122,7 @@
     <string name="no_dishes_added">Жодної страви ще не додано</string>
     <string name="amount_must_be_greater_than_zero">Кількість має бути більшою за 0</string>
     <string name="loading">Завантаження…</string>
+    <string name="saved_successfully">Збережено успішно</string>
+    <string name="analysis_failed">Не вдалось проаналізувати зображення</string>
+    <string name="saving_error">Не вдалося зберегти</string>
 </resources>

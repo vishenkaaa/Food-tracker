@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DishDto(
+    val id: String,
     val title: String,
     val kcal: Int,
     val carb: Float,
@@ -16,7 +17,7 @@ data class DishDto(
 )
 
 fun DishDto.toDish(): Dish = Dish(
-    id = "",
+    id = id,
     title = title,
     img = "",
     kcal = kcal,

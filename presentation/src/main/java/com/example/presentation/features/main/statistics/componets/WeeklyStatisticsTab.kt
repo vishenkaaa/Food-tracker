@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
@@ -213,13 +214,19 @@ fun NutritionPill(
             val fillHeight = (itemHeight * fillPercentage.coerceIn(0f, 1f))
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .size(width = 54.dp, height = fillHeight)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(40.dp)
-                    )
-            )
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(40.dp))
+            ){
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .size(width = 54.dp, height = fillHeight)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(40.dp)
+                        )
+                )
+            }
 
             val circleSize = 38.dp
             val paddingFromTop = 8.dp

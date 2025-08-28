@@ -63,20 +63,13 @@ fun EditDishBottomSheet(
     mealType: MealType,
     onSave: (Dish, MealType) -> Unit,
     onDismiss: () -> Unit,
+    enableChangeMealType: Boolean = true,
     viewModel: EditDishVM = hiltViewModel()
 ) {
-   val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val state = viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(dish, mealType) {
         viewModel.initialize(dish, mealType)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.showToast.collect {
-            Toast.makeText(context,
-                context.getString(R.string.amount_must_be_greater_than_zero), Toast.LENGTH_SHORT).show()
-        }
     }
 
     ModalBottomSheet(
@@ -120,10 +113,11 @@ fun EditDishBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            MealTypeDropdown(
-                selectedMealType = state.value.mealType,
-                onMealTypeChange = { viewModel.updateMealType(it) }
-            )
+            if(enableChangeMealType)
+                MealTypeDropdown(
+                    selectedMealType = state.value.mealType,
+                    onMealTypeChange = { viewModel.updateMealType(it) }
+                )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -135,8 +129,9 @@ fun EditDishBottomSheet(
                 text = stringResource(R.string.save),
                 onClick = {
                     val updatedDish = viewModel.createUpdatedDish()
-                    if(updatedDish!=null) onSave(updatedDish, state.value.mealType)
-                }
+                    onSave(updatedDish, state.value.mealType)
+                },
+                enabled = state.value.amount.toFloatOrNull()?.let { it > 0f } ?: false
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -183,11 +178,13 @@ private fun UnitDropdown(
     onUnitChange: (UnitType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false)}
+    val enableExpanded = availableUnits.size > 1
 
     StyledDropdownMenu(
         value = selectedUnit.displayName(),
         expanded = expanded,
+        enableExpanded = enableExpanded,
         onExpandedChange = { expanded = it },
         modifier = modifier,
         items = availableUnits,
@@ -225,8 +222,9 @@ private fun MealTypeDropdown(
 private fun <T> StyledDropdownMenu(
     value: String,
     expanded: Boolean,
+    enableExpanded: Boolean = true,
     onExpandedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     items: List<T>,
     itemText: @Composable (T) -> String,
     onItemClick: (T) -> Unit,
@@ -244,7 +242,7 @@ private fun <T> StyledDropdownMenu(
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             trailingIcon = {
-                if(items.size>1) Icon(
+                if(enableExpanded) Icon(
                     painter = painterResource(R.drawable.down_arrow),
                     contentDescription = "Dropdown arrow",
                     tint = Color.Unspecified,
@@ -253,7 +251,7 @@ private fun <T> StyledDropdownMenu(
             }
         )
 
-        if(items.size>1)
+        if(enableExpanded)
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { onExpandedChange(false) },

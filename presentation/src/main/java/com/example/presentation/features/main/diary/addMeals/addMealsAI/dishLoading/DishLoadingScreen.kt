@@ -40,6 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
@@ -106,32 +111,23 @@ private fun RotatingLoadingIndicator(
     size: Dp = 80.dp,
     duration: Int = 1500
 ) {
-    val isDark = isSystemInDarkTheme()
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.Asset("loader_animation.json")
+    )
 
-    val rotationAnimation by rememberInfiniteTransition(label = "rotation").animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = duration,
-                easing = LinearEasing
-            ),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation"
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever,
     )
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(size)
     ) {
-        Image(
-            painter = if(isDark) painterResource(id = R.drawable.loading_dark)
-            else painterResource(id = R.drawable.loading_light),
-            contentDescription = "Loading",
-            modifier = Modifier
-                .fillMaxSize()
-                .rotate(rotationAnimation),
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.fillMaxSize()
         )
 
         Text(

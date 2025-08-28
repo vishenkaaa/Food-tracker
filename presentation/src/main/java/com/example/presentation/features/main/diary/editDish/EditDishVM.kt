@@ -23,9 +23,6 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
     private val _state = MutableStateFlow(EditDishState())
     val state: StateFlow<EditDishState> = _state.asStateFlow()
 
-    private val _showToast = MutableSharedFlow<Unit>()
-    val showToast = _showToast.asSharedFlow()
-
     fun initialize(dish: Dish, mealType: MealType) {
         val initialUnit = UnitType.fromValue(dish.unit.value) ?: UnitType.GRAM
         val availableUnits = getAvailableUnits(dish.unit)
@@ -99,15 +96,9 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun createUpdatedDish(): Dish? {
+    fun createUpdatedDish(): Dish {
         val currentState = _state.value
         val amount = currentState.amount.toFloatOrNull()?.roundTo1Decimal() ?: 0f
-        if(amount<1) {
-            viewModelScope.launch {
-                _showToast.emit(Unit)
-            }
-            return null
-        }
         return currentState.dish.copy(
             amount = amount,
             unit = currentState.selectedUnit,

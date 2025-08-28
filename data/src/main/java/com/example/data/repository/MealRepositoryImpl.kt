@@ -8,7 +8,9 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.domain.repository.MealRepository
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import javax.inject.Inject
@@ -29,14 +31,18 @@ class MealRepositoryImpl @Inject constructor(
         dish: Dish
     ): Result<Unit> = safeCall(errorLogger) {
         val dishMap = DishModelMapper.dishToMap(dish)
-        firestore.collection(USERS_KEY)
+        val diaryDocRef = firestore.collection(USERS_KEY)
             .document(userId)
             .collection(DIARY_KEY)
             .document(date)
+
+        diaryDocRef.set(mapOf("createdAt" to FieldValue.serverTimestamp()), SetOptions.merge()).await()
+
+        diaryDocRef
             .collection(mealType.value)
-            .document(dish.id)
-            .set(dishMap)
+            .add(dishMap)
             .await()
+
     }
 
     override suspend fun removeDishFromMeal(
