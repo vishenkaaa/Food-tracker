@@ -82,7 +82,7 @@ fun ResultStep(
                 )
                 MacroNutrientsCard(
                     macroNutrients.carbs,
-                    stringResource(R.string.carbohydrates),
+                    stringResource(R.string.carbs),
                     painterResource(R.drawable.grains),
                     modifier = Modifier.width(totalWidth * 0.38f)
                 )

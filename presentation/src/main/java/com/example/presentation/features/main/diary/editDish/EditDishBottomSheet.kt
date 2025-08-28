@@ -356,7 +356,7 @@ private fun NutritionGrid(nutrition: NutritionData) {
         ) {
             NutritionItem(
                 icon = painterResource(R.drawable.grains),
-                label = stringResource(R.string.carb),
+                label = stringResource(R.string.carbs),
                 value = stringResource(R.string.grams_format, nutrition.carb),
                 modifier = Modifier.weight(0.5f)
             )

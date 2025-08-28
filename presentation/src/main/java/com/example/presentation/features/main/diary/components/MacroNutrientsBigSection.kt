@@ -20,7 +20,7 @@ fun MacroNutrientsBigSection(protein: Float, fat: Float, carbs: Float){
         )
 
         MacroNutrientBigItem(
-            label = stringResource(R.string.carb),
+            label = stringResource(R.string.carbs),
             value = stringResource(R.string.grams_format, carbs)
         )
 

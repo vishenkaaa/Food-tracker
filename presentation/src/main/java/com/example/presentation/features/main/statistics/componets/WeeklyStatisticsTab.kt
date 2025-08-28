@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,7 +42,6 @@ import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.presentation.R
 import com.example.presentation.common.utils.getAppLocale
 import com.example.presentation.features.main.statistics.models.ChartNutrientInfo
-import com.himanshoe.charty.common.asSolidChartColor
 import com.himanshoe.charty.pie.PieChart
 import com.himanshoe.charty.pie.model.PieChartData
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -152,17 +150,17 @@ fun WeeklyNutritionAverage(
             )
 
             val carbPercentage = if (statistics.maxCarbs > 0) {
-                statistics.averageCarbs.toFloat() / statistics.maxCarbs
+                statistics.averageCarbs / statistics.maxCarbs
             } else 0f
 
             NutritionPill(
                 value = statistics.averageCarbs.toString(),
-                label = stringResource(R.string.carb),
+                label = stringResource(R.string.carbs),
                 fillPercentage = carbPercentage
             )
 
             val fatPercentage = if (statistics.maxFat > 0) {
-                statistics.averageFat.toFloat() / statistics.maxFat
+                statistics.averageFat / statistics.maxFat
             } else 0f
 
             NutritionPill(
@@ -172,7 +170,7 @@ fun WeeklyNutritionAverage(
             )
 
             val proteinPercentage = if (statistics.maxProtein > 0) {
-                statistics.averageProtein.toFloat() / statistics.maxProtein
+                statistics.averageProtein/ statistics.maxProtein
             } else 0f
 
             NutritionPill(
@@ -341,7 +339,7 @@ private fun createNutrients(
 
     return listOf(
         ChartNutrientInfo(
-            label = stringResource(R.string.carb),
+            label = stringResource(R.string.carbs),
             grams = carbs,
             percent = percentages[0],
             color = carbsColor

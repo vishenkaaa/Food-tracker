@@ -20,7 +20,7 @@ fun MacroNutrientsSmallSection(protein: Float, fat: Float, carbs: Float){
             protein
         )
         MacroNutrientSmallItem(
-            stringResource(R.string.carb),
+            stringResource(R.string.carbs),
             carbs
         )
         MacroNutrientSmallItem(
