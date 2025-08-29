@@ -1,5 +1,6 @@
 package com.example.presentation.features.main.profile.deleteAccount
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ fun DeleteAccountRoute(
 ) {
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = context as Activity
 
     val successDeleteMessage = stringResource(R.string.success_delete)
     LaunchedEffect(Unit) {
@@ -51,7 +53,7 @@ fun DeleteAccountRoute(
     DeleteAccountScreen(
         baseUiState = baseUiState,
         onErrorConsume = { viewModel.consumeError() },
-        onDelete = { viewModel.onDelete() },
+        onDelete = { viewModel.onDelete(activity) },
         onCancel = { onCancelDelete() }
     )
 }

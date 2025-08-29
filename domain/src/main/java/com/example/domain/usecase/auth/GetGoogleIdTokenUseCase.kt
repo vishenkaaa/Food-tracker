@@ -6,7 +6,7 @@ import javax.inject.Inject
 class GetGoogleIdTokenUseCase @Inject constructor(
     private val tokenProvider: TokenProvider
 ) {
-    suspend operator fun invoke(forceNewAccount: Boolean): String{
-        return tokenProvider.getGoogleIdToken(forceNewAccount).getOrThrow()
+    suspend operator fun invoke(forceNewAccount: Boolean): Result<String> {
+        return tokenProvider.getGoogleIdToken(forceNewAccount)
     }
 }

@@ -123,4 +123,11 @@
     <string name="saved_successfully">Збережено успішно</string>
     <string name="analysis_failed">Не вдалось проаналізувати зображення</string>
     <string name="saving_error">Не вдалося зберегти</string>
+
+    <string name="error_no_credential_available">Немає доступних облікових записів</string>
+    <string name="error_invalid_credential_type">Неправильний тип облікових даних</string>
+    <string name="error_user_cancelled_auth">Авторизацію скасовано користувачем</string>
+    <string name="error_unknown_auth">Сталася невідома помилка під час авторизації</string>
+    <string name="error_google_token_null">Не вдалося отримати Google токен</string>
+    <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
 </resources>

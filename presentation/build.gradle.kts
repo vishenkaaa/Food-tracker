@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":common"))
 
     // Core Android
     implementation(libs.androidx.core.ktx)
@@ -111,4 +112,5 @@ dependencies {
     implementation("com.himanshoe:charty:2.0.1")
 
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation(libs.play.services.auth.v2140)
 }

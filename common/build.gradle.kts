@@ -1,14 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.example.data"
+    namespace = "com.example.common"
     compileSdk = 36
 
     defaultConfig {
@@ -16,12 +14,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField(
-            "String",
-            "OPENAI_API_KEY",
-            "\"${project.findProperty("OPENAI_API_KEY") ?: ""}\""
-        )
     }
 
     buildTypes {
@@ -40,38 +32,17 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
-    buildFeatures {
-        buildConfig = true
-    }
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":presentation"))
-    implementation(project(":common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.googleid)
-    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.kotlinx.coroutines.android)
-
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.datastore.preferences.core)
-
-    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
-    implementation(libs.firebase.crashlytics)
-
-    implementation(libs.okhttp)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.auth.v2140)
 }
