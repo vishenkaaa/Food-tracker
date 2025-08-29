@@ -143,13 +143,10 @@ fun ResultAIScreen(
                             bottom = padding.calculateBottomPadding()
                         )
                 ) {
-                    NutritionSection(
+                    CaloriesSection(
                         imgUri = imgUri,
                         calories = uiState.calories,
-                        targetCalories = uiState.targetCalories,
-                        carb = uiState.carbs,
-                        protein = uiState.protein,
-                        fat = uiState.fat
+                        targetCalories = uiState.targetCalories
                     )
 
                     Box(
@@ -177,14 +174,16 @@ fun ResultAIScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
-                        NutritionSection(
+                        CaloriesSection(
                             imgUri = imgUri,
                             calories = uiState.calories,
-                            targetCalories = uiState.targetCalories,
-                            carb = uiState.carbs,
-                            protein = uiState.protein,
-                            fat = uiState.fat
+                            targetCalories = uiState.targetCalories
                         )
+                    }
+
+                    item{
+                        Spacer(modifier = Modifier.height(12.dp))
+                        MacroNutrientsBigSection(uiState.protein, uiState.fat, uiState.carbs)
                     }
 
                     items(
@@ -230,13 +229,10 @@ fun ResultAIScreen(
 }
 
 @Composable
-fun NutritionSection(
+fun CaloriesSection(
     imgUri: String,
     calories: Int,
     targetCalories: Int,
-    carb: Float,
-    protein: Float,
-    fat: Float
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -254,9 +250,5 @@ fun NutritionSection(
         Spacer(Modifier.height(8.dp))
 
         CaloriesDisplay(calories)
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        MacroNutrientsBigSection(protein, fat, carb)
     }
 }

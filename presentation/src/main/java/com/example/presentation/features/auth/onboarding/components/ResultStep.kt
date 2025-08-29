@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -67,32 +68,25 @@ fun ResultStep(
         CaloriesCard(targetCalories)
 
         Spacer(Modifier.height(20.dp))
-        BoxWithConstraints(
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            val totalWidth = maxWidth
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                MacroNutrientsCard(
-                    macroNutrients.proteins,
-                    stringResource(R.string.proteins),
-                    painterResource(R.drawable.eggcrack),
-                    modifier = Modifier.width(totalWidth * 0.28f)
-                )
-                MacroNutrientsCard(
-                    macroNutrients.carbs,
-                    stringResource(R.string.carbs),
-                    painterResource(R.drawable.grains),
-                    modifier = Modifier.width(totalWidth * 0.38f)
-                )
-                MacroNutrientsCard(
-                    macroNutrients.fats,
-                    stringResource(R.string.fats),
-                    painterResource(R.drawable.avocado),
-                    modifier = Modifier.width(totalWidth * 0.28f)
-                )
-            }
+            MacroNutrientsCard(
+                macroNutrients.proteins,
+                stringResource(R.string.proteins),
+                painterResource(R.drawable.eggcrack),
+            )
+            MacroNutrientsCard(
+                macroNutrients.carbs,
+                stringResource(R.string.carbs),
+                painterResource(R.drawable.grains),
+            )
+            MacroNutrientsCard(
+                macroNutrients.fats,
+                stringResource(R.string.fats),
+                painterResource(R.drawable.avocado),
+            )
         }
     }
 }
@@ -127,7 +121,8 @@ fun CaloriesCard(
                 Icon(
                     painter = painterResource(R.drawable.fire),
                     contentDescription = "Fire",
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(32.dp)
                 )
                 Text(
                     text = stringResource(R.string.calories_format, targetCalories),
@@ -201,11 +196,10 @@ fun MacroNutrientsCard(
     value: Float,
     name: String,
     icon: Painter,
-    modifier: Modifier = Modifier
 ){
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = modifier
+        modifier = Modifier
             .shadow(
                 elevation = 3.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -215,7 +209,7 @@ fun MacroNutrientsCard(
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -223,14 +217,14 @@ fun MacroNutrientsCard(
                 painter = icon,
                 contentDescription = "Fire",
                 tint = Color.Unspecified,
-                modifier = Modifier.height(32.dp)
+                modifier = Modifier.size(32.dp)
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                 text = name,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Start
                 )
