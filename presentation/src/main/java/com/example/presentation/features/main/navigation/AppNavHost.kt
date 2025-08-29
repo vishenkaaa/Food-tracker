@@ -50,7 +50,8 @@ fun AppNavHost(
                 when {
                     userAuthState.isLoggedIn == null || userAuthState.isLoggedIn == false -> {
                         navController.navigate(Graphs.Login) {
-                            popUpTo(Graphs.IdleScreen) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
 
@@ -62,7 +63,8 @@ fun AppNavHost(
 
                     else -> {
                         navController.navigate(MainGraph.Dairy) {
-                            popUpTo(Graphs.IdleScreen) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 }

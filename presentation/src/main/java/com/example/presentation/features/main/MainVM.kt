@@ -5,6 +5,7 @@ import com.example.domain.manager.AuthStateManager
 import com.example.domain.manager.UserAuthState
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.navigation.Graphs
+import com.example.presentation.features.main.navigation.LoginGraph
 import com.example.presentation.features.main.navigation.MainGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -27,11 +28,17 @@ class MainVM @Inject constructor(
     fun isDestinationInMainGraph(route: String?): Boolean {
         if (route == null) return false
 
-        return when {
-            route.contains("MainGraph.Dairy") -> true
-            route.contains("MainGraph.Statistics") -> true
-            route.contains("MainGraph.Profile") -> true
-            else -> false
-        }
+        return route == MainGraph.Dairy::class.qualifiedName ||
+                route == MainGraph.Statistics::class.qualifiedName ||
+                route == MainGraph.Profile::class.qualifiedName
+    }
+
+    fun isDestinationRoot(route: String?): Boolean {
+        if (route == null) return false
+
+        return route == MainGraph.Dairy::class.qualifiedName ||
+                route == MainGraph.Statistics::class.qualifiedName ||
+                route == MainGraph.Profile::class.qualifiedName ||
+                route == LoginGraph.Google::class.qualifiedName
     }
 }

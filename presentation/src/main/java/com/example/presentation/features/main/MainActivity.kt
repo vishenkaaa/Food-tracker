@@ -43,6 +43,8 @@ import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.main.navigation.AppNavHost
 import com.example.presentation.features.main.navigation.AppNavigationBar
+import com.example.presentation.features.main.navigation.LoginGraph
+import com.example.presentation.features.main.navigation.MainGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -134,7 +136,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleBackPress(navController: NavHostController) {
-        if (navController.currentDestination?.route == navController.graph.startDestinationRoute) {
+        val currentRoute = navController.currentDestination?.route
+
+        val isRootDestination = viewModel.isDestinationRoot(currentRoute)
+
+        if (isRootDestination) {
             val currentTime = System.currentTimeMillis()
             val interval = currentTime - (onBackPressClickTime ?: 0)
 
