@@ -130,4 +130,6 @@
     <string name="error_unknown_auth">Сталася невідома помилка під час авторизації</string>
     <string name="error_google_token_null">Не вдалося отримати Google токен</string>
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
+    <string name="confirmation_person">Підтвердження особи</string>
+    <string name="confirmation_message">З міркувань безпеки, для видалення акаунта потрібно підтвердити вашу особу. Для цього потрібно переувійти в акаунт</string>
 </resources>

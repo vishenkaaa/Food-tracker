@@ -128,5 +128,6 @@
     <string name="error_unknown_auth">An unknown error occurred during authentication</string>
     <string name="error_google_token_null">Не вдалося отримати Google токен</string>
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
-
+    <string name="confirmation_person">Identity confirmation</string>
+    <string name="confirmation_message">For security reasons, you need to confirm your identity to delete your account. Please sign in again.</string>
 </resources>

@@ -32,6 +32,7 @@ import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
+import com.example.presentation.common.ui.components.InfoDialog
 import com.example.presentation.common.ui.components.LoadingBackground
 
 @Composable
@@ -40,6 +41,7 @@ fun DeleteAccountRoute(
     onCancelDelete: () -> Unit
 ) {
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
+    val showInfoDialog by viewModel.showInfoDialog.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as Activity
 
@@ -52,6 +54,8 @@ fun DeleteAccountRoute(
 
     DeleteAccountScreen(
         baseUiState = baseUiState,
+        showInfoDialog = showInfoDialog,
+        onConfirmDialog = { viewModel.onConfirmDialog() },
         onErrorConsume = { viewModel.consumeError() },
         onDelete = { viewModel.onDelete(activity) },
         onCancel = { onCancelDelete() }
@@ -61,6 +65,8 @@ fun DeleteAccountRoute(
 @Composable
 fun DeleteAccountScreen(
     baseUiState: BaseUiState,
+    showInfoDialog: Boolean,
+    onConfirmDialog: () -> Unit,
     onErrorConsume: () -> Unit,
     onDelete: () -> Unit,
     onCancel: () -> Unit
@@ -85,6 +91,13 @@ fun DeleteAccountScreen(
                 onCancel = onCancel
             )
         }
+
+        InfoDialog(
+            visible = showInfoDialog,
+            title = stringResource(R.string.confirmation_person),
+            message = stringResource(R.string.confirmation_message),
+            onConfirm = { onConfirmDialog() },
+        )
 
         LoadingBackground(baseUiState.isLoading)
 
@@ -168,6 +181,8 @@ fun DeleteAccountScreenPreview (){
         baseUiState = BaseUiState(),
         onDelete = {},
         onCancel = {},
-        onErrorConsume = {}
+        onErrorConsume = {},
+        showInfoDialog = false,
+        onConfirmDialog = {}
     )
 }

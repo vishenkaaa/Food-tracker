@@ -6,7 +6,7 @@ interface FirebaseAuthRepository {
     suspend fun signInWithGoogle(idToken: String): Result<User>
     suspend fun oldSignInWithGoogle(forceNewAccount: Boolean): Result<String>
     suspend fun signOut()
-    suspend fun deleteAccount(idToken: String): Result<Unit>
+    suspend fun deleteAccount(): Result<Unit>
     suspend fun isUserLoggedIn(): Boolean
     suspend fun getCurrentUserId(): String?
 }
