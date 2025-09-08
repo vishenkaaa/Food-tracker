@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.DatePickerTypography
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.auth.onboarding.components.HeightStep
 import java.time.Instant
 import java.time.LocalDate
@@ -99,7 +100,9 @@ fun CustomDatePickerDialog(
 @Preview(showBackground = true)
 @Composable
 fun CustomDatePickerDialogPreview() {
-    CustomDatePickerDialog(
-        LocalDate.now(), {}, {}
-    ) {}
+    FoodTrackTheme {
+        CustomDatePickerDialog(
+            LocalDate.now(), {}, {}
+        ) {}
+    }
 }

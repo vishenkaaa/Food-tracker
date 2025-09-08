@@ -34,6 +34,7 @@ import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.InfoDialog
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun DeleteAccountRoute(
@@ -177,12 +178,14 @@ private fun WarningContent() {
 @Composable
 @Preview(showBackground = true)
 fun DeleteAccountScreenPreview (){
-    DeleteAccountScreen(
-        baseUiState = BaseUiState(),
-        onDelete = {},
-        onCancel = {},
-        onErrorConsume = {},
-        showInfoDialog = false,
-        onConfirmDialog = {}
-    )
+    FoodTrackTheme {
+        DeleteAccountScreen(
+            baseUiState = BaseUiState(),
+            onDelete = {},
+            onCancel = {},
+            onErrorConsume = {},
+            showInfoDialog = false,
+            onConfirmDialog = {}
+        )
+    }
 }

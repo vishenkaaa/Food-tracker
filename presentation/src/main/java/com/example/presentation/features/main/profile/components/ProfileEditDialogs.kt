@@ -7,6 +7,7 @@ import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.description
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
@@ -142,8 +143,10 @@ fun ProfileEditDialogs(
 @Preview(showBackground = true)
 @Composable
 fun ProfileEditDialogsPreview() {
-    ProfileEditDialogs(
-        uiState = ProfileUiState(),
-        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-    )
+    FoodTrackTheme {
+        ProfileEditDialogs(
+            uiState = ProfileUiState(),
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        )
+    }
 }

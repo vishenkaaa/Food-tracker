@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun CurrentWeightStep(
@@ -22,7 +23,9 @@ fun CurrentWeightStep(
 @Preview(showBackground = true)
 @Composable
 fun CurrentWeightStepPreview() {
-    CurrentWeightStep(
-        ""
-    ) {}
+    FoodTrackTheme {
+        CurrentWeightStep(
+            ""
+        ) {}
+    }
 }

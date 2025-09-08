@@ -34,12 +34,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.example.domain.model.statistics.DayStatistics
 import com.example.domain.model.statistics.WeeklyNutritionStatistics
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.common.utils.getAppLocale
 import com.example.presentation.features.main.statistics.models.ChartNutrientInfo
 import com.himanshoe.charty.pie.PieChart
@@ -110,7 +112,7 @@ fun WeeklyStatisticsTab(
         }
 
         item {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(90.dp))
         }
     }
 }
@@ -591,5 +593,41 @@ fun WeekNavigation(
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WeeklyStatisticsTabPreview() {
+    val mockDays = listOf(
+        DayStatistics(LocalDate.now().with(DayOfWeek.MONDAY), calories = 1800, carbs = 200f, protein = 80f, fat = 60f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.TUESDAY), calories = 2100, carbs = 220f, protein = 90f, fat = 70f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.WEDNESDAY), calories = 1500, carbs = 150f, protein = 60f, fat = 40f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.THURSDAY), calories = 2000, carbs = 190f, protein = 85f, fat = 65f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.FRIDAY), calories = 1900, carbs = 180f, protein = 75f, fat = 55f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.SATURDAY), calories = 2200, carbs = 230f, protein = 95f, fat = 80f),
+        DayStatistics(LocalDate.now().with(DayOfWeek.SUNDAY), calories = 1600, carbs = 160f, protein = 65f, fat = 50f)
+    )
+
+    val mockWeeklyStats = WeeklyNutritionStatistics(
+        targetCalories = 2000,
+        dayStatistics = mockDays,
+        weekStart = LocalDate.now().with(DayOfWeek.MONDAY),
+        averageCalories = 1871,
+        averageCarbs = 190f,
+        averageProtein = 79f,
+        averageFat = 60f,
+        maxCalories = 2200,
+        maxCarbs = 230f,
+        maxProtein = 95f,
+        maxFat = 80f
+    )
+
+    FoodTrackTheme {
+        WeeklyStatisticsTab(
+            statistics = mockWeeklyStats,
+            onPreviousWeek = { },
+            onNextWeek = { }
+        )
     }
 }

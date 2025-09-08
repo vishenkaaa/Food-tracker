@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun ErrorSnackBar(
@@ -81,11 +82,13 @@ fun ConnectionErrorSnackBar(
 @Preview(showSystemUi = true)
 @Composable
 fun ConnectionErrorSnackBarPreview() {
-    ErrorSnackBar(
-        error = "Error descr",
-        actionLabel = "Action",
-        onErrorConsumed = {
+    FoodTrackTheme {
+        ErrorSnackBar(
+            error = "Error descr",
+            actionLabel = "Action",
+            onErrorConsumed = {
 
-        }
-    )
+            }
+        )
+    }
 }

@@ -19,23 +19,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.extension.roundTo1Decimal
+import com.example.domain.model.diary.MealType
 import com.example.domain.model.statistics.DailyNutritionStatistics
 import com.example.domain.model.statistics.MealStatistics
-import com.example.domain.model.statistics.StatisticsPeriod
 import com.example.presentation.R
 import com.example.presentation.common.ui.components.RoundedCircularProgress
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
 import kotlin.math.roundToInt
@@ -186,5 +184,50 @@ fun DailyNutritionCircularProgress(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DailyStatisticsTabPreview() {
+    val mockMealStats = listOf(
+        MealStatistics(
+            mealType = MealType.BREAKFAST,
+            calories = 350,
+            carbs = 40f,
+            protein = 15f,
+            fat = 10f,
+            percentage = 30
+        ),
+        MealStatistics(
+            mealType = MealType.LUNCH,
+            calories = 550,
+            carbs = 60f,
+            protein = 25f,
+            fat = 20f,
+            percentage = 50
+        ),
+        MealStatistics(
+            mealType = MealType.DINNER,
+            calories = 250,
+            carbs = 20f,
+            protein = 20f,
+            fat = 12f,
+            percentage = 20
+        )
+    )
+
+    val mockDailyStats = DailyNutritionStatistics(
+        totalCalories = 1150,
+        targetCalories = 2000,
+        progress = 1150f / 2000f,
+        mealStatistics = mockMealStats
+    )
+
+    FoodTrackTheme {
+        DailyStatisticsTab(
+            statistics = mockDailyStats,
+            loading = false
+        )
     }
 }

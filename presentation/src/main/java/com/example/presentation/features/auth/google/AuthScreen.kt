@@ -42,6 +42,7 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun AuthRoute(
@@ -204,9 +205,11 @@ fun AuthBackground(){
 @Preview
 @Composable
 private fun AuthScreenPreview() {
-    AuthScreen(
-        baseUiState = BaseUiState(),
-        onErrorConsume = {},
-        onLoginClicked = {}
-    )
+    FoodTrackTheme {
+        AuthScreen(
+            baseUiState = BaseUiState(),
+            onErrorConsume = {},
+            onLoginClicked = {}
+        )
+    }
 }

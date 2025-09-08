@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,8 +47,9 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CenterAlignedHeader
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
-import com.example.presentation.extensions.displayName
 import com.example.presentation.common.ui.modifiers.shimmerEffect
+import com.example.presentation.common.ui.values.FoodTrackTheme
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.profile.components.ProfileEditDialogs
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
@@ -473,14 +473,16 @@ fun ProfileScreenPreview() {
         isConnectionError = false
     )
 
-    ProfileScreen(
-        uiState = uiState,
-        baseUiState = baseUiState,
-        onLogoutClick = {},
-        onLogoutConfirmation = {},
-        onDeleteAccountClick = {},
-        onRetry = {},
-        onErrorConsume = {},
-        onEditClick = {}
-    )
+    FoodTrackTheme {
+        ProfileScreen(
+            uiState = uiState,
+            baseUiState = baseUiState,
+            onLogoutClick = {},
+            onLogoutConfirmation = {},
+            onDeleteAccountClick = {},
+            onRetry = {},
+            onErrorConsume = {},
+            onEditClick = {}
+        )
+    }
 }

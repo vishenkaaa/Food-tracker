@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun CustomButton(
@@ -77,12 +78,14 @@ fun CustomButton(
 @Composable
 @Preview(showBackground = true)
 fun CustomButtonPreview(){
-    Column {
-        CustomButton(
-            "Text", Modifier, painterResource(R.drawable.google)
-        ) {}
-        CustomButton(
-            "Text"
-        ) {}
+    FoodTrackTheme {
+        Column {
+            CustomButton(
+                "Text", Modifier, painterResource(R.drawable.google)
+            ) {}
+            CustomButton(
+                "Text"
+            ) {}
+        }
     }
 }

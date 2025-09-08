@@ -12,15 +12,16 @@ import com.example.domain.model.statistics.MealStatistics
 import com.example.domain.model.statistics.NutritionStatistics
 import com.example.domain.model.statistics.StatisticsPeriod
 import com.example.domain.model.statistics.WeeklyNutritionStatistics
-import com.example.domain.usecase.user.GetTargetCaloriesUseCase
+import com.example.domain.repository.MealRepository
+import com.example.domain.repository.UserRepository
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class GetNutritionStatisticsUseCase @Inject constructor(
-    private val getMealsForDateUseCase: GetMealsForDateUseCase,
-    private val getTargetCaloriesUseCase: GetTargetCaloriesUseCase
+    private val mealRepository: MealRepository,
+    private val userRepository: UserRepository,
 ) {
     suspend operator fun invoke(
         userId: String,
@@ -28,7 +29,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
         weekStart: LocalDate? = null
     ): Result<NutritionStatistics> {
         return try {
-            val targetCaloriesResult = getTargetCaloriesUseCase(userId)
+            val targetCaloriesResult = userRepository.getTargetCalories(userId)
 
             if (targetCaloriesResult.isFailure) {
                 return Result.failure(targetCaloriesResult.exceptionOrNull()!!)
@@ -64,7 +65,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
 
             for (i in 0..6) {
                 val currentDate = weekStart.plusDays(i.toLong())
-                val mealsResult = getMealsForDateUseCase(userId, currentDate.toString())
+                val mealsResult = mealRepository.getMealsByDate(userId, currentDate.toString())
 
                 val dayNutrition = if (mealsResult.isSuccess) {
                     val dailyMeals = mealsResult.getOrThrow()
@@ -119,7 +120,7 @@ class GetNutritionStatisticsUseCase @Inject constructor(
         date: String,
         targetCalories: Int
     ): Result<NutritionStatistics> {
-        val mealsResult = getMealsForDateUseCase(userId, date)
+        val mealsResult = mealRepository.getMealsByDate(userId, date)
 
         if (mealsResult.isFailure) {
             return Result.failure(mealsResult.exceptionOrNull()!!)

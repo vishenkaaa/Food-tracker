@@ -45,6 +45,7 @@ import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MAX_STEPS
 import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.WELCOME_STEP
 import com.example.presentation.features.auth.onboarding.components.BirthDateStep
@@ -298,9 +299,11 @@ fun OnboardingScreen(
 @Preview(showBackground = true)
 @Composable
 fun TargetScreenPreview() {
-    OnboardingScreen(
-        BaseUiState(),
-        OnboardingUiState(step = 0),
-        {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-    )
+    FoodTrackTheme {
+        OnboardingScreen(
+            BaseUiState(),
+            OnboardingUiState(step = 0),
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        )
+    }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.Gender
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.displayName
 
 @Composable
@@ -121,11 +122,13 @@ fun<T> RadioSelectionDialog(
 @Preview(showBackground = true)
 @Composable
 fun RadioSelectionDialogPreview() {
-    RadioSelectionDialog(
-        title = "Стать",
-        items = Gender.entries,
-        selectedItem = Gender.MALE,
-        {}, {}, {},
-        getDisplayName = { it.displayName() }
-    )
+    FoodTrackTheme {
+        RadioSelectionDialog(
+            title = "Стать",
+            items = Gender.entries,
+            selectedItem = Gender.MALE,
+            {}, {}, {},
+            getDisplayName = { it.displayName() }
+        )
+    }
 }

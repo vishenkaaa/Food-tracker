@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.user.Goal
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import kotlin.math.abs
 
 @Composable
@@ -30,7 +31,9 @@ fun WeightChangeStep(
 @Composable
 @Preview
 fun WeightChangeStepPreview() {
-    WeightChangeStep(
-        Goal.GAIN, ""
-    ) {}
+    FoodTrackTheme {
+        WeightChangeStep(
+            Goal.GAIN, ""
+        ) {}
+    }
 }

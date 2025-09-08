@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,6 +54,7 @@ import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.shimmerEffect
 import com.example.presentation.common.ui.modifiers.softShadow
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.common.utils.getAppLocale
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.icon
@@ -635,5 +637,55 @@ fun CalendarHeader(
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DiaryScreenPreview() {
+    val mockUiState = DiaryScreenUIState(
+        weekStart = LocalDate.now().with(DayOfWeek.MONDAY),
+        selectedDate = LocalDate.now(),
+        caloriesConsumed = 1200,
+        caloriesTarget = 2000,
+        carb = 150f,
+        protein = 80f,
+        fat = 50f,
+    )
+
+    val mockBaseUiState = BaseUiState(
+        isLoading = false,
+        isConnectionError = false,
+        unexpectedError = null
+    )
+
+    FoodTrackTheme {
+        DiaryScreen(
+            uiState = mockUiState,
+            baseUiState = mockBaseUiState,
+            onPreviousWeek = {},
+            onNextWeek = {},
+            onDateSelected = {},
+            onMealItemClick = { _, _ -> },
+            onAddMealClick = {},
+            onErrorConsume = {},
+            onConnectionRetry = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MealItemPreview() {
+    FoodTrackTheme {
+        MealItem(
+            mealType = MealType.LUNCH,
+            calories = 450,
+            carb = 55f,
+            protein = 15f,
+            fat = 18f,
+            onItemClick = {},
+            onAddClick = {}
+        )
     }
 }

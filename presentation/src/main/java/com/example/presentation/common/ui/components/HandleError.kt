@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun HandleError(
@@ -50,7 +51,9 @@ fun HandleError(
 @Preview(showSystemUi = true)
 @Composable
 fun HandleErrorPreview() {
-    HandleError(
-        baseUiState = BaseUiState()
-    )
+    FoodTrackTheme {
+        HandleError(
+            baseUiState = BaseUiState()
+        )
+    }
 }

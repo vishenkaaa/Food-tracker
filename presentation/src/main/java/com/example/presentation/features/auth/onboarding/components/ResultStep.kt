@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.MacroNutrients
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.common.utils.BMICalculator
 
 @Composable
@@ -242,7 +243,9 @@ fun MacroNutrientsCard(
 @Composable
 @Preview(showBackground = true)
 fun ResultStepPreview(){
-    ResultStep(
-        MacroNutrients(), 21f, 1000
-    )
+    FoodTrackTheme {
+        ResultStep(
+            MacroNutrients(), 21f, 1000
+        )
+    }
 }

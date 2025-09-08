@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun NumberInputStep(
@@ -154,10 +155,12 @@ fun NumberInputStep(
 @Preview(showBackground = true)
 @Composable
 fun NumberInputStepPreview() {
-    NumberInputStep(
-        "Ваша ціль набору ваги",
-        "0",
-        "Кг",
-        false,
-    ) {}
+    FoodTrackTheme {
+        NumberInputStep(
+            "Ваша ціль набору ваги",
+            "0",
+            "Кг",
+            false,
+        ) {}
+    }
 }

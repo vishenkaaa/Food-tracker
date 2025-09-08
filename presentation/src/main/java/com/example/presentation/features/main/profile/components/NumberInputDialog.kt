@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import java.time.LocalDate
 
 @Composable
@@ -158,11 +159,13 @@ fun NumberInputDialog(
 @Preview(showBackground = true)
 @Composable
 fun NumberInputDialogPreview() {
-    NumberInputDialog(
-        title = "Вага",
-        value = "",
-        onDismiss = {},
-        onSave = {},
-        onValueChanged = {}
-    )
+    FoodTrackTheme {
+        NumberInputDialog(
+            title = "Вага",
+            value = "",
+            onDismiss = {},
+            onSave = {},
+            onValueChanged = {}
+        )
+    }
 }

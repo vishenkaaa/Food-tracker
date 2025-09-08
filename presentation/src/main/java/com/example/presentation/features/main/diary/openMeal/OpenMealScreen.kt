@@ -100,7 +100,6 @@ fun OpenMealScreen(
     onRetry: () -> Unit,
 ) {
     Box {
-
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
