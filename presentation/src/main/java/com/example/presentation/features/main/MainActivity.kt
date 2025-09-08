@@ -20,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.domain.manager.UserAuthState
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
-import com.example.presentation.features.MainContent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

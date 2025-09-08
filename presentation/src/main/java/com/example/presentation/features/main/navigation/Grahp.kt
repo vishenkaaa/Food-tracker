@@ -42,6 +42,12 @@ sealed class MainGraph {
     data object DeleteAccount : MainGraph()
 
     @Serializable
+    data class AddMeal(
+        val mealType: MealType,
+        val date: String,
+    ) : MainGraph()
+
+    @Serializable
     data class AddMealAI(
         val mealType: MealType,
         val date: String,

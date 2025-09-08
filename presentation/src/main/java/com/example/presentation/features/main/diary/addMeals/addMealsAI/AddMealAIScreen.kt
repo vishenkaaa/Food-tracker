@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,7 +51,6 @@ import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.camera.CameraPermissionManager
 import com.example.presentation.common.ui.components.HandleError
-import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.AddMealAIUiState
 import com.example.presentation.features.main.diary.extensions.findActivity
@@ -63,6 +61,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AddMealAIRoute(
+    modifier: Modifier = Modifier,
     mealType: MealType,
     date: LocalDate,
     onBackPressed: () -> Unit,
@@ -115,6 +114,7 @@ fun AddMealAIRoute(
     }
 
     AddMealAIScreen(
+        modifier = modifier,
         mealType = mealType,
         date = date,
         uiState = uiState,
@@ -131,6 +131,7 @@ fun AddMealAIRoute(
 
 @Composable
 fun AddMealAIScreen(
+    modifier: Modifier = Modifier,
     mealType: MealType,
     date: LocalDate,
     uiState: AddMealAIUiState,
@@ -151,41 +152,28 @@ fun AddMealAIScreen(
         onInitializeCamera(lifecycleOwner, previewView)
     }
 
-    Box{
-        Scaffold(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            topBar = {
-                LeftAlignedHeader(
-                    mealType = mealType,
-                    onNavigateBack = onNavigateBack
-                )
-            },
-        ){ padding ->
-            Box(
-                Modifier.padding(padding)
-            ){
-                Box(
-                    modifier = Modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
-                ){
-                    AndroidView(
-                        factory = { previewView },
-                        modifier = Modifier.fillMaxSize(),
-                        update = { onInitializeCamera(lifecycleOwner, it) }
-                    )
-                }
-
-                CameraOverlayBox()
-
-                CameraControlsBar(
-                    uiState = uiState,
-                    baseUiState = baseUiState,
-                    onGalleryClick = onGalleryClick,
-                    onCapturePhoto = onCapturePhoto,
-                    onToggleFlash = onToggleFlash,
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
-            }
+    Box(modifier = modifier){
+        Box(
+            modifier = Modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
+        ){
+            AndroidView(
+                factory = { previewView },
+                modifier = Modifier.fillMaxSize(),
+                update = { onInitializeCamera(lifecycleOwner, it) }
+            )
         }
+
+        CameraOverlayBox()
+
+        CameraControlsBar(
+            uiState = uiState,
+            baseUiState = baseUiState,
+            onGalleryClick = onGalleryClick,
+            onCapturePhoto = onCapturePhoto,
+            onToggleFlash = onToggleFlash,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+
         LoadingBackground(baseUiState.isLoading)
         HandleError(
             baseUiState = baseUiState,
@@ -247,7 +235,7 @@ fun CameraControlsBar(
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 32.dp, vertical = 42.dp),
+            .padding(horizontal = 32.dp, vertical = 34.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

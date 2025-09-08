@@ -132,4 +132,6 @@
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
     <string name="confirmation_person">Підтвердження особи</string>
     <string name="confirmation_message">З міркувань безпеки, для видалення акаунта потрібно підтвердити вашу особу. Для цього потрібно переувійти в акаунт</string>
+    <string name="barcode">Barcode</string>
+    <string name="scan_barcode_here">Scan barcode here</string>
 </resources>

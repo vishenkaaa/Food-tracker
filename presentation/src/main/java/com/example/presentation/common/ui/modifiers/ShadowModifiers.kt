@@ -39,7 +39,6 @@ fun Modifier.softShadow(
                 shadowColor
             )
 
-            // Малюємо тільки тінь (об'єкт буде прозорим)
             canvas.drawRoundRect(
                 left = with(density) { spread.toPx() },
                 top = with(density) { spread.toPx() },

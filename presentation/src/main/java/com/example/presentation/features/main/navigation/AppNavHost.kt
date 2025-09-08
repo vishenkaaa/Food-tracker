@@ -23,7 +23,7 @@ import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
 import com.example.presentation.features.main.diary.DiaryVM
-import com.example.presentation.features.main.diary.addMeals.addMealsAI.AddMealAIRoute
+import com.example.presentation.features.main.diary.addMeals.AddMealRoute
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading.DishLoadingRoute
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI.ResultAIRoute
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
@@ -153,7 +153,7 @@ private fun NavGraphBuilder.mainGraph(
                 },
                 onNavigateToAddMeal = { mealType, date ->
                     navController.navigate(
-                        MainGraph.AddMealAI(
+                        MainGraph.AddMeal(
                             mealType = mealType,
                             date = date.toString(),
                         )
@@ -193,7 +193,7 @@ private fun NavGraphBuilder.mainGraph(
                 onBackPressed = { navController.popBackStack() },
                 onNavigateToAddDish = { mealType, date ->
                     navController.navigate(
-                        MainGraph.AddMealAI(
+                        MainGraph.AddMeal(
                             mealType = mealType,
                             date = date.toString(),
                         )
@@ -202,11 +202,12 @@ private fun NavGraphBuilder.mainGraph(
             )
         }
 
-        composable<MainGraph.AddMealAI> { backStackEntry ->
-            val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
-            AddMealAIRoute(
+        composable<MainGraph.AddMeal> { backStackEntry ->
+            val args = backStackEntry.toRoute<MainGraph.AddMeal>()
+            AddMealRoute(
                 mealType = args.mealType,
                 date = LocalDate.parse(args.date),
+                onBackPressed = { navController.popBackStack() },
                 onNavigateToAnalyze = { imgUri ->
                     navController.navigate(
                         MainGraph.DishLoading(
@@ -215,14 +216,33 @@ private fun NavGraphBuilder.mainGraph(
                             imgUri = imgUri
                         )
                     ) {
-                        popUpTo<MainGraph.AddMealAI> {
-                            inclusive = true
-                        }
+                        popUpTo<MainGraph.AddMeal> { inclusive = true }
                     }
-                },
-                onBackPressed = { navController.popBackStack() }
+                }
             )
         }
+//
+//        composable<MainGraph.AddMealAI> { backStackEntry ->
+//            val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
+//            AddMealAIRoute(
+//                mealType = args.mealType,
+//                date = LocalDate.parse(args.date),
+//                onNavigateToAnalyze = { imgUri ->
+//                    navController.navigate(
+//                        MainGraph.DishLoading(
+//                            mealType = args.mealType,
+//                            date = args.date,
+//                            imgUri = imgUri
+//                        )
+//                    ) {
+//                        popUpTo<MainGraph.AddMealAI> {
+//                            inclusive = true
+//                        }
+//                    }
+//                },
+//                onBackPressed = { navController.popBackStack() }
+//            )
+//        }
 
         composable<MainGraph.DishLoading> { backStackEntry ->
             val args = backStackEntry.toRoute<MainGraph.DishLoading>()

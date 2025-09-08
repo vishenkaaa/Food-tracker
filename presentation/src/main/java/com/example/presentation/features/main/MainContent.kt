@@ -1,4 +1,4 @@
-package com.example.presentation.features
+package com.example.presentation.features.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
