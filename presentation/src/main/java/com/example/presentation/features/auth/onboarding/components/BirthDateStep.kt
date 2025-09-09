@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.DatePickerTypography
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -82,10 +83,12 @@ fun BirthDateStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun BirthDateStep() {
-    UserActivityLevelSectionStep(
-        UserActivityLevel.ACTIVE
-    ) {}
+    FoodTrackTheme {
+        UserActivityLevelSectionStep(
+            UserActivityLevel.ACTIVE
+        ) {}
+    }
 }

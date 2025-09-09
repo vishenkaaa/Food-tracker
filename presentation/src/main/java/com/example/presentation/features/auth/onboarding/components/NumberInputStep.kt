@@ -31,25 +31,35 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun NumberInputStep(
     title: String,
-    value: Float,
+    value: String,
     unit: String,
     isIntegerInput: Boolean = false,
-    onValueSelected: (Float) -> Unit,
+    onValueSelected: (String) -> Unit,
 ) {
     var input by remember(value) {
-        mutableStateOf(
-            if (value > 0) {
-                if (isIntegerInput) value.toInt().toString() else value.toString()
+        val initialValue =
+            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+                if (isIntegerInput) value.toFloat().toInt().toString()
+                else value
             } else ""
+
+        mutableStateOf(
+            TextFieldValue(
+                text = initialValue,
+                selection = TextRange(initialValue.length)
+            )
         )
     }
 
@@ -64,9 +74,7 @@ fun NumberInputStep(
             .padding(horizontal = 16.dp)
             .padding(top = 88.dp)
             .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
+                indication = null, interactionSource = remember { MutableInteractionSource() }) {
                 focusManager.clearFocus()
             }
     ) {
@@ -87,9 +95,15 @@ fun NumberInputStep(
             OutlinedTextField(
                 value = input,
                 onValueChange = { newValue ->
-                    input = newValue
-                    val floatValue = newValue.toFloatOrNull() ?: 0f
-                    onValueSelected(floatValue)
+                    val filteredValue = if (isIntegerInput) newValue.text.filter { it.isDigit() }
+                    else {
+                        val text = newValue.text
+                        if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
+                            text
+                        else input.text
+                    }
+                    input = newValue.copy(text = filteredValue)
+                    onValueSelected(filteredValue)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
@@ -123,8 +137,7 @@ fun NumberInputStep(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .background(
-                        MaterialTheme.colorScheme.primary,
-                        RoundedCornerShape(16.dp)
+                        MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp)
                     )
                     .fillMaxHeight()
                     .padding(horizontal = 16.dp)
@@ -139,13 +152,15 @@ fun NumberInputStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun NumberInputStepPreview() {
-    NumberInputStep(
-        "Ваша ціль набору ваги",
-        0f,
-        "Кг",
-        false,
-    ) {}
+    FoodTrackTheme {
+        NumberInputStep(
+            "Ваша ціль набору ваги",
+            "0",
+            "Кг",
+            false,
+        ) {}
+    }
 }

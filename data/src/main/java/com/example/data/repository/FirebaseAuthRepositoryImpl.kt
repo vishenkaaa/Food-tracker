@@ -1,23 +1,31 @@
 package com.example.data.repository
 
+import android.content.Context
+import com.example.common.GoogleSignInPendingException
+import com.example.data.R
 import com.example.data.auth.LocalAuthStateManager
 import com.example.data.mapper.UserModelMapper.mapToUser
-import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.data.util.safeCall
 import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.user.User
 import com.example.domain.repository.FirebaseAuthRepository
+import com.example.domain.repository.UserRepository
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
     firestore: FirebaseFirestore,
+    private val userRepository: UserRepository,
     private val auth: FirebaseAuth,
     private val localAuthStateManager: LocalAuthStateManager,
-    private val errorLogger: ErrorLogger
+    private val errorLogger: ErrorLogger,
+    @ApplicationContext private val context: Context
 ) : FirebaseAuthRepository {
 
     companion object{
@@ -25,6 +33,21 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     }
 
     private val usersCollection = firestore.collection(USERS_KEY)
+
+    override suspend fun oldSignInWithGoogle(forceNewAccount: Boolean): Result<String> {
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.firebase_client_id))
+            .requestEmail()
+            .build()
+
+        val client = GoogleSignIn.getClient(context, signInOptions)
+
+        if (forceNewAccount) {
+            client.signOut()
+        }
+
+        throw GoogleSignInPendingException(client.signInIntent)
+    }
 
     override suspend fun signInWithGoogle(idToken: String): Result<User> = safeCall(errorLogger) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -44,7 +67,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 photoUrl = firebaseUser.photoUrl?.toString(),
                 isNew = true
             )
-            createUser(newUser).getOrThrow()
+            userRepository.createUser(newUser).getOrThrow()
             localAuthStateManager.saveAuthState(userId, firebaseUser.email, true)
             newUser
         } else {
@@ -58,14 +81,19 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createUser(user: User): Result<Unit> = safeCall(errorLogger){
-        val userMap = userToMap(user)
-        usersCollection.document(user.id).set(userMap).await()
-    }
-
     override suspend fun signOut() {
         localAuthStateManager.clearAuthState()
         auth.signOut()
+    }
+
+    override suspend fun deleteAccount(): Result<Unit> = safeCall(errorLogger) {
+        val currentUser = auth.currentUser ?: throw Exception("No authenticated user")
+        val userId = currentUser.uid
+
+        currentUser.delete().await()
+
+        usersCollection.document(userId).delete().await()
+        localAuthStateManager.clearAuthState()
     }
 
     override suspend fun isUserLoggedIn(): Boolean {
@@ -75,10 +103,4 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     override suspend fun getCurrentUserId(): String? {
         return localAuthStateManager.getCurrentUserId()
     }
-
-    override suspend fun isUserFullyRegistered(userId: String): Boolean = safeCall(errorLogger){
-        val snapshot = usersCollection.document(userId).get().await()
-        val user = snapshot.data?.let { mapToUser(it, userId) }
-        return user?.targetCalories != 0
-    }.getOrDefault(false)
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun WelcomeStep() {
@@ -47,5 +48,7 @@ fun WelcomeStep() {
 @Composable
 @Preview(showBackground = true)
 fun WelcomeStepPreview() {
-    WelcomeStep()
+    FoodTrackTheme {
+        WelcomeStep()
+    }
 }

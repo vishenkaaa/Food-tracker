@@ -2,14 +2,13 @@ package com.example.presentation.extensions
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
-import com.example.domain.model.BMIStatus
+import com.example.presentation.features.auth.onboarding.models.BMIStatus
 import com.example.presentation.R
 
 data class BMICategory(
     val label: String,
     val color: Color
 )
-
 
 fun BMIStatus.toBMICategory(context: Context): BMICategory {
     return when (this) {

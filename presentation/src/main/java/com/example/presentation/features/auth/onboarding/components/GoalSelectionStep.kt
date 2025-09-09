@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.Goal
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.displayName
 
 @Composable
@@ -79,8 +80,10 @@ fun GoalSelectionStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GoalSelectionStepPreview() {
-    GoalSelectionStep(Goal.GAIN){}
+    FoodTrackTheme {
+        GoalSelectionStep(Goal.GAIN) {}
+    }
 }

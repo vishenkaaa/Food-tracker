@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.description
 import com.example.presentation.extensions.displayName
 
@@ -94,5 +95,7 @@ fun UserActivityLevelSectionStep(
 @Preview(showBackground = true)
 @Composable
 fun UserActivityLevelSectionStepPreview() {
-    UserActivityLevelSectionStep(UserActivityLevel.ACTIVE) {}
+    FoodTrackTheme {
+        UserActivityLevelSectionStep(UserActivityLevel.ACTIVE) {}
+    }
 }

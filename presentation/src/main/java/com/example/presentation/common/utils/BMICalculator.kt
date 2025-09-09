@@ -1,7 +1,7 @@
 package com.example.presentation.common.utils
 
 import android.content.Context
-import com.example.domain.model.BMIStatus
+import com.example.presentation.features.auth.onboarding.models.BMIStatus
 import com.example.presentation.extensions.BMICategory
 import com.example.presentation.extensions.toBMICategory
 

@@ -5,12 +5,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.user.Goal
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
+import kotlin.math.abs
 
 @Composable
 fun WeightChangeStep(
     goal: Goal,
-    weightChange: Float,
-    onWeightChangeSelected: (Float) -> Unit,
+    weightChange: String,
+    onWeightChangeSelected: (String) -> Unit,
 ) {
     val title = when (goal) {
         Goal.LOSE -> stringResource(R.string.how_much_weight_lose)
@@ -19,20 +21,19 @@ fun WeightChangeStep(
     }
     NumberInputStep(
         title = title,
-        value = if (goal == Goal.LOSE) -weightChange else weightChange,
+        value = abs(weightChange.toFloatOrNull() ?: 0f).toString(),
         unit = stringResource(R.string.kilograms),
         isIntegerInput = false,
-        onValueSelected = { value ->
-            val adjustedValue = if (goal == Goal.LOSE) -value else value
-            onWeightChangeSelected(adjustedValue)
-        },
+        onValueSelected = onWeightChangeSelected,
     )
 }
 
 @Composable
 @Preview
 fun WeightChangeStepPreview() {
-    WeightChangeStep(
-        Goal.GAIN, 0f
-    ) {}
+    FoodTrackTheme {
+        WeightChangeStep(
+            Goal.GAIN, ""
+        ) {}
+    }
 }

@@ -1,0 +1,32 @@
+package com.example.presentation.features.main.diary.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.presentation.R
+
+@Composable
+fun MacroNutrientsBigSection(protein: Float, fat: Float, carbs: Float){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        MacroNutrientBigItem(
+            label = stringResource(R.string.protein),
+            value = stringResource(R.string.grams_format, protein)
+        )
+
+        MacroNutrientBigItem(
+            label = stringResource(R.string.carbs),
+            value = stringResource(R.string.grams_format, carbs)
+        )
+
+        MacroNutrientBigItem(
+            label = stringResource(R.string.fat),
+            value = stringResource(R.string.grams_format, fat)
+        )
+    }
+}

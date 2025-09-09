@@ -1,6 +1,5 @@
 package com.example.domain.model.user
 
-import com.example.domain.model.MacroNutrients
 import java.time.LocalDate
 import java.time.Period
 
@@ -17,7 +16,8 @@ data class User(
     val gender: Gender = Gender.MALE,
     val birthDate: LocalDate? = null,
     val userActivityLevel: UserActivityLevel = UserActivityLevel.SEDENTARY,
-    val targetCalories: Int = 0
+    val targetCalories: Int = 0,
+
 ){
     fun calculateCalories(): Int? {
         if(currentWeight == null || height == null || birthDate == null)
@@ -66,9 +66,9 @@ data class User(
         val fatCalories = dailyCalories * fatPercent
 
         // Конвертація калорій в грами
-        val proteins = (proteinCalories / proteinCaloriesPerGram).toInt()
-        val carbs = (carbCalories / carbCaloriesPerGram).toInt()
-        val fats = (fatCalories / fatCaloriesPerGram).toInt()
+        val proteins = (proteinCalories / proteinCaloriesPerGram).toFloat()
+        val carbs = (carbCalories / carbCaloriesPerGram).toFloat()
+        val fats = (fatCalories / fatCaloriesPerGram).toFloat()
 
         return MacroNutrients(
             proteins = proteins,

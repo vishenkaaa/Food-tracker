@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+  <path
+      android:strokeWidth="1"
+      android:pathData="M18.333,19.333C18.517,19.333 18.667,19.482 18.667,19.666C18.667,19.85 18.517,20 18.333,20C18.149,20 18,19.85 18,19.666C18,19.483 18.149,19.333 18.333,19.333Z"
+      android:fillColor="#000000"
+      android:strokeColor="#4B7E38"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M13,18.667C13.184,18.667 13.333,18.816 13.334,19C13.334,19.184 13.184,19.334 13,19.334C12.816,19.333 12.667,19.184 12.667,19C12.667,18.816 12.816,18.667 13,18.667Z"
+      android:fillColor="#000000"
+      android:strokeColor="#4B7E38"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M12.333,14C12.517,14 12.667,14.149 12.667,14.333C12.667,14.517 12.517,14.667 12.333,14.667C12.149,14.667 12,14.517 12,14.333C12,14.149 12.149,14 12.333,14Z"
+      android:fillColor="#000000"
+      android:strokeColor="#4B7E38"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M16.333,15.333C16.517,15.333 16.667,15.482 16.667,15.666C16.667,15.85 16.517,16 16.333,16C16.149,16 16,15.85 16,15.666C16,15.483 16.149,15.333 16.333,15.333Z"
+      android:fillColor="#000000"
+      android:strokeColor="#4B7E38"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M24,16C22.939,16 21.922,15.579 21.172,14.828C20.421,14.078 20,13.061 20,12C18.939,12 17.922,11.579 17.172,10.828C16.421,10.078 16,9.061 16,8C14.418,8 12.871,8.469 11.555,9.348C10.24,10.227 9.214,11.477 8.609,12.939C8.003,14.4 7.845,16.009 8.154,17.561C8.462,19.113 9.224,20.538 10.343,21.657C11.462,22.776 12.887,23.538 14.439,23.846C15.991,24.155 17.6,23.997 19.062,23.391C20.523,22.785 21.773,21.76 22.652,20.445C23.531,19.129 24,17.582 24,16Z"
+      android:strokeLineJoin="round"
+      android:fillColor="#00000000"
+      android:strokeColor="#4B7E38"
+      android:strokeLineCap="round"/>
+</vector>

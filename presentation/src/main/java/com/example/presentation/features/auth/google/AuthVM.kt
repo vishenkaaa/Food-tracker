@@ -1,28 +1,39 @@
 package com.example.presentation.features.auth.google
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import androidx.activity.result.ActivityResult
 import androidx.lifecycle.viewModelScope
+import com.example.common.ActivityHolder
+import com.example.common.GoogleSignInPendingException
 import com.example.domain.manager.AuthStateManager
-import com.example.data.auth.GoogleCredentialManager
-import com.example.domain.model.user.User
+import com.example.domain.model.auth.AuthError
+import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
+import com.example.domain.usecase.auth.OldGoogleSignInUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.extensions.getLocalizedMessage
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthVM @Inject constructor(
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
-    private val credentialManager: GoogleCredentialManager,
-    private val authStateManager: AuthStateManager
+    private val getGoogleIdTokenUseCase: GetGoogleIdTokenUseCase,
+    private val oldGoogleSignInUseCase: OldGoogleSignInUseCase,
+    private val authStateManager: AuthStateManager,
+    private val activityHolder: ActivityHolder
 ) : BaseViewModel() {
 
-    private val _state = MutableStateFlow<AuthState>(AuthState.Idle)
-    val state: StateFlow<AuthState> = _state
+    private val _googleSignInIntent = MutableSharedFlow<Intent>()
+    val googleSignInIntent = _googleSignInIntent.asSharedFlow()
 
     fun signInWithGoogle(context: Context, forceNewAccount: Boolean = true) {
         viewModelScope.launch {
@@ -30,41 +41,103 @@ class AuthVM @Inject constructor(
             handleLoading(true)
 
             try {
-                val idToken = credentialManager.getGoogleIdToken(context, forceNewAccount)
-                val result = signInWithGoogleUseCase(idToken)
+                if (context is Activity)
+                    activityHolder.setActivity(context)
 
-                if (result.isSuccess) {
-                    val user = result.getOrThrow()
+                val idTokenResult = getGoogleIdTokenUseCase(forceNewAccount)
 
-                    authStateManager.setAuthState(true, user.targetCalories != 0)
+                idTokenResult.fold(
+                    onSuccess = { idToken ->
+                        processGoogleSignIn(idToken, context)
+                    },
+                    onFailure = { error ->
+                        if(!hasInternet(context)) {
+                            handleError(
+                                Exception(context.getString(R.string.no_internet_connection)),
+                                context
+                            )
+                            return@launch
+                        }
+                        when {
+                            error is AuthError.NoCredentialAvailable && context is Activity -> {
+                                startOldGoogleSignIn(forceNewAccount)
+                                return@launch
+                            }
+                            else -> {
+                                val localizedMessage = if (error is AuthError) error.getLocalizedMessage(context)
+                                else context.getString(R.string.error_unknown_auth)
 
-                    _state.value = if (user.isNew) {
-                        AuthState.NewUser(user)
-                    } else {
-                        AuthState.Success(user)
+                                handleError(Exception(localizedMessage), context)
+                            }
+                        }
                     }
-                } else {
-                    val exception = result.exceptionOrNull() ?: Exception(context.getString(R.string.unknown_error))
-                    handleUnexpectedError(exception)
-                    _state.value = AuthState.Error(exception.message ?: context.getString(R.string.unknown_error))
-                }
+                )
             } catch (e: Exception) {
-                handleUnexpectedError(e, context)
-                _state.value = AuthState.Error(e.message ?: context.getString(R.string.unknown_error))
+                val localizedMessage = context.getString(R.string.error_unknown_auth)
+                handleError(Exception(localizedMessage))
             } finally {
                 handleLoading(false)
             }
         }
     }
 
-    fun consumeError() {
-        clearErrors()
+    private suspend fun startOldGoogleSignIn(forceNewAccount: Boolean) {
+        try {
+            oldGoogleSignInUseCase(forceNewAccount)
+        } catch (e: GoogleSignInPendingException) {
+            _googleSignInIntent.emit(e.intent)
+        } catch (e: Exception) {
+            handleError(e)
+        }
     }
-}
 
-sealed class AuthState {
-    data object Idle : AuthState()
-    data class Success(val user: User) : AuthState()
-    data class NewUser(val user: User) : AuthState()
-    data class Error(val message: String) : AuthState()
+    fun handleOldGoogleSignInResult(result: ActivityResult, context: Context) {
+        viewModelScope.launch {
+            try {
+                handleLoading(true)
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    val account = task.getResult(ApiException::class.java)
+                    val token = account.idToken
+
+                    if (token != null) {
+                        processGoogleSignIn(token, context)
+                    } else {
+                        val errorMessage = context.getString(R.string.error_google_token_null)
+                        handleError(Exception(errorMessage))
+                    }
+                } else {
+                    val errorMessage = context.getString(R.string.error_google_signin_cancelled)
+                    handleError(Exception(errorMessage))
+                }
+            } catch (e: Exception) {
+                val localizedMessage = context.getString(R.string.error_unknown_auth)
+                handleError(Exception(localizedMessage))
+            } finally {
+                handleLoading(false)
+            }
+        }
+    }
+
+    private suspend fun processGoogleSignIn(idToken: String, context: Context) {
+        try {
+            val result = signInWithGoogleUseCase(idToken)
+            result.fold(
+                onSuccess = { user ->
+                    authStateManager.setAuthState(true, user.targetCalories != 0)
+                },
+                onFailure = { error ->
+                    val localizedMessage = if (error is AuthError) {
+                        error.getLocalizedMessage(context)
+                    } else {
+                        context.getString(R.string.error_unknown_auth)
+                    }
+                    handleError(Exception(localizedMessage))
+                }
+            )
+        } catch (e: Exception) {
+            val localizedMessage = context.getString(R.string.error_unknown_auth)
+            handleError(Exception(localizedMessage))
+        }
+    }
 }

@@ -15,20 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
-fun ErrorSnackbar(
+fun ErrorSnackBar(
     error: String,
     actionLabel: String? = null,
     onErrorDismissed: (() -> Unit)? = null,
     onErrorConsumed: (() -> Unit)? = null,
-    duration: SnackbarDuration = SnackbarDuration.Short,
+    duration: SnackbarDuration = SnackbarDuration.Long,
 ) {
-    val snackbarHostState = remember(error) { SnackbarHostState() }
+    val snackBarHostState = remember(error) { SnackbarHostState() }
 
-    LaunchedEffect(snackbarHostState) {
-        val action = snackbarHostState.showSnackbar(
+    LaunchedEffect(snackBarHostState) {
+        val action = snackBarHostState.showSnackbar(
             message = error,
             actionLabel = actionLabel,
             duration = duration,
@@ -45,7 +47,7 @@ fun ErrorSnackbar(
     }
 
     SnackbarHost(
-        hostState = snackbarHostState,
+        hostState = snackBarHostState,
     ) {
         Snackbar(
             snackbarData = it,
@@ -54,7 +56,7 @@ fun ErrorSnackbar(
             dismissActionContentColor = MaterialTheme.colorScheme.onBackground,
             actionColor = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(bottom = 40.dp)
+            modifier = Modifier.padding(bottom = 40.dp).zIndex(1f)
         )
     }
 }
@@ -64,7 +66,7 @@ fun ConnectionErrorSnackBar(
     onErrorDismissed: (() -> Unit),
     onErrorConsumed: (() -> Unit)
 ) {
-    ErrorSnackbar(
+    ErrorSnackBar(
         error = stringResource(R.string.no_internet_connection),
         actionLabel = stringResource(R.string.retry),
         duration = SnackbarDuration.Indefinite,
@@ -80,11 +82,13 @@ fun ConnectionErrorSnackBar(
 @Preview(showSystemUi = true)
 @Composable
 fun ConnectionErrorSnackBarPreview() {
-    ErrorSnackbar(
-        error = "Error descr",
-        actionLabel = "Action",
-        onErrorConsumed = {
+    FoodTrackTheme {
+        ErrorSnackBar(
+            error = "Error descr",
+            actionLabel = "Action",
+            onErrorConsumed = {
 
-        }
-    )
+            }
+        )
+    }
 }

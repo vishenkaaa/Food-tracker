@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.user.Gender
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.common.ui.values.White
 import com.example.presentation.extensions.displayName
 import com.example.presentation.extensions.imgRes
@@ -101,8 +102,10 @@ fun GenderSelectionStep(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GenderSelectionStepPreview() {
-    GenderSelectionStep(Gender.MALE) {}
+    FoodTrackTheme {
+        GenderSelectionStep(Gender.MALE) {}
+    }
 }

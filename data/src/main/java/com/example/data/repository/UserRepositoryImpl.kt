@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.mapper.UserModelMapper.mapToUser
 import com.example.data.mapper.UserModelMapper.userInfoToMap
+import com.example.data.mapper.UserModelMapper.userToMap
 import com.example.data.util.safeCall
 import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.user.User
@@ -22,6 +23,21 @@ class UserRepositoryImpl @Inject constructor(
 
     private val usersCollection = firestore.collection(USERS_KEY)
 
+    override suspend fun createUser(user: User): Result<Unit> = safeCall(errorLogger){
+        val userMap = userToMap(user)
+        usersCollection.document(user.id).set(userMap).await()
+    }
+
+    override suspend fun getTargetCalories(userId: String): Result<Int> = safeCall(errorLogger) {
+        val snapshot = usersCollection.document(userId).get().await()
+        if (!snapshot.exists()) {
+            throw Exception("User not found")
+        }
+
+        val targetCalories = (snapshot[TARGET_CALORIES_KEY] as? Number)?.toInt() ?: 0
+        targetCalories
+    }
+
     override suspend fun getUser(userId: String): Result<User> = safeCall(errorLogger) {
         val snapshot = usersCollection.document(userId).get().await()
         if (!snapshot.exists()) {
@@ -37,7 +53,9 @@ class UserRepositoryImpl @Inject constructor(
         usersCollection.document(user.id).update(userMap).await()
     }
 
-    override suspend fun updateTargetCalories(userId: String, targetCalories: Int): Result<Unit> = safeCall(errorLogger) {
-        usersCollection.document(userId).update(TARGET_CALORIES_KEY, targetCalories).await()
-    }
+    override suspend fun isUserFullyRegistered(userId: String): Boolean = safeCall(errorLogger){
+        val snapshot = usersCollection.document(userId).get().await()
+        val user = snapshot.data?.let { mapToUser(it, userId) }
+        return user?.targetCalories != 0
+    }.getOrDefault(false)
 }

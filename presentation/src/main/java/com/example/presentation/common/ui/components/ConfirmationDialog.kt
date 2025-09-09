@@ -27,10 +27,16 @@ fun ConfirmationDialog(
         AlertDialog(
             onDismissRequest = onDismiss,
             title = {
-                Text(text = title, style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground)
             },
             text = {
-                Text(text = message, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground)
             },
             confirmButton = {
                 TextButton(
@@ -40,13 +46,18 @@ fun ConfirmationDialog(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(text = confirmButtonText, style = MaterialTheme.typography.titleMedium,
+                    Text(
+                        text = confirmButtonText,
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onError)
                 }
             },
             dismissButton = {
                 TextButton(onDismiss, shape = RoundedCornerShape(16.dp)) {
-                    Text(text = dismissButtonText, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = dismissButtonText,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground)
                 }
             },
             shape = RoundedCornerShape(16.dp),

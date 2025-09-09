@@ -43,18 +43,12 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":data"))
+    implementation(project(":common"))
 
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-
-    // Firebase & Google Services
-    implementation(libs.play.services.base)
-    implementation(libs.play.services.auth)
-    implementation(libs.firebase.common.ktx)
-    implementation(libs.firebase.common)
 
     // Compose BOM
     val composeBom = platform(libs.androidx.compose.bom)
@@ -75,6 +69,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.material3.android)
 
@@ -105,4 +100,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.monitor)
     androidTestImplementation(libs.androidx.runner)
+
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.accompanist.permissions)
+
+    implementation("com.patrykandpatrick.vico:compose:2.1.3")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.1.3")
+    implementation("com.patrykandpatrick.vico:core:2.1.3")
+    implementation("com.himanshoe:charty:2.0.1")
+
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation(libs.play.services.auth.v2140)
 }

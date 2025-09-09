@@ -1,16 +1,11 @@
 package com.example.presentation.common.ui.values
 
-import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 
 // Light Theme Colors
 private val LightColorScheme
@@ -18,8 +13,10 @@ private val LightColorScheme
     get() = lightColorScheme(
         primary = Green, // акцентний
         onPrimary = White, // на акцентному
+        primaryContainer = DisableLightContainer, // недоступний контейнер
         secondary = DarkGreen30, // світло сірий текст
         onSecondary = DarkGreen60, // темніший сірий текст
+        secondaryContainer = LightBackground,
         surface = Green30, // не заповнений прогрес
         onSurface = DarkGreen50, // не вибраний текст
         surfaceVariant = Color.Black.copy(0.20f), // тінь
@@ -38,8 +35,10 @@ private val DarkColorScheme
     get() = darkColorScheme(
         primary = Green,
         onPrimary = White,
+        primaryContainer = DisableDarkContainer,
         secondary = White.copy(0.8f),
         onSecondary = White.copy(0.6f),
+        secondaryContainer = DarkContainer,
         surface = Green30,
         onSurface = White.copy(0.4f),
         surfaceVariant = Color.Black.copy(0.20f),
@@ -60,17 +59,6 @@ fun FoodTrackTheme(
     val colorScheme = when {
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
-    }
-
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            window.statusBarColor = Color.Transparent.toArgb()
-            window.navigationBarColor = Color.Transparent.toArgb()
-        }
     }
 
     MaterialTheme(

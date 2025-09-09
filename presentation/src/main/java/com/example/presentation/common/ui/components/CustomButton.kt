@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
+import com.example.presentation.common.ui.values.FoodTrackTheme
 
 @Composable
 fun CustomButton(
@@ -27,6 +28,7 @@ fun CustomButton(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
     iconPositionStart: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -36,8 +38,8 @@ fun CustomButton(
             .fillMaxWidth(),
         onClick = onClick,
         colors = ButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = color,
+            contentColor = color,
             disabledContentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.surface
         ),
@@ -59,7 +61,7 @@ fun CustomButton(
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = text,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             if(icon!=null && !iconPositionStart)
@@ -76,12 +78,14 @@ fun CustomButton(
 @Composable
 @Preview(showBackground = true)
 fun CustomButtonPreview(){
-    Column {
-        CustomButton(
-            "Text", Modifier, painterResource(R.drawable.google)
-        ) {}
-        CustomButton(
-            "Text"
-        ) {}
+    FoodTrackTheme {
+        Column {
+            CustomButton(
+                "Text", Modifier, painterResource(R.drawable.google)
+            ) {}
+            CustomButton(
+                "Text"
+            ) {}
+        }
     }
 }
