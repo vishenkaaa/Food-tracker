@@ -1,5 +1,6 @@
 package com.example.presentation.features
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -44,6 +45,10 @@ fun MainContent(
         }
     }
 
+    BackHandler {
+        onBackPressed()
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -61,8 +66,7 @@ fun MainContent(
                     AppNavHost(
                         modifier = Modifier.fillMaxSize(),
                         navController = navController,
-                        userAuthState = userAuthState,
-                        shouldShowBottomBar = shouldShowBottomBar,
+                        userAuthState = userAuthState
                     )
 
                     val navBackStackEntry by navController.currentBackStackEntryAsState()

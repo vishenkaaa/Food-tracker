@@ -40,8 +40,7 @@ import java.time.LocalDate
 fun AppNavHost(
     modifier: Modifier,
     navController: NavHostController,
-    userAuthState: UserAuthState,
-    shouldShowBottomBar: Boolean,
+    userAuthState: UserAuthState
 ) {
     LaunchedEffect(userAuthState.isLoggedIn, userAuthState.isFullyRegistered) {
         delay(1000)
