@@ -90,18 +90,6 @@ class CameraService @Inject constructor(
         }
     }
 
-    private fun hasCamera(lensFacing: Int): Boolean {
-        return try {
-            cameraProvider?.hasCamera(
-                CameraSelector.Builder()
-                    .requireLensFacing(lensFacing)
-                    .build()
-            ) == true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     fun hasFlashUnit(): Boolean {
         return camera?.cameraInfo?.hasFlashUnit() == true
     }

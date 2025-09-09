@@ -1,8 +1,6 @@
 package com.example.presentation.features.main.diary.addMeals.addMealBarcode
 
 import android.content.Context
-import androidx.camera.core.Camera
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
@@ -11,6 +9,8 @@ import com.example.domain.usecase.camera.ToggleFlashUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.camera.CameraService
+import com.example.presentation.features.main.diary.addMeals.addMealBarcode.models.AddMealBarcodeUiState
+import com.example.presentation.features.main.diary.addMeals.addMealBarcode.models.BarcodeInputMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +57,31 @@ class AddMealBarcodeVM @Inject constructor(
         }
     }
 
+    fun switchInputMode(mode: BarcodeInputMode) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                inputMode = mode,
+                showManualEntry = mode == BarcodeInputMode.MANUAL
+            )
+        }
+    }
+
+    fun updateManualBarcodeInput(input: String) {
+        _uiState.update { currentState ->
+            currentState.copy(manualBarcodeInput = input)
+        }
+    }
+
+    fun submitManualBarcode(): String? {
+        val barcode = _uiState.value.manualBarcodeInput
+        return if (barcode.length >= 8) {
+            barcode
+        } else {
+            handleError(Exception("Barcode must be at least 8 digits long"))
+            null
+        }
+    }
+
     fun toggleFlash() {
         if (!_uiState.value.hasFlashUnit){
             handleError(Exception(context.getString(R.string.error_flash_not_available)))
@@ -72,37 +97,8 @@ class AddMealBarcodeVM @Inject constructor(
             }
     }
 
-    private fun onBarcodeDetected(barcode: String) {
-        if (_uiState.value.scannedBarcode != barcode) {
-            _uiState.value = _uiState.value.copy(
-                scannedBarcode = barcode,
-                showBarcodeResult = true
-            )
-
-            processBarcode(barcode)
-        }
-    }
-
-    private fun processBarcode(barcode: String) {
-
-    }
-
-    fun dismissBarcodeResult() {
-        _uiState.value = _uiState.value.copy(showBarcodeResult = false)
-    }
-
     override fun onCleared() {
         super.onCleared()
         cameraProvider?.unbindAll()
     }
 }
-
-data class AddMealBarcodeUiState(
-    val scannedBarcode: String? = null,
-    val isFlashOn: Boolean = false,
-    val showBarcodeResult: Boolean = false,
-    val productFound: Boolean = false,
-
-    val isCameraReady: Boolean = false,
-    val hasFlashUnit: Boolean = false
-)
