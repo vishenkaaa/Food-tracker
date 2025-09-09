@@ -162,17 +162,15 @@ fun AddMealAIScreen(
             },
         ){ padding ->
             Box(
-                Modifier.padding(padding)
+                Modifier
+                    .padding(padding)
+                    .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
             ){
-                Box(
-                    modifier = Modifier.clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
-                ){
-                    AndroidView(
-                        factory = { previewView },
-                        modifier = Modifier.fillMaxSize(),
-                        update = { onInitializeCamera(lifecycleOwner, it) }
-                    )
-                }
+                AndroidView(
+                    factory = { previewView },
+                    modifier = Modifier.fillMaxSize(),
+                    update = { onInitializeCamera(lifecycleOwner, it) }
+                )
 
                 CameraOverlayBox()
 
@@ -247,7 +245,7 @@ fun CameraControlsBar(
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp))
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 32.dp, vertical = 42.dp),
+            .padding(horizontal = 32.dp, vertical = 34.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

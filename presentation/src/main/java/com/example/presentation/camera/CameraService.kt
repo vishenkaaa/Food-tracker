@@ -30,8 +30,6 @@ class CameraService @Inject constructor(
     private val lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
-    // TODO Consider using Dispatchers.IO
-
     suspend fun initializeCamera(
         lifecycleOwner: LifecycleOwner,
         previewView: PreviewView
@@ -89,18 +87,6 @@ class CameraService @Inject constructor(
                     }
                 }
             )
-        }
-    }
-
-    private fun hasCamera(lensFacing: Int): Boolean {
-        return try {
-            cameraProvider?.hasCamera(
-                CameraSelector.Builder()
-                    .requireLensFacing(lensFacing)
-                    .build()
-            ) == true
-        } catch (e: Exception) {
-            false
         }
     }
 
