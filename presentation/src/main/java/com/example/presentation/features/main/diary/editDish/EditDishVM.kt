@@ -1,7 +1,5 @@
 package com.example.presentation.features.main.diary.editDish
 
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
@@ -9,13 +7,10 @@ import com.example.domain.model.diary.NutritionData
 import com.example.domain.model.diary.UnitType
 import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

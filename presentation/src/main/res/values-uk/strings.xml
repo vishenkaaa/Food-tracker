@@ -132,4 +132,7 @@
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
     <string name="confirmation_person">Підтвердження особи</string>
     <string name="confirmation_message">З міркувань безпеки, для видалення акаунта потрібно підтвердити вашу особу. Для цього потрібно переувійти в акаунт</string>
+    <string name="try_again">Try again</string>
+    <string name="oops">Oops!</string>
+    <string name="dish_not_recognized">Dish not recognized</string>
 </resources>

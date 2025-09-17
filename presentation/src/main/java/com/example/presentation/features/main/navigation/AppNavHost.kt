@@ -226,8 +226,6 @@ private fun NavGraphBuilder.mainGraph(
         composable<MainGraph.DishLoading> { backStackEntry ->
             val args = backStackEntry.toRoute<MainGraph.DishLoading>()
             DishLoadingRoute(
-                mealType = args.mealType,
-                date = LocalDate.parse(args.date),
                 imgUri = args.imgUri,
                 onBackPressed = { navController.popBackStack() },
                 onNavigateToResults = { dishes ->
@@ -270,6 +268,19 @@ private fun NavGraphBuilder.mainGraph(
                     }
                 },
                 imgUri = args.imgUri,
+                onTryAgain = {
+                    navController.navigate(
+                        MainGraph.DishLoading(
+                            mealType = args.mealType,
+                            date = args.date,
+                            imgUri = args.imgUri
+                        )
+                    ) {
+                        popUpTo<MainGraph.AddMealAI> {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 

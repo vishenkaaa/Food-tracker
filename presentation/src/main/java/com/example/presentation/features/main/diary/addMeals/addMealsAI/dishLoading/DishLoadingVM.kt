@@ -23,24 +23,11 @@ import javax.inject.Inject
 class DishLoadingVM @Inject constructor(
     private val analyzeDishImageUseCase: AnalyzeDishImageUseCase,
     @ApplicationContext private val context: Context,
-    savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
-
-    companion object {
-        private const val KEY_IMG_URI = "imgUri"
-    }
-
     private val _uiState = MutableStateFlow(DishLoadingUiState())
     val uiState: StateFlow<DishLoadingUiState> = _uiState.asStateFlow()
 
-    init {
-        val imgUri: String? = savedStateHandle[KEY_IMG_URI]
-        if (imgUri != null) {
-            analyze(imgUri)
-        }
-    }
-
-    private fun analyze(imgUri: String) {
+    fun analyze(imgUri: String) {
         viewModelScope.launch {
             handleLoading(true)
 
