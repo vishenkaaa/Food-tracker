@@ -123,7 +123,6 @@
     <string name="saved_successfully">Збережено успішно</string>
     <string name="analysis_failed">Не вдалось проаналізувати зображення</string>
     <string name="saving_error">Не вдалося зберегти</string>
-
     <string name="error_no_credential_available">Немає доступних облікових записів</string>
     <string name="error_invalid_credential_type">Неправильний тип облікових даних</string>
     <string name="error_user_cancelled_auth">Авторизацію скасовано користувачем</string>
@@ -132,7 +131,7 @@
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
     <string name="confirmation_person">Підтвердження особи</string>
     <string name="confirmation_message">З міркувань безпеки, для видалення акаунта потрібно підтвердити вашу особу. Для цього потрібно переувійти в акаунт</string>
-    <string name="try_again">Try again</string>
-    <string name="oops">Oops!</string>
-    <string name="dish_not_recognized">Dish not recognized</string>
+    <string name="try_again">Спробувати ще раз</string>
+    <string name="oops">Упс!</string>
+    <string name="dish_not_recognized">Не вдалось розвізнати страву</string>
 </resources>

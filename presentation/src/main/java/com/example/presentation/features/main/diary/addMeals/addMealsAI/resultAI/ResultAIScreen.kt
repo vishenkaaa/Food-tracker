@@ -45,6 +45,7 @@ import com.example.presentation.common.ui.components.CloseHeader
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
+import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
@@ -124,9 +125,8 @@ fun ResultAIScreen(
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
-                CloseHeader(
-                    onNavigateBack = onBackPressed
-                )
+                if (uiState.dishes.isEmpty()) CloseHeader(onBackPressed)
+                else LeftAlignedHeader(uiState.mealType) { onBackPressed() }
             },
             bottomBar = {
                 if(uiState.dishes.isNotEmpty())
@@ -222,7 +222,7 @@ private fun EmptyStateContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.new_profile_black),
+            painter = painterResource(R.drawable.new_profile),
             contentDescription = "image",
             modifier = Modifier
                 .fillMaxWidth()
