@@ -95,25 +95,37 @@ class AuthVM @Inject constructor(
         viewModelScope.launch {
             try {
                 handleLoading(true)
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    val account = task.getResult(ApiException::class.java)
-                    val token = account.idToken
 
-                    if (token != null) {
-                        processGoogleSignIn(token, context)
-                    } else {
-                        val errorMessage = context.getString(R.string.error_google_token_null)
-                        handleError(Exception(errorMessage))
+                when (result.resultCode) {
+                    Activity.RESULT_OK -> {
+                        try {
+                            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                            val account = task.getResult(ApiException::class.java)
+                            val token = account.idToken
+
+                            if (token != null) {
+                                processGoogleSignIn(token, context)
+                            } else {
+                                val errorMessage = context.getString(R.string.error_google_token_null)
+                                handleError(Exception(errorMessage))
+                            }
+                        } catch (apiException: ApiException) {
+                            handleError(Exception(context.getString(R.string.error_unknown_auth)))
+                        }
                     }
-                } else {
-                    val errorMessage = context.getString(R.string.error_google_signin_cancelled)
-                    handleError(Exception(errorMessage))
+                    Activity.RESULT_CANCELED -> {
+                        handleError(Exception(context.getString(R.string.error_user_cancelled_auth)))
+                    }
+                    else -> {
+                        val errorMessage = context.getString(R.string.error_unknown_auth)
+                        handleError(Exception("$errorMessage: ${result.resultCode}"))
+                    }
                 }
             } catch (e: Exception) {
                 val localizedMessage = context.getString(R.string.error_unknown_auth)
                 handleError(Exception(localizedMessage))
-            } finally {
+            }
+            finally {
                 handleLoading(false)
             }
         }
@@ -127,11 +139,10 @@ class AuthVM @Inject constructor(
                     authStateManager.setAuthState(true, user.targetCalories != 0)
                 },
                 onFailure = { error ->
-                    val localizedMessage = if (error is AuthError) {
+                    val localizedMessage = if (error is AuthError)
                         error.getLocalizedMessage(context)
-                    } else {
+                    else
                         context.getString(R.string.error_unknown_auth)
-                    }
                     handleError(Exception(localizedMessage))
                 }
             )

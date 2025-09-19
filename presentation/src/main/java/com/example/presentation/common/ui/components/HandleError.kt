@@ -24,7 +24,7 @@ fun HandleError(
     when {
         baseUiState.isConnectionError -> {
             Box(
-                modifier = modifier.fillMaxWidth().zIndex(10f).statusBarsPadding(),
+                modifier = modifier.fillMaxSize().zIndex(10f).statusBarsPadding(),
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 ConnectionErrorSnackBar(
@@ -36,8 +36,8 @@ fun HandleError(
 
         baseUiState.unexpectedError?.isNotBlank() == true -> {
             Box(
-                modifier = modifier.fillMaxWidth().zIndex(10f).statusBarsPadding(),
-                contentAlignment = Alignment.TopCenter
+                modifier = modifier.fillMaxSize().zIndex(10f).statusBarsPadding(),
+                contentAlignment = Alignment.BottomCenter
             ) {
                 ErrorSnackBar(
                     error = baseUiState.unexpectedError.toString(),

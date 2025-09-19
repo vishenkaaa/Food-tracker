@@ -38,13 +38,22 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.getString(R.string.firebase_client_id))
             .requestEmail()
+            .requestProfile()
             .build()
 
         val client = GoogleSignIn.getClient(context, signInOptions)
 
         if (forceNewAccount) {
-            client.signOut()
+            try {
+                client.signOut().await()
+                kotlinx.coroutines.delay(500)
+            } catch (e: Exception) {
+                android.util.Log.e("FirebaseAuthRepository", "Error during sign out: ${e.message}")
+            }
         }
+
+        val lastAccount = GoogleSignIn.getLastSignedInAccount(context)
+        android.util.Log.d("FirebaseAuthRepository", "Last signed in account: ${lastAccount?.email}")
 
         throw GoogleSignInPendingException(client.signInIntent)
     }
