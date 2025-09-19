@@ -2,10 +2,12 @@ package com.example.data.repository
 
 import com.example.data.mapper.DishModelMapper
 import com.example.data.util.safeCall
+import com.example.domain.extension.calculateDayNutrition
 import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
+import com.example.domain.model.diary.NutritionData
 import com.example.domain.repository.MealRepository
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
@@ -104,6 +106,20 @@ class MealRepositoryImpl @Inject constructor(
 
     override suspend fun getMealsByDate(userId: String, date: String): Result<DailyMeals> = safeCall(errorLogger) {
         getDailyMealsForDate(userId, date)
+    }
+
+    override suspend fun getDailyNutrition(userId: String, date: String): Result<NutritionData> = safeCall(errorLogger) {
+        val meals = getDailyMealsForDate(userId, date)
+        val allDishes = meals.breakfast + meals.lunch + meals.dinner + meals.snacks
+
+        allDishes.fold(NutritionData()) { total, dish ->
+            NutritionData(
+                calories = total.calories + dish.kcal,
+                carb = total.carb + dish.carb,
+                protein = total.protein + dish.protein,
+                fat = total.fat + dish.fats
+            )
+        }
     }
 
     override suspend fun getDishesForMeal(

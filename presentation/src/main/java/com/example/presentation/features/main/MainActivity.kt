@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
         setupSplashScreen(splashScreen)
         setContent()
         observeUiEvents()
+        observeUserAuthForWidget()
     }
 
     private fun observeUiEvents() {
@@ -52,6 +53,18 @@ class MainActivity : ComponentActivity() {
                     }
                     is UiEvent.NavigateBack -> {
                         navController?.popBackStack()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeUserAuthForWidget() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userAuthState.collect { authState ->
+                    if (!authState.isLoading && authState.isLoggedIn == true) {
+                        viewModel.onUserAuthenticated(this@MainActivity)
                     }
                 }
             }

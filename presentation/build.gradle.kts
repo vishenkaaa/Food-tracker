@@ -113,4 +113,6 @@ dependencies {
 
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     implementation(libs.play.services.auth.v2140)
+
+    implementation(libs.androidx.glance.appwidget)
 }
