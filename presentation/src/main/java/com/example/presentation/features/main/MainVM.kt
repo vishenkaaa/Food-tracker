@@ -1,15 +1,11 @@
 package com.example.presentation.features.main
 
-import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.manager.UserAuthState
-import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
-import com.example.domain.usecase.meal.GetCaloriesProgressUseCase
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.navigation.LoginGraph
 import com.example.presentation.features.main.navigation.MainGraph
-import com.example.presentation.widget.WidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,17 +14,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MainVM @Inject constructor(
-    private val authStateManager: AuthStateManager,
-    private val widgetUpdater: WidgetUpdater,
-    private val getCaloriesUseCase: GetCaloriesProgressUseCase,
-    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+    private val authStateManager: AuthStateManager
 ) : BaseViewModel() {
 
     val userAuthState: StateFlow<UserAuthState> = authStateManager.userAuthState
@@ -41,10 +31,6 @@ class MainVM @Inject constructor(
 
     private var lastBackPressTime: Long = 0
     private var currentRoute: String? = null
-
-    init {
-        observeAuthState()
-    }
 
     fun onBackPressed() {
         viewModelScope.launch {
@@ -61,53 +47,6 @@ class MainVM @Inject constructor(
             } else {
                 _uiEvents.emit(UiEvent.NavigateBack)
             }
-        }
-    }
-
-    private fun observeAuthState() {
-        viewModelScope.launch {
-            userAuthState.collect { authState ->
-                if (!authState.isLoading && authState.isLoggedIn == true) {
-                    // Користувач авторизований - можемо оновити віджет
-                    // Але потрібен Context, тому створимо метод для MainActivity
-                }
-            }
-        }
-    }
-
-    fun onUserAuthenticated(context: Context) {
-        viewModelScope.launch {
-            updateWidgetIfNeeded(context)
-        }
-    }
-
-    fun updateWidgetData(context: Context) {
-        viewModelScope.launch {
-            updateWidgetIfNeeded(context)
-        }
-    }
-
-    private suspend fun updateWidgetIfNeeded(context: Context) {
-        try {
-            if (!widgetUpdater.hasCaloriesWidget(context)) {
-                // Віджет не встановлений - не робимо зайву роботу
-                return
-            }
-
-            val userId = getCurrentUserIdUseCase() ?: return
-            val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-            val caloriesResult = getCaloriesUseCase(userId, currentDate)
-            caloriesResult.fold(
-                onSuccess = { caloriesProgress ->
-                    widgetUpdater.updateCaloriesWidget(context, caloriesProgress)
-                },
-                onFailure = { error ->
-                    error.printStackTrace()
-                }
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 

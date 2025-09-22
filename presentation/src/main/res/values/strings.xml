@@ -132,6 +132,6 @@
     <string name="try_again">Try again</string>
     <string name="oops">Oops!</string>
     <string name="dish_not_recognized">Dish not recognized</string>
-
-    <string name="calories_widget_description">Показує прогрес споживання калорій</string>
+    <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
+    <string name="loading_error">Помилка завантаження</string>
 </resources>

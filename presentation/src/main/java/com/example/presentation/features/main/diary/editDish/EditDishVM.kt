@@ -19,7 +19,7 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
     val state: StateFlow<EditDishState> = _state.asStateFlow()
 
     fun initialize(dish: Dish, mealType: MealType) {
-        val initialUnit = UnitType.fromValue(dish.unit.value) ?: UnitType.GRAM
+        val initialUnit = UnitType.fromValue(dish.unit.value)
         val availableUnits = getAvailableUnits(dish.unit)
 
         _state.value = EditDishState(
@@ -52,7 +52,7 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
     private fun calculateNutrition() {
         val currentState = _state.value
         val currentAmount = currentState.amount.toFloatOrNull()?: 0f
-        val originalAmount = currentState.dish.amount.toFloat()
+        val originalAmount = currentState.dish.amount
         val originalUnit = currentState.dish.unit
 
         val convertedAmount = when {

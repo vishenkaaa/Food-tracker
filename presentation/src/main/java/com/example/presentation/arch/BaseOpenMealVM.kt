@@ -11,6 +11,7 @@ import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
+import com.example.presentation.common.utils.WidgetUpdater
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -84,6 +85,7 @@ open class BaseOpenMealVM (
                 ).fold(
                     onSuccess = {
                         updateLocalDishes(updatedDish, updatedMealType)
+                        WidgetUpdater.updateWidget(context)
                         diaryVM.refreshData()
                         onEditDishDismiss()
                     },
