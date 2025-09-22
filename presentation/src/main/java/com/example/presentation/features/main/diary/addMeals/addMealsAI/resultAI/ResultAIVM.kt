@@ -36,14 +36,14 @@ class ResultAIVM @Inject constructor(
     }
 
     override fun onDeleteConfirmationResult(status: Boolean, diaryVM: DiaryVM) {
+        if (status) uiState.value.dishIdToDelete?.let { id ->
+            deleteLocalDish(id)
+        }
         _uiState.update {
             it.copy(
                 showDeleteMealDialog = false,
                 dishIdToDelete = null
             )
-        }
-        if (status) uiState.value.dishIdToDelete?.let { id ->
-            deleteLocalDish(id)
         }
     }
 

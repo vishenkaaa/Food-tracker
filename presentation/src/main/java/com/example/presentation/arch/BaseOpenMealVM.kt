@@ -123,14 +123,15 @@ open class BaseOpenMealVM (
     }
 
     open fun onDeleteConfirmationResult(status: Boolean, diaryVM: DiaryVM) {
+        if (status) uiState.value.dishIdToDelete?.let { id ->
+            onDeleteDish(id, diaryVM)
+            WidgetUpdater.updateWidget(context)
+        }
         _uiState.update {
             it.copy(
                 showDeleteMealDialog = false,
                 dishIdToDelete = null
             )
-        }
-        if (status) uiState.value.dishIdToDelete?.let { id ->
-            onDeleteDish(id, diaryVM)
         }
     }
 

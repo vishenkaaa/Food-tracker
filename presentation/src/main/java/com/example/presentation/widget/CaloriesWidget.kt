@@ -12,6 +12,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
@@ -30,6 +32,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.presentation.R
 import com.example.presentation.common.utils.createProgressCircleBitmap
+import com.example.presentation.features.main.MainActivity
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -146,7 +149,8 @@ object  CaloriesWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .background(GlanceTheme.colors.widgetBackground),
+                .background(GlanceTheme.colors.widgetBackground)
+                .clickable( actionStartActivity<MainActivity>() ),
             contentAlignment = Alignment.Center
         ) {
             when {
