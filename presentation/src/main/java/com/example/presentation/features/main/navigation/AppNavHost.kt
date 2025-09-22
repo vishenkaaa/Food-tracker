@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.example.domain.manager.UserAuthState
-import com.example.domain.model.diary.Dish
 import com.example.presentation.features.auth.google.AuthRoute
 import com.example.presentation.features.auth.onboarding.OnboardingRoute
 import com.example.presentation.features.main.diary.DiaryRoute
@@ -31,6 +30,9 @@ import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
 import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.statistics.StatisticsRoute
+import com.example.presentation.model.DishDto
+import com.example.presentation.model.toDomain
+import com.example.presentation.model.toDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -140,7 +142,10 @@ private fun NavGraphBuilder.mainGraph(
             DiaryRoute(
                 viewModel = hiltViewModel(parentEntry),
                 onNavigateToOpenMeal = { mealType, dishes, date, targetCalories ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set(DISHES_KEY, dishes)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        DISHES_KEY,
+                        dishes.toDto()
+                    )
 
                     navController.navigate(
                         MainGraph.OpenMeal(
@@ -176,7 +181,8 @@ private fun NavGraphBuilder.mainGraph(
             },
         ) { backStackEntry ->
             val args = backStackEntry.toRoute<MainGraph.OpenMeal>()
-            val dishes = navController.previousBackStackEntry?.savedStateHandle?.get<List<Dish>>(DISHES_KEY) ?: listOf()
+            val dishesDto = navController.previousBackStackEntry?.savedStateHandle?.get<List<DishDto>>(DISHES_KEY) ?: listOf()
+            val dishes = dishesDto.toDomain()
 
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Graphs.Main>()
@@ -230,7 +236,7 @@ private fun NavGraphBuilder.mainGraph(
                 onBackPressed = { navController.popBackStack() },
                 onNavigateToResults = { dishes ->
                     val parentEntry = navController.getBackStackEntry<Graphs.Main>()
-                    parentEntry.savedStateHandle[DISHES_KEY] = dishes
+                    parentEntry.savedStateHandle[DISHES_KEY] = dishes.toDto()
 
                     navController.navigate(
                         MainGraph.ResultAI(
@@ -253,7 +259,8 @@ private fun NavGraphBuilder.mainGraph(
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Graphs.Main>()
             }
-            val dishes = parentEntry.savedStateHandle.get<List<Dish>>(DISHES_KEY) ?: listOf()
+            val dishesDto = parentEntry.savedStateHandle.get<List<DishDto>>(DISHES_KEY) ?: listOf()
+            val dishes = dishesDto.toDomain()
             val diaryVM = hiltViewModel<DiaryVM>(parentEntry)
 
             ResultAIRoute(

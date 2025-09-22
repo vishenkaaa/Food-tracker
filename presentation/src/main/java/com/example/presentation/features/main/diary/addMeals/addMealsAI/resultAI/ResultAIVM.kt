@@ -11,6 +11,7 @@ import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseOpenMealVM
 import com.example.presentation.features.main.diary.DiaryVM
+import com.example.presentation.common.utils.WidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.update
@@ -61,6 +62,7 @@ class ResultAIVM @Inject constructor(
                 }
             }
 
+            WidgetUpdater.updateWidget(context)
             diaryVM.refreshData()
             Result.success(Unit)
         } catch (e: Exception) {

@@ -3,6 +3,7 @@ package com.example.domain.repository
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.MealType
+import com.example.domain.model.diary.NutritionData
 
 interface MealRepository {
     suspend fun addDishToMeal(
@@ -40,4 +41,6 @@ interface MealRepository {
         startDate: String,
         endDate: String
     ): Result<Map<String, DailyMeals>>
+
+    suspend fun getDailyNutrition(userId: String, date: String): Result<NutritionData>
 }

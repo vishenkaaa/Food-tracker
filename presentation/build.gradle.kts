@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -113,4 +114,6 @@ dependencies {
 
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     implementation(libs.play.services.auth.v2140)
+
+    implementation(libs.androidx.glance.appwidget)
 }

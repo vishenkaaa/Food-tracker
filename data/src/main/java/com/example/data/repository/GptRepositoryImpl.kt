@@ -50,7 +50,7 @@ class GptRepositoryImpl @Inject constructor(
                             "protein": "Protein in grams (float, 1 decimal place)",
                             "fats": "Fats in grams (float, 1 decimal place)",
                             "amount": "Quantity value (float, 1 decimal place)",
-                            "unit": "Unit of measurement (g, ml, l, pcs)"
+                            "unit": "Unit of measurement (only: g, ml, l, piece)"
                           }
                         ]
 

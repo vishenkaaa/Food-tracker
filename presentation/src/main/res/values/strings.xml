@@ -121,7 +121,6 @@
     <string name="saved_successfully">Saved successfully</string>
     <string name="analysis_failed">Failed to analyze image</string>
     <string name="saving_error">Failed to save</string>
-
     <string name="error_no_credential_available">No accounts available</string>
     <string name="error_invalid_credential_type">Invalid credential type</string>
     <string name="error_user_cancelled_auth">Authentication cancelled by user</string>
@@ -133,4 +132,6 @@
     <string name="try_again">Try again</string>
     <string name="oops">Oops!</string>
     <string name="dish_not_recognized">Dish not recognized</string>
+    <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
+    <string name="loading_error">Помилка завантаження</string>
 </resources>
