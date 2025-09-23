@@ -1,8 +1,6 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.diary.Dish
 import com.example.domain.usecase.gpt.AnalyzeDishImageUseCase
@@ -41,11 +39,7 @@ class DishLoadingVM @Inject constructor(
 
             result
                 .onSuccess { dishes ->
-                    Log.d("DishLoadingVM", "GPT response: $dishes")
                     _uiState.update { it.copy(dishes = dishes) }
-                }
-                .onFailure { e ->
-                    Log.e("DishLoadingVM", "GPT error", e)
                 }
                 .also {
                     _uiState.update { it.copy(loading = false) }

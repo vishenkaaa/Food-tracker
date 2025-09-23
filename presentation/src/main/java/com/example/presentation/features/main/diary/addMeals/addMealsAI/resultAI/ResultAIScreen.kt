@@ -134,7 +134,7 @@ fun ResultAIScreen(
                         text = stringResource(R.string.save),
                         modifier = Modifier
                             .navigationBarsPadding()
-                            .padding(bottom = 32.dp)
+                            .padding(bottom = 28.dp)
                     ) { onSave() }
             }
         ) { padding ->
@@ -147,7 +147,7 @@ fun ResultAIScreen(
                         .padding(horizontal = 16.dp),
                     contentPadding = PaddingValues(
                         top = padding.calculateTopPadding(),
-                        bottom = padding.calculateBottomPadding()
+                        bottom = padding.calculateBottomPadding() + 20.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
