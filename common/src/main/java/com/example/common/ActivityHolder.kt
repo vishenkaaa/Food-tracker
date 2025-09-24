@@ -15,12 +15,4 @@ class ActivityHolder @Inject constructor() {
     fun getActivity(): Activity? {
         return currentActivity
     }
-
-    fun clearActivity() {
-        currentActivity = null
-    }
-
-    fun requireActivity(): Activity {
-        return currentActivity ?: throw IllegalStateException("Activity not set. Call setActivity() first.")
-    }
 }
