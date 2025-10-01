@@ -142,4 +142,5 @@
     <string name="privacy_url">https://doc-hosting.flycricket.io/foodsnap-ai-privacy-policy/4ba8fb5c-7eb4-4bff-91cd-bad278d02c17/privacy</string>
     <string name="about">About</string>
     <string name="contact_us">Contact us</string>
+    <string name="support_email">mailto:foodsnap.support@stfalcon.com</string>
 </resources>

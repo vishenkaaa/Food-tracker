@@ -59,6 +59,7 @@ fun AboutScreen(
 
     val termsUrl = stringResource(R.string.terms_url)
     val privacyUrl = stringResource(R.string.privacy_url)
+    val supportEmail = stringResource(R.string.support_email)
 
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -79,7 +80,7 @@ fun AboutScreen(
             AboutItem(
                 icon = R.drawable.mail,
                 text = stringResource(R.string.contact_us),
-                onClick = { uriHandler.openUri("mailto:foodsnap.support@stfalcon.com") }
+                onClick = { uriHandler.openUri(supportEmail) }
             )
             Spacer(Modifier.height(20.dp))
 
@@ -146,7 +147,7 @@ fun AboutItem(
             .clickable(
                 onClick = onClick,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource()}
+                interactionSource = remember { MutableInteractionSource() }
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
