@@ -54,17 +54,16 @@ import com.example.presentation.camera.CameraPermissionManager
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.LoadingBackground
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.AddMealAIUiState
 import com.example.presentation.features.main.diary.extensions.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import java.time.LocalDate
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AddMealAIRoute(
     mealType: MealType,
-    date: LocalDate,
     onBackPressed: () -> Unit,
     onNavigateToAnalyze: (String) -> Unit,
     viewModel: AddMealAIVM = hiltViewModel()
@@ -116,7 +115,6 @@ fun AddMealAIRoute(
 
     AddMealAIScreen(
         mealType = mealType,
-        date = date,
         uiState = uiState,
         baseUiState = baseUiState,
         onInitializeCamera = viewModel::initializeCamera,
@@ -132,7 +130,6 @@ fun AddMealAIRoute(
 @Composable
 fun AddMealAIScreen(
     mealType: MealType,
-    date: LocalDate,
     uiState: AddMealAIUiState,
     baseUiState: BaseUiState,
     onInitializeCamera: (LifecycleOwner, PreviewView) -> Unit,
@@ -156,7 +153,7 @@ fun AddMealAIScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
                 LeftAlignedHeader(
-                    mealType = mealType,
+                    title = mealType.displayName(),
                     onNavigateBack = onNavigateBack
                 )
             },
@@ -176,7 +173,6 @@ fun AddMealAIScreen(
 
                 CameraControlsBar(
                     uiState = uiState,
-                    baseUiState = baseUiState,
                     onGalleryClick = onGalleryClick,
                     onCapturePhoto = onCapturePhoto,
                     onToggleFlash = onToggleFlash,
@@ -234,7 +230,6 @@ fun CameraOverlayBox() {
 @Composable
 fun CameraControlsBar(
     uiState: AddMealAIUiState,
-    baseUiState: BaseUiState,
     onGalleryClick: () -> Unit,
     onCapturePhoto: () -> Unit,
     onToggleFlash: () -> Unit,

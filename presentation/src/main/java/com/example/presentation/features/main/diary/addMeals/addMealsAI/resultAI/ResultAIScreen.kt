@@ -46,6 +46,7 @@ import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
@@ -126,7 +127,7 @@ fun ResultAIScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
                 if (uiState.dishes.isEmpty()) CloseHeader(onBackPressed)
-                else LeftAlignedHeader(uiState.mealType) { onBackPressed() }
+                else LeftAlignedHeader(uiState.mealType.displayName()) { onBackPressed() }
             },
             bottomBar = {
                 if(uiState.dishes.isNotEmpty())

@@ -15,13 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.diary.MealType
 import com.example.presentation.R
-import com.example.presentation.extensions.displayName
 
 @Composable
 fun LeftAlignedHeader(
-    mealType: MealType,
+    title: String,
     onNavigateBack: () -> Unit
 ) {
     Row(
@@ -29,7 +27,7 @@ fun LeftAlignedHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 4.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onNavigateBack) {
@@ -42,7 +40,7 @@ fun LeftAlignedHeader(
         }
 
         Text(
-            text = mealType.displayName(),
+            text = title,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(start = 8.dp)

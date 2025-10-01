@@ -28,6 +28,7 @@ import com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI
 import com.example.presentation.features.main.diary.openMeal.OpenMealRoute
 import com.example.presentation.features.main.idle.IdleRoute
 import com.example.presentation.features.main.profile.ProfileRoute
+import com.example.presentation.features.main.profile.about.AboutRoute
 import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.statistics.StatisticsRoute
 import com.example.presentation.model.DishDto
@@ -211,7 +212,6 @@ private fun NavGraphBuilder.mainGraph(
             val args = backStackEntry.toRoute<MainGraph.AddMealAI>()
             AddMealAIRoute(
                 mealType = args.mealType,
-                date = LocalDate.parse(args.date),
                 onNavigateToAnalyze = { imgUri ->
                     navController.navigate(
                         MainGraph.DishLoading(
@@ -301,12 +301,17 @@ private fun NavGraphBuilder.mainGraph(
             }
             ProfileRoute(
                 viewModel = hiltViewModel(parentEntry),
-                onDeleteAccount = { navController.navigate(MainGraph.DeleteAccount) }
+                onDeleteAccount = { navController.navigate(MainGraph.DeleteAccount) },
+                onAbout = { navController.navigate(MainGraph.About) }
             )
         }
 
         composable<MainGraph.DeleteAccount> {
             DeleteAccountRoute{ navController.popBackStack() }
+        }
+
+        composable<MainGraph.About> {
+            AboutRoute{ navController.popBackStack() }
         }
     }
 }

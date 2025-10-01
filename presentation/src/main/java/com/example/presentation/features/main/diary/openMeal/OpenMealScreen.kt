@@ -44,6 +44,7 @@ import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
@@ -104,7 +105,7 @@ fun OpenMealScreen(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
                 LeftAlignedHeader(
-                    mealType = uiState.mealType,
+                    title = uiState.mealType.displayName(),
                     onNavigateBack = onBackPressed
                 )
             },

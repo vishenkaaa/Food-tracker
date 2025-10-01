@@ -134,10 +134,12 @@
     <string name="dish_not_recognized">Dish not recognized</string>
     <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
     <string name="loading_error">Помилка завантаження</string>
-    <string name="and">" and "</string>
+    <string name="and">"\n and "</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="terms_of_service">Terms of Service\n</string>
+    <string name="terms_of_service">Terms of Use</string>
     <string name="continuing_you_accept_our">"By continuing, you agree to our "</string>
     <string name="terms_url">https://doc-hosting.flycricket.io/foodsnap-ai-terms-of-use/36cf11b3-486a-4761-ae79-23067abf4043/terms</string>
     <string name="privacy_url">https://doc-hosting.flycricket.io/foodsnap-ai-privacy-policy/4ba8fb5c-7eb4-4bff-91cd-bad278d02c17/privacy</string>
+    <string name="about">About</string>
+    <string name="contact_us">Contact us</string>
 </resources>

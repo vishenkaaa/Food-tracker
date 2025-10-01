@@ -61,7 +61,7 @@ fun CustomButton(
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = text,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             if(icon!=null && !iconPositionStart)

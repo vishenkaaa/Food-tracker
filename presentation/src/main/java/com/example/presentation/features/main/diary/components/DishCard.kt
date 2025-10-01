@@ -78,10 +78,10 @@ fun DishCard(
             }
 
             HorizontalDivider(
+                thickness = 0.5.dp,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .fillMaxWidth()
-                    .height(0.5.dp)
                     .background(MaterialTheme.colorScheme.onBackground.copy(0.1f))
             )
 
