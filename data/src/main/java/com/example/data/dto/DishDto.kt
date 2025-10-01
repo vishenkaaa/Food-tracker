@@ -25,5 +25,5 @@ fun DishDto.toDish(): Dish = Dish(
     protein = protein,
     fats = fats,
     amount = amount,
-    unit = UnitType.fromValue(unit) ?: UnitType.GRAM
+    unit = UnitType.fromValue(unit)
 )

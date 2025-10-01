@@ -1,6 +1,7 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,10 +41,12 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.CloseHeader
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
+import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
@@ -60,6 +65,7 @@ fun ResultAIRoute(
     dishes: List<Dish>,
     date: LocalDate,
     onBackPressed: () -> Unit,
+    onTryAgain: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
@@ -95,7 +101,8 @@ fun ResultAIRoute(
                     onBackPressed()
                 }
             }
-        }
+        },
+        onTryAgain = onTryAgain
     )
 }
 
@@ -112,16 +119,15 @@ fun ResultAIScreen(
     onDeleteDish: (String) -> Unit,
     onErrorConsume: () -> Unit,
     onRetry: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    onTryAgain: () -> Unit
 ) {
     Box {
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
-                LeftAlignedHeader(
-                    mealType = uiState.mealType,
-                    onNavigateBack = onBackPressed
-                )
+                if (uiState.dishes.isEmpty()) CloseHeader(onBackPressed)
+                else LeftAlignedHeader(uiState.mealType.displayName()) { onBackPressed() }
             },
             bottomBar = {
                 if(uiState.dishes.isNotEmpty())
@@ -129,47 +135,20 @@ fun ResultAIScreen(
                         text = stringResource(R.string.save),
                         modifier = Modifier
                             .navigationBarsPadding()
-                            .padding(bottom = 32.dp)
+                            .padding(bottom = 28.dp)
                     ) { onSave() }
             }
         ) { padding ->
-            if (uiState.dishes.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .padding(
-                            top = padding.calculateTopPadding(),
-                            bottom = padding.calculateBottomPadding()
-                        )
-                ) {
-                    CaloriesSection(
-                        imgUri = imgUri,
-                        calories = uiState.calories,
-                        targetCalories = uiState.targetCalories
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.analysis_failed),
-                            color = MaterialTheme.colorScheme.secondary,
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
+            if (uiState.dishes.isEmpty())
+                EmptyStateContent(padding = padding, onTryAgain = onTryAgain)
+            else {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp),
                     contentPadding = PaddingValues(
                         top = padding.calculateTopPadding(),
-                        bottom = padding.calculateBottomPadding()
+                        bottom = padding.calculateBottomPadding() + 20.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -177,13 +156,14 @@ fun ResultAIScreen(
                         CaloriesSection(
                             imgUri = imgUri,
                             calories = uiState.calories,
-                            targetCalories = uiState.targetCalories
                         )
                     }
 
                     item{
-                        Spacer(modifier = Modifier.height(12.dp))
-                        MacroNutrientsBigSection(uiState.protein, uiState.fat, uiState.carbs)
+                        MacroNutrientsBigSection(
+                            protein = uiState.protein,
+                            fat = uiState.fat,
+                            carbs = uiState.carbs)
                     }
 
                     items(
@@ -229,14 +209,68 @@ fun ResultAIScreen(
 }
 
 @Composable
+private fun EmptyStateContent(
+    padding: PaddingValues,
+    onTryAgain: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = padding.calculateTopPadding(),
+                bottom = padding.calculateBottomPadding()
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.new_profile),
+            contentDescription = "image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 70.dp),
+            contentScale = ContentScale.FillWidth
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = stringResource(R.string.oops),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.error,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = stringResource(R.string.dish_not_recognized),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        CustomButton(
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .navigationBarsPadding(),
+            text = stringResource(R.string.try_again),
+            color = MaterialTheme.colorScheme.error,
+            onClick = { onTryAgain() }
+        )
+    }
+}
+
+@Composable
 fun CaloriesSection(
     imgUri: String,
     calories: Int,
-    targetCalories: Int,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
     ) {
         AsyncImage(
             model = imgUri,

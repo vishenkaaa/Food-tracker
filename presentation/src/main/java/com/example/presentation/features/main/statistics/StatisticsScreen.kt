@@ -111,6 +111,7 @@ fun StatisticsScreen(
                     )
 
                     HorizontalDivider(
+                        thickness = 0.5.dp,
                         modifier = Modifier
                             .padding(top = 2.dp)
                             .fillMaxWidth()
@@ -162,7 +163,6 @@ fun StatisticsScreen(
 fun StatisticsTabRow(
     selectedTab: StatisticsPeriod,
     onTabSelected: (StatisticsPeriod) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     PrimaryTabRow(
         selectedTabIndex = StatisticsPeriod.entries.indexOf(selectedTab),

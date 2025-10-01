@@ -67,4 +67,7 @@ sealed class MainGraph {
         val date: String,
         val imgUri: String
     ) : MainGraph()
+
+    @Serializable
+    data object About : MainGraph()
 }

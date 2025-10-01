@@ -123,7 +123,6 @@
     <string name="saved_successfully">Збережено успішно</string>
     <string name="analysis_failed">Не вдалось проаналізувати зображення</string>
     <string name="saving_error">Не вдалося зберегти</string>
-
     <string name="error_no_credential_available">Немає доступних облікових записів</string>
     <string name="error_invalid_credential_type">Неправильний тип облікових даних</string>
     <string name="error_user_cancelled_auth">Авторизацію скасовано користувачем</string>
@@ -132,4 +131,17 @@
     <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
     <string name="confirmation_person">Підтвердження особи</string>
     <string name="confirmation_message">З міркувань безпеки, для видалення акаунта потрібно підтвердити вашу особу. Для цього потрібно переувійти в акаунт</string>
+    <string name="try_again">Спробувати ще раз</string>
+    <string name="oops">Упс!</string>
+    <string name="dish_not_recognized">Не вдалось розвізнати страву</string>
+    <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
+    <string name="loading_error">Помилка завантаження</string>
+    <string name="and">"\n and "</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Use</string>
+    <string name="continuing_you_accept_our">"By continuing, you agree to our "</string>
+    <string name="terms_url">https://doc-hosting.flycricket.io/foodsnap-ai-terms-of-use/36cf11b3-486a-4761-ae79-23067abf4043/terms</string>
+    <string name="privacy_url">https://doc-hosting.flycricket.io/foodsnap-ai-privacy-policy/4ba8fb5c-7eb4-4bff-91cd-bad278d02c17/privacy</string>
+    <string name="about">About</string>
+    <string name="contact_us">Contact us</string>
 </resources>

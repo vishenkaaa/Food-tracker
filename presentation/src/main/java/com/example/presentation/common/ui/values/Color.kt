@@ -29,25 +29,25 @@ val Green30: Color
     @Composable
     get() = colorResource(R.color.green_30)
 
-val DarkGreen: Color
+val Dark60: Color
     @Composable
-    get() = colorResource(R.color.dark_green)
+    get() = colorResource(R.color.dark_60)
 
-val DarkGreen60: Color
+val Dark50: Color
     @Composable
-    get() = colorResource(R.color.dark_green_60)
+    get() = colorResource(R.color.dark_50)
 
-val DarkGreen50: Color
+val Dark30: Color
     @Composable
-    get() = colorResource(R.color.dark_green_50)
-
-val DarkGreen30: Color
-    @Composable
-    get() = colorResource(R.color.dark_green_30)
+    get() = colorResource(R.color.dark_30)
 
 val Dark: Color
     @Composable
     get() = colorResource(R.color.dark)
+
+val Gray: Color
+    @Composable
+    get() = colorResource(R.color.gray)
 
 val DisableDarkContainer: Color
     @Composable
@@ -63,7 +63,7 @@ val DarkContainer: Color
 
 val DarkBackground: Color
     @Composable
-    get() = colorResource(R.color.dark_bg)
+    get() = colorResource(R.color.dark)
 
 val Red: Color
     @Composable

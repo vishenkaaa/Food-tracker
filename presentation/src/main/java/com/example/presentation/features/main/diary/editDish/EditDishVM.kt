@@ -1,7 +1,5 @@
 package com.example.presentation.features.main.diary.editDish
 
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
@@ -9,13 +7,10 @@ import com.example.domain.model.diary.NutritionData
 import com.example.domain.model.diary.UnitType
 import com.example.presentation.arch.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +19,7 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
     val state: StateFlow<EditDishState> = _state.asStateFlow()
 
     fun initialize(dish: Dish, mealType: MealType) {
-        val initialUnit = UnitType.fromValue(dish.unit.value) ?: UnitType.GRAM
+        val initialUnit = UnitType.fromValue(dish.unit.value)
         val availableUnits = getAvailableUnits(dish.unit)
 
         _state.value = EditDishState(
@@ -57,7 +52,7 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
     private fun calculateNutrition() {
         val currentState = _state.value
         val currentAmount = currentState.amount.toFloatOrNull()?: 0f
-        val originalAmount = currentState.dish.amount.toFloat()
+        val originalAmount = currentState.dish.amount
         val originalUnit = currentState.dish.unit
 
         val convertedAmount = when {

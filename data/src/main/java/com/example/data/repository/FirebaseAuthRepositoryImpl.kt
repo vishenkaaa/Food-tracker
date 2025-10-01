@@ -1,8 +1,5 @@
 package com.example.data.repository
 
-import android.content.Context
-import com.example.common.GoogleSignInPendingException
-import com.example.data.R
 import com.example.data.auth.LocalAuthStateManager
 import com.example.data.mapper.UserModelMapper.mapToUser
 import com.example.data.util.safeCall
@@ -10,12 +7,9 @@ import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.user.User
 import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.repository.UserRepository
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -24,8 +18,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     private val userRepository: UserRepository,
     private val auth: FirebaseAuth,
     private val localAuthStateManager: LocalAuthStateManager,
-    private val errorLogger: ErrorLogger,
-    @ApplicationContext private val context: Context
+    private val errorLogger: ErrorLogger
 ) : FirebaseAuthRepository {
 
     companion object{
@@ -33,21 +26,6 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     }
 
     private val usersCollection = firestore.collection(USERS_KEY)
-
-    override suspend fun oldSignInWithGoogle(forceNewAccount: Boolean): Result<String> {
-        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.firebase_client_id))
-            .requestEmail()
-            .build()
-
-        val client = GoogleSignIn.getClient(context, signInOptions)
-
-        if (forceNewAccount) {
-            client.signOut()
-        }
-
-        throw GoogleSignInPendingException(client.signInIntent)
-    }
 
     override suspend fun signInWithGoogle(idToken: String): Result<User> = safeCall(errorLogger) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)

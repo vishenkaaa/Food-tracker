@@ -2,6 +2,8 @@ package com.example.presentation.common.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +24,7 @@ fun HandleError(
     when {
         baseUiState.isConnectionError -> {
             Box(
-                modifier = modifier.fillMaxSize().zIndex(10f),
+                modifier = modifier.fillMaxSize().zIndex(10f).statusBarsPadding(),
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 ConnectionErrorSnackBar(
@@ -34,7 +36,7 @@ fun HandleError(
 
         baseUiState.unexpectedError?.isNotBlank() == true -> {
             Box(
-                modifier = modifier.fillMaxSize().zIndex(10f),
+                modifier = modifier.fillMaxSize().zIndex(10f).statusBarsPadding(),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 ErrorSnackBar(

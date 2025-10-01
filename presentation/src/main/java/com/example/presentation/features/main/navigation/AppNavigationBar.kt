@@ -84,7 +84,7 @@ fun NavigationShadow() {
                 Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.background.copy(alpha = 0.0f),
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.7f),
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
                         MaterialTheme.colorScheme.background,
                     )
                 )

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -61,6 +62,7 @@ import java.time.format.DateTimeFormatter
 fun ProfileRoute(
     viewModel: ProfileVM = hiltViewModel(),
     onDeleteAccount: () -> Unit,
+    onAbout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
@@ -73,7 +75,8 @@ fun ProfileRoute(
         onDeleteAccountClick = onDeleteAccount,
         onRetry = { viewModel.loadUserProfile() },
         onErrorConsume = viewModel::clearErrors,
-        onEditClick = viewModel::onEditClick
+        onEditClick = viewModel::onEditClick,
+        onAboutClick = onAbout
     )
 
     ProfileEditDialogs(
@@ -96,6 +99,7 @@ fun ProfileScreen(
     uiState: ProfileUiState,
     baseUiState: BaseUiState,
     onLogoutClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onLogoutConfirmation: (Boolean) -> Unit,
     onDeleteAccountClick: () -> Unit,
     onRetry: () -> Unit,
@@ -106,32 +110,41 @@ fun ProfileScreen(
     val hasError = baseUiState.unexpectedError != null || baseUiState.isConnectionError || uiState.user==null
 
     Box {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            CenterAlignedHeader(stringResource(R.string.profile))
+            item { CenterAlignedHeader(stringResource(R.string.profile)) }
 
-            if (isLoading || hasError) ProfileUserCardShimmer()
-            else ProfileUserCard(uiState.user!!)
+            item {
+                if (isLoading || hasError) ProfileUserCardShimmer()
+                else ProfileUserCard(uiState.user!!)
+                Spacer(Modifier.height(16.dp))
+            }
 
-            Spacer(Modifier.height(16.dp))
+            item {
+                if (isLoading || hasError) UserGoalsSectionShimmer()
+                else UserGoalsSection(user = uiState.user!!, onEditClick = onEditClick)
 
-            if (isLoading || hasError) UserGoalsSectionShimmer()
-            else UserGoalsSection(user = uiState.user!!, onEditClick = onEditClick)
+                Divider()
+            }
 
-            Divider()
+            item {
+                if (isLoading || hasError) UserInfoSectionShimmer()
+                else UserInfoSection(uiState.user!!, onEditClick = onEditClick)
 
-            if (isLoading || hasError) UserInfoSectionShimmer()
-            else UserInfoSection(uiState.user!!, onEditClick = onEditClick)
+                Divider()
+            }
 
-            Divider()
-
-            ProfileActionsSection(
-                onLogoutClick = onLogoutClick, onDeleteAccountClick = onDeleteAccountClick
-            )
+            item {
+                ProfileActionsSection(
+                    onAboutClick = onAboutClick,
+                    onLogoutClick = onLogoutClick,
+                    onDeleteAccountClick = onDeleteAccountClick
+                )
+            }
         }
 
         ConfirmationDialog(
@@ -154,6 +167,7 @@ fun ProfileScreen(
 @Composable
 private fun Divider() {
     HorizontalDivider(
+        thickness = 1.dp,
         modifier = Modifier
             .padding(vertical = 24.dp)
             .fillMaxWidth()
@@ -349,22 +363,30 @@ private fun UserInfoSection(
 private fun UserInfoSectionShimmer() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         repeat(5) {
-            ProfileItemShimmer(hasIcon = true)
+            ProfileItemShimmer()
         }
     }
 }
 
 @Composable
 private fun ProfileActionsSection(
+    onAboutClick: () -> Unit,
     onLogoutClick: () -> Unit = {},
     onDeleteAccountClick: () -> Unit = {}
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ProfileItem(
+            icon = painterResource(R.drawable.info),
+            title = stringResource(R.string.about),
+            onClick = onAboutClick,
+            iconTint = MaterialTheme.colorScheme.onSurface
+        )
+
+        ProfileItem(
             icon = painterResource(R.drawable.sign_out),
             title = stringResource(R.string.logout),
             onClick = onLogoutClick,
-            iconTint = MaterialTheme.colorScheme.onBackground.copy(0.6f)
+            iconTint = MaterialTheme.colorScheme.onSurface
         )
 
         ProfileItem(
@@ -434,7 +456,7 @@ private fun ProfileItem(
 }
 
 @Composable
-private fun ProfileItemShimmer(hasIcon: Boolean = false) {
+private fun ProfileItemShimmer() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -482,7 +504,8 @@ fun ProfileScreenPreview() {
             onDeleteAccountClick = {},
             onRetry = {},
             onErrorConsume = {},
-            onEditClick = {}
+            onEditClick = {},
+            onAboutClick = {}
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.dishLoading
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,8 +36,6 @@ import java.time.LocalDate
 
 @Composable
 fun DishLoadingRoute(
-    mealType: MealType,
-    date: LocalDate,
     imgUri: String,
     onBackPressed: () -> Unit,
     onNavigateToResults: (List<Dish>) -> Unit,
@@ -44,28 +43,26 @@ fun DishLoadingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.analyze(imgUri)
+    }
+
+    BackHandler {
+        onBackPressed()
+    }
+
     LaunchedEffect(uiState.loading) {
         if (!uiState.loading) {
             onNavigateToResults(uiState.dishes)
         }
     }
 
-    DishLoadingScreen(
-        imgUri = imgUri,
-        dishes = uiState.dishes,
-        onErrorConsume = { viewModel.clearErrors() },
-        onConnectionRetry = { viewModel.retryLastAction() }
-    )
+    DishLoadingScreen()
 }
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun DishLoadingScreen(
-    imgUri: String,
-    dishes: List<Dish>,
-    onErrorConsume: () -> Unit,
-    onConnectionRetry: () -> Unit,
-) {
+fun DishLoadingScreen() {
     Box {
         Column(
             modifier = Modifier
@@ -90,7 +87,6 @@ fun DishLoadingScreen(
 @Composable
 private fun RotatingLoadingIndicator(
     size: Dp = 80.dp,
-    duration: Int = 1500
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.Asset("loader_animation.json")
@@ -124,11 +120,6 @@ private fun RotatingLoadingIndicator(
 @Composable
 fun DishLoadingScreenPreview() {
     FoodTrackTheme {
-        DishLoadingScreen(
-            imgUri = "",
-            dishes = emptyList(),
-            onErrorConsume = { },
-            onConnectionRetry = { }
-        )
+        DishLoadingScreen()
     }
 }
