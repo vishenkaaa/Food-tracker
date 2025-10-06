@@ -14,7 +14,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.foodtrack"
+        applicationId = "com.stfalcon.foodsnap"
         minSdk = 29
         targetSdk = 36
         versionCode = 4
