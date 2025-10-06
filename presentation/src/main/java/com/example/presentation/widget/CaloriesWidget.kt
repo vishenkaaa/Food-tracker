@@ -1,6 +1,7 @@
 package com.example.presentation.widget
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -12,7 +13,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
@@ -150,7 +150,12 @@ object  CaloriesWidget : GlanceAppWidget() {
                 .fillMaxSize()
                 .padding(16.dp)
                 .background(GlanceTheme.colors.widgetBackground)
-                .clickable( actionStartActivity<MainActivity>() ),
+                .clickable {
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    }
+                    context.startActivity(intent)
+                },
             contentAlignment = Alignment.Center
         ) {
             when {
