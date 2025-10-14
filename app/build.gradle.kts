@@ -17,7 +17,7 @@ android {
         applicationId = "com.stfalcon.foodsnap"
         minSdk = 29
         targetSdk = 36
-        versionCode = 4
+        versionCode = 8
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.material3.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
     implementation(libs.firebase.analytics)
