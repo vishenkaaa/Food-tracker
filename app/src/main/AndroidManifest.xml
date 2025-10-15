@@ -28,6 +28,7 @@
         <activity
             android:name="com.example.presentation.features.main.MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.FoodTrack">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
