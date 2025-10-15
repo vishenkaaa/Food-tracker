@@ -6,6 +6,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -18,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.DatePickerTypography
 import com.example.presentation.common.ui.values.FoodTrackTheme
-import com.example.presentation.features.auth.onboarding.components.HeightStep
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -33,7 +33,22 @@ fun CustomDatePickerDialog(
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDate?.toEpochDay()?.let {
             LocalDate.ofEpochDay(it).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        })
+        },
+        yearRange = IntRange(1900, LocalDate.now().year),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val dateToCheck = Instant.ofEpochMilli(utcTimeMillis)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                val today = LocalDate.now()
+                return dateToCheck <= today
+            }
+
+            override fun isSelectableYear(year: Int): Boolean {
+                return year <= LocalDate.now().year
+            }
+        }
+    )
 
     LaunchedEffect(datePickerState.selectedDateMillis) {
         val millis = datePickerState.selectedDateMillis
