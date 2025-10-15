@@ -150,7 +150,7 @@ class ProfileVM @Inject constructor(
                     )
                         _uiState.update { it.copy(editDialogType = ProfileEditDialogType.WEIGHT_CHANGE) }
 
-                    if(currentUser.isGoalAchieved())
+                    if(updatedUser.isGoalAchieved())
                         _uiState.update { it.copy(showInfoDialog = true) }
                 }
                 .onFailure { error ->
