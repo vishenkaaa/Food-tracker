@@ -9,6 +9,7 @@ import java.time.LocalDate
 data class ProfileUiState(
     val user: User? = null,
     val showLogoutDialog: Boolean = false,
+    val showInfoDialog: Boolean = false,
     val editDialogType: ProfileEditDialogType? = null,
 
     val tempGender: Gender? = null,

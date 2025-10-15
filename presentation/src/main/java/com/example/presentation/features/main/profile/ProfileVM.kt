@@ -6,6 +6,7 @@ import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.UserActivityLevel
+import com.example.domain.model.user.isGoalAchieved
 import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.GetCurrentUserUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase
@@ -55,16 +56,21 @@ class ProfileVM @Inject constructor(
 
     fun onEditClick(dialogType: ProfileEditDialogType){
         val currentUser = _uiState.value.user
+
+        val tempWeightChange = if (dialogType == ProfileEditDialogType.WEIGHT_CHANGE) {
+            val targetWeight = currentUser?.targetWeight
+            val currentWeight = currentUser?.currentWeight
+            if (targetWeight != null && currentWeight != null)
+                abs(currentWeight - targetWeight).toString() else ""
+        } else ""
+
         _uiState.update { state ->
             state.copy(
                 editDialogType = dialogType,
                 tempGender = if (dialogType == ProfileEditDialogType.GENDER) currentUser?.gender else null,
                 tempGoal = if (dialogType == ProfileEditDialogType.GOAL) currentUser?.goal else null,
                 tempActivityLevel = if (dialogType == ProfileEditDialogType.ACTIVITY_LEVEL) currentUser?.userActivityLevel else null,
-                tempWeightChange = if (dialogType == ProfileEditDialogType.WEIGHT_CHANGE) {
-                    val weightChange = currentUser?.weightChange ?: 0f
-                    if (weightChange != 0f) abs(weightChange).toString() else ""
-                } else "",
+                tempWeightChange = tempWeightChange,
                 tempCurrentWeight = if (dialogType == ProfileEditDialogType.CURRENT_WEIGHT) (currentUser?.currentWeight).toString() else "",
                 tempHeight = if (dialogType == ProfileEditDialogType.HEIGHT) (currentUser?.height).toString() else "",
                 tempBirthDate = if (dialogType == ProfileEditDialogType.DATE_OF_BIRTH) currentUser?.birthDate else null,
@@ -77,22 +83,43 @@ class ProfileVM @Inject constructor(
         val state = _uiState.value
         val currentUser = state.user ?: return
 
+        val currentDialogType = state.editDialogType
+        val oldUserGoal = currentUser.goal
+
         viewModelScope.launch {
             handleLoading(true)
 
-            val updatedUser = when (state.editDialogType) {
+            val updatedUser = when (currentDialogType) {
                 ProfileEditDialogType.GENDER -> currentUser.copy(gender = state.tempGender!!)
-                ProfileEditDialogType.GOAL -> currentUser.copy(goal = state.tempGoal!!)
+                ProfileEditDialogType.GOAL -> {
+                    when (val newGoal = state.tempGoal!!) {
+                        Goal.MAINTAIN -> {
+                            currentUser.copy(goal = newGoal, targetWeight = null)
+                        }
+
+                        Goal.LOSE, Goal.GAIN -> {
+                            val initialTargetWeight =
+                                if (newGoal != oldUserGoal) currentUser.currentWeight
+                                else currentUser.targetWeight ?: currentUser.currentWeight
+                            currentUser.copy(goal = newGoal, targetWeight = initialTargetWeight)
+                        }
+                    }
+                }
                 ProfileEditDialogType.ACTIVITY_LEVEL -> currentUser.copy(userActivityLevel = state.tempActivityLevel!!)
                 ProfileEditDialogType.WEIGHT_CHANGE -> {
-                    val weightChange = state.tempWeightChange.toFloatOrNull()
-                    if(weightChange!=null){
-                        val finalWeightChange = if(currentUser.goal == Goal.LOSE)
-                            -weightChange
-                        else
-                            weightChange
-                        currentUser.copy(weightChange = finalWeightChange)
-                    }else currentUser
+                    val weightChangeAmount = state.tempWeightChange.toFloatOrNull()
+                    val currentWeight = currentUser.currentWeight
+
+                    if (weightChangeAmount != null && currentWeight != null) {
+                        val calculatedTargetWeight = when (currentUser.goal) {
+                            Goal.LOSE -> currentWeight - weightChangeAmount
+                            Goal.GAIN -> currentWeight + weightChangeAmount
+                            Goal.MAINTAIN -> currentWeight
+                        }
+                        currentUser.copy(targetWeight = calculatedTargetWeight)
+                    } else {
+                        currentUser
+                    }
                 }
                 ProfileEditDialogType.CURRENT_WEIGHT -> {
                     val weight = state.tempCurrentWeight.toFloatOrNull() ?: 0f
@@ -114,6 +141,17 @@ class ProfileVM @Inject constructor(
                 .onSuccess {
                     _uiState.update { it.copy(user = updatedUser, editDialogType = null) }
                     handleLoading(false)
+
+                    val newGoal = state.tempGoal
+
+                    if (currentDialogType == ProfileEditDialogType.GOAL &&
+                        (newGoal == Goal.LOSE || newGoal == Goal.GAIN) &&
+                        (oldUserGoal != newGoal)
+                    )
+                        _uiState.update { it.copy(editDialogType = ProfileEditDialogType.WEIGHT_CHANGE) }
+
+                    if(currentUser.isGoalAchieved())
+                        _uiState.update { it.copy(showInfoDialog = true) }
                 }
                 .onFailure { error ->
                     handleError(error, context) { saveDialogChanges() }
@@ -123,7 +161,7 @@ class ProfileVM @Inject constructor(
     }
 
     fun onDialogDismiss() {
-        _uiState.update { it.copy(editDialogType = null) }
+        _uiState.update { it.copy(editDialogType = null, showInfoDialog = false) }
     }
 
     fun updateTempGender(gender: Gender) {

@@ -48,6 +48,7 @@ import com.example.presentation.arch.BaseUiState
 import com.example.presentation.common.ui.components.CenterAlignedHeader
 import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
+import com.example.presentation.common.ui.components.InfoDialog
 import com.example.presentation.common.ui.modifiers.shimmerEffect
 import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.displayName
@@ -76,7 +77,8 @@ fun ProfileRoute(
         onRetry = { viewModel.loadUserProfile() },
         onErrorConsume = viewModel::clearErrors,
         onEditClick = viewModel::onEditClick,
-        onAboutClick = onAbout
+        onAboutClick = onAbout,
+        onDismissDialog = viewModel::onDialogDismiss
     )
 
     ProfileEditDialogs(
@@ -105,6 +107,7 @@ fun ProfileScreen(
     onRetry: () -> Unit,
     onErrorConsume: () -> Unit,
     onEditClick: (ProfileEditDialogType) -> Unit,
+    onDismissDialog: () -> Unit
 ) {
     val isLoading = baseUiState.isLoading
     val hasError = baseUiState.unexpectedError != null || baseUiState.isConnectionError || uiState.user==null
@@ -146,6 +149,13 @@ fun ProfileScreen(
                 )
             }
         }
+
+        InfoDialog(
+            visible = uiState.showInfoDialog,
+            title = stringResource(R.string.congratulations_goal_achieved),
+            message = stringResource(R.string.you_ve_successfully_reached_your_target_weight),
+            onConfirm = { onDismissDialog() },
+        )
 
         ConfirmationDialog(
             visible = uiState.showLogoutDialog,
@@ -286,7 +296,7 @@ private fun UserGoalsSection(
                 title = stringResource(R.string.goal_weight),
                 value = stringResource(
                     R.string.kg,
-                    user.currentWeight!!.plus(user.weightChange ?: 0f)
+                    user.targetWeight?: user.currentWeight!!
                 ),
                 hasArrow = true,
                 onClick = { onEditClick(ProfileEditDialogType.WEIGHT_CHANGE) }
@@ -481,7 +491,7 @@ fun ProfileScreenPreview() {
         targetCalories = 2200,
         userActivityLevel = UserActivityLevel.ACTIVE,
         photoUrl = null,
-        weightChange = 0f
+        targetWeight = 75f
     )
 
     val uiState = ProfileUiState(
@@ -505,7 +515,8 @@ fun ProfileScreenPreview() {
             onRetry = {},
             onErrorConsume = {},
             onEditClick = {},
-            onAboutClick = {}
+            onAboutClick = {},
+            onDismissDialog = {}
         )
     }
 }

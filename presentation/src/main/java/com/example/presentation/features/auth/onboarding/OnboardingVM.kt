@@ -219,14 +219,19 @@ class OnboardingVM @Inject constructor(
 
     private fun createUserWithCalculations(userId: String): User {
         val weightChangeFloat = weightChange.toFloatOrNull() ?: 0f
-        val finalWeightChangeFloat = if(goal == Goal.LOSE) -weightChangeFloat else weightChangeFloat
         val currentWeightFloat = currentWeight.toFloatOrNull() ?: 0f
         val heightInt = height.toIntOrNull() ?: 0
+
+        val targetWeight = when(goal){
+            Goal.LOSE -> currentWeightFloat - weightChangeFloat
+            Goal.GAIN -> currentWeightFloat + weightChangeFloat
+            else -> null
+        }
 
         user = User(
             id = userId,
             goal = goal!!,
-            weightChange = finalWeightChangeFloat,
+            targetWeight = targetWeight,
             gender = gender!!,
             userActivityLevel = userActivityLevel!!,
             currentWeight = currentWeightFloat,

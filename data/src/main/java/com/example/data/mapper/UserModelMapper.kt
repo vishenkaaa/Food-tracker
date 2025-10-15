@@ -5,11 +5,13 @@ import com.example.domain.model.user.Goal
 import com.example.domain.model.user.User
 import com.example.domain.model.user.UserActivityLevel
 import java.time.LocalDate
+import kotlin.math.abs
 
 object UserModelMapper {
     private const val GOAL_KEY = "goal"
     private const val TARGET_CALORIES_KEY = "targetCalories"
-    private const val WEIGHT_CHANGE_KEY = "weightChange"
+    private const val WEIGHT_CHANGE_KEY = "weightChange" // старий ключ
+    private const val TARGET_WEIGHT_KEY = "targetWeight" // новий ключ
     private const val CURRENT_WEIGHT_KEY = "currentWeight"
     private const val GENDER_KEY = "gender"
     private const val USER_ACTIVITY_LEVEL_KEY = "userActivityLevel"
@@ -25,7 +27,7 @@ object UserModelMapper {
         return mapOf(
             GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
-            WEIGHT_CHANGE_KEY to user.weightChange,
+            TARGET_WEIGHT_KEY to user.targetWeight,
             CURRENT_WEIGHT_KEY to user.currentWeight,
             GENDER_KEY to user.gender.value,
             USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
@@ -40,7 +42,7 @@ object UserModelMapper {
         return mapOf(
             GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
-            WEIGHT_CHANGE_KEY to user.weightChange,
+            TARGET_WEIGHT_KEY to user.targetWeight,
             CURRENT_WEIGHT_KEY to user.currentWeight,
             GENDER_KEY to user.gender.value,
             USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
@@ -55,12 +57,34 @@ object UserModelMapper {
 
     // Map з Firebase в User
     fun mapToUser(data: Map<String, Any>, userId: String): User {
+        val currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat()
+        val goal = data[GOAL_KEY]?.toString()?.let { Goal.fromValue(it) } ?: Goal.MAINTAIN
+
+        val targetWeight = when{
+            data.containsKey(TARGET_WEIGHT_KEY) -> (data[TARGET_WEIGHT_KEY] as? Number)?.toFloat()
+
+            data.containsKey(WEIGHT_CHANGE_KEY) -> {
+                val weightChange = (data[WEIGHT_CHANGE_KEY] as? Number)?.toFloat()
+
+                if (weightChange != null && currentWeight != null) {
+                    when (goal) {
+                        Goal.LOSE -> currentWeight - abs(weightChange)
+                        Goal.GAIN -> currentWeight +  abs(weightChange)
+                        Goal.MAINTAIN -> currentWeight
+                    }
+                } else
+                    currentWeight
+            }
+
+            else -> currentWeight
+        }
+
         return User(
             id = userId,
-            goal = data[GOAL_KEY]?.toString()?.let { Goal.fromValue(it) } ?: Goal.MAINTAIN,
+            goal = goal,
             targetCalories = (data[TARGET_CALORIES_KEY] as? Number)?.toInt() ?: 0,
-            weightChange = (data[WEIGHT_CHANGE_KEY] as? Number)?.toFloat(),
-            currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat(),
+            targetWeight = targetWeight,
+            currentWeight = currentWeight,
             gender = data[GENDER_KEY]?.toString()?.let { Gender.fromValue(it) } ?: Gender.MALE,
             userActivityLevel = data[USER_ACTIVITY_LEVEL_KEY]?.toString()?.let {
                 UserActivityLevel.fromValue(it)

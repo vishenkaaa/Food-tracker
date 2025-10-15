@@ -143,4 +143,7 @@
     <string name="about">About</string>
     <string name="contact_us">Contact us</string>
     <string name="support_email">mailto:foodsnap.support@stfalcon.com</string>
+    <string name="failed_to_update_user_data_please_try_restarting_the_app">Failed to update user data. Please try restarting the app</string>
+    <string name="congratulations_goal_achieved">Congratulations! Goal Achieved!</string>
+    <string name="you_ve_successfully_reached_your_target_weight">You\'ve successfully reached your target weight. Fantastic work! You can now adjust your goal in the profile settings.</string>
 </resources>

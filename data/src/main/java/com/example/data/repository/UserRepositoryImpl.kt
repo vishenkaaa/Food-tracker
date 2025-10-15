@@ -23,6 +23,16 @@ class UserRepositoryImpl @Inject constructor(
 
     private val usersCollection = firestore.collection(USERS_KEY)
 
+    override suspend fun migrateOldUserData(userId: String): Result<Unit> = safeCall(errorLogger) {
+        val user = getUser(userId).getOrThrow()
+        val userMap = userToMap(user)
+
+        usersCollection
+            .document(user.id)
+            .set(userMap)
+            .await()
+    }
+
     override suspend fun createUser(user: User): Result<Unit> = safeCall(errorLogger){
         val userMap = userToMap(user)
         usersCollection.document(user.id).set(userMap).await()

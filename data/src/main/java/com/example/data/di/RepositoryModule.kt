@@ -1,9 +1,11 @@
 package com.example.data.di
 
+import com.example.data.repository.AppSettingsRepositoryImpl
 import com.example.data.repository.CameraRepositoryImpl
 import com.example.data.repository.GptRepositoryImpl
 import com.example.data.repository.MealRepositoryImpl
 import com.example.data.repository.UserRepositoryImpl
+import com.example.domain.repository.AppSettingsRepository
 import com.example.domain.repository.CameraRepository
 import com.example.domain.repository.GptRepository
 import com.example.domain.repository.MealRepository
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindGptRepository(
         gptRepositoryImpl: GptRepositoryImpl
     ): GptRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAppSettingsRepository(
+        appSettingsRepositoryImpl: AppSettingsRepositoryImpl
+    ): AppSettingsRepository
 }

@@ -11,13 +11,12 @@ data class User(
     val isNew: Boolean = false,
     val goal: Goal = Goal.MAINTAIN,
     val currentWeight: Float? = null,
-    val weightChange: Float? = null,
+    val targetWeight: Float? = null,
     val height: Int? = null,
     val gender: Gender = Gender.MALE,
     val birthDate: LocalDate? = null,
     val userActivityLevel: UserActivityLevel = UserActivityLevel.SEDENTARY,
     val targetCalories: Int = 0,
-
 ){
     fun calculateCalories(): Int? {
         if(currentWeight == null || height == null || birthDate == null)
@@ -75,5 +74,16 @@ data class User(
             carbs = carbs,
             fats = fats
         )
+    }
+}
+
+fun User.isGoalAchieved(): Boolean {
+    val current = this.currentWeight ?: return false
+    val target = this.targetWeight ?: return false
+
+    return when (this.goal) {
+        Goal.LOSE -> current <= target
+        Goal.GAIN -> current >= target
+        Goal.MAINTAIN -> false
     }
 }

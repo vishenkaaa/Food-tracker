@@ -11,6 +11,7 @@ import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.camera.CheckCameraPermissionUseCase
 import com.example.domain.usecase.meal.GetMealsForDateRangeUseCase
 import com.example.domain.usecase.user.GetTargetCaloriesUseCase
+import com.example.domain.usecase.user.MigrateUserDataUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
@@ -34,6 +35,7 @@ class DiaryVM @Inject constructor(
     private val getTargetCaloriesUseCase: GetTargetCaloriesUseCase,
     private val getMealsForDateRangeUseCase: GetMealsForDateRangeUseCase,
     private val checkCameraPermissionUseCase: CheckCameraPermissionUseCase,
+    migrateUserDataUseCase: MigrateUserDataUseCase,
 ) : BaseViewModel() {
     private val _uiState = MutableStateFlow(DiaryScreenUIState())
     val uiState: StateFlow<DiaryScreenUIState> = _uiState.asStateFlow()
@@ -45,6 +47,19 @@ class DiaryVM @Inject constructor(
 
     init {
         loadInitialData()
+
+        viewModelScope.launch {
+            try {
+                val userId = getCurrentUserIdUseCase()
+                    ?: throw Exception(context.getString(R.string.user_not_authenticated))
+                val migrationResult = migrateUserDataUseCase(userId)
+
+                if (migrationResult.isFailure) migrationResult.getOrThrow()
+
+            } catch (e: Exception){
+                handleError(Exception(context.getString(R.string.failed_to_update_user_data_please_try_restarting_the_app)), context)
+            }
+        }
     }
 
     private fun loadInitialData() {
