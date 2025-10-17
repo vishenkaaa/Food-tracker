@@ -54,7 +54,7 @@ fun SwipeDishItem(
     SwipeToDismissBox(
         state = dismissState,
         modifier = Modifier.softShadow(
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f),
+            color = MaterialTheme.colorScheme.surfaceVariant,
             blurRadius = 12.dp,
             offsetY = 1.dp,
             offsetX = 1.dp,

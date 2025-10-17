@@ -15,4 +15,5 @@
     <color name="disable_dark_container">#343434</color>
     <color name="disable_light_container">#F3F3F3</color>
     <color name="red">#D92632</color>
+    <color name="shadow">#14434343</color>
 </resources>

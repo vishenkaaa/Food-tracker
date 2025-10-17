@@ -31,12 +31,12 @@ fun DishCard(
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         modifier = Modifier
             .fillMaxWidth()
             .softShadow(
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 blurRadius = 12.dp,
                 offsetY = 1.dp,
                 offsetX = 1.dp,
@@ -78,11 +78,11 @@ fun DishCard(
             }
 
             HorizontalDivider(
+                color = MaterialTheme.colorScheme.onBackground.copy(0.1f),
                 thickness = 0.5.dp,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.onBackground.copy(0.1f))
             )
 
             MacroNutrientsSmallSection(dish.protein, dish.fats, dish.carb)

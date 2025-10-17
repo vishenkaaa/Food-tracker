@@ -272,12 +272,12 @@ fun MealItem(
         onClick = onItemClick,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         modifier = Modifier
             .fillMaxWidth()
             .softShadow(
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 blurRadius = 12.dp,
                 offsetY = 1.dp,
                 offsetX = 1.dp,
@@ -527,9 +527,9 @@ fun DayItem(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.background,
+            else MaterialTheme.colorScheme.surfaceContainer,
             disabledContainerColor =  if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.background,
+            else MaterialTheme.colorScheme.surfaceContainer,
         ),
         enabled = enabled,
         elevation = CardDefaults.elevatedCardElevation(
@@ -537,7 +537,7 @@ fun DayItem(
         ),
         modifier = Modifier
             .softShadow(
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 blurRadius = 25.dp,
                 offsetY = 4.dp,
                 offsetX = 0.dp,

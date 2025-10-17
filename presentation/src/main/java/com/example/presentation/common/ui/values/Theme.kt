@@ -19,7 +19,7 @@ private val LightColorScheme
         secondaryContainer = LightBackground,
         surface = Green30, // не заповнений прогрес
         onSurface = Dark50, // не вибраний текст
-        surfaceVariant = Color.Black.copy(0.20f), // тінь
+        surfaceVariant = Shadow, // тінь
         surfaceContainer = White, // фон контейнера
         background = LightBackground, //фон
         onBackground = Dark, // текст на фоні
@@ -41,7 +41,7 @@ private val DarkColorScheme
         secondaryContainer = DarkContainer,
         surface = Green30,
         onSurface = White.copy(0.4f),
-        surfaceVariant = Color.Black.copy(0.20f),
+        surfaceVariant = Shadow.copy(0.08f),
         surfaceContainer = DarkContainer,
         background = DarkBackground,
         onBackground = White,

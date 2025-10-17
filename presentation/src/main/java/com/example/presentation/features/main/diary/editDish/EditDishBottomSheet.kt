@@ -309,7 +309,7 @@ private fun StyledTextField(
         trailingIcon = trailingIcon,
         modifier = modifier
             .softShadow(
-                color = MaterialTheme.colorScheme.onBackground.copy(0.05f),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 offsetX = 1.dp,
                 offsetY = 1.dp,
                 blurRadius = 12.dp,
@@ -321,8 +321,8 @@ private fun StyledTextField(
             unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
-            focusedContainerColor = MaterialTheme.colorScheme.background,
-            unfocusedContainerColor = MaterialTheme.colorScheme.background
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     )
 }
@@ -380,7 +380,7 @@ private fun NutritionItem(
     Row(
         modifier = modifier
             .softShadow(
-                color = MaterialTheme.colorScheme.onBackground.copy(0.05f),
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 blurRadius = 12.dp,
                 offsetX = 0.dp,
                 offsetY = 4.dp,

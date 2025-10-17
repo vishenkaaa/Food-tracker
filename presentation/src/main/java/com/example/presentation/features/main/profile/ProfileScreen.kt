@@ -177,11 +177,11 @@ fun ProfileScreen(
 @Composable
 private fun Divider() {
     HorizontalDivider(
+        color = MaterialTheme.colorScheme.onBackground.copy(0.2f),
         thickness = 1.dp,
         modifier = Modifier
             .padding(vertical = 24.dp)
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onBackground.copy(0.2f))
     )
 }
 

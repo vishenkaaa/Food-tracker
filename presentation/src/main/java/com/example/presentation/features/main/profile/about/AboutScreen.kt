@@ -98,39 +98,52 @@ fun AboutScreen(
             )
 
             HorizontalDivider(
+                color = MaterialTheme.colorScheme.onBackground.copy(0.2f),
                 thickness = 1.dp,
                 modifier = Modifier
                     .padding(vertical = 24.dp)
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.onBackground.copy(0.2f))
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.check_verified),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "FoodSnap AI",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "$versionName ($versionCode)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            AppVersionInfo(
+                versionName = versionName,
+                versionCode = versionCode
+            )
+        }
+    }
+}
+
+@Composable
+fun AppVersionInfo(
+    versionName: String,
+    versionCode: Long
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.check_verified),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(Modifier.width(8.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "FoodSnap AI",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "$versionName ($versionCode)",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }

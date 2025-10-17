@@ -111,11 +111,11 @@ fun StatisticsScreen(
                     )
 
                     HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onBackground.copy(0.2f),
                         thickness = 0.5.dp,
                         modifier = Modifier
                             .padding(top = 2.dp)
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.onBackground.copy(0.2f))
                     )
                 }
             }
