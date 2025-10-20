@@ -16,6 +16,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
@@ -145,17 +146,18 @@ object  CaloriesWidget : GlanceAppWidget() {
         val consumed = prefs[intPreferencesKey(CONSUMED_KEY)] ?: 0
         val target = prefs[intPreferencesKey(TARGET_KEY)] ?: 2000
 
+        val launchMainActivityAction = actionStartActivity(
+            Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+        )
+
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .background(GlanceTheme.colors.widgetBackground)
-                .clickable {
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    }
-                    context.startActivity(intent)
-                },
+                .clickable(launchMainActivityAction),
             contentAlignment = Alignment.Center
         ) {
             when {
