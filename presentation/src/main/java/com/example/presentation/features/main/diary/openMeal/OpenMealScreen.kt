@@ -27,6 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +54,7 @@ import com.example.presentation.features.main.diary.components.MacroNutrientsBig
 import com.example.presentation.features.main.diary.components.SwipeDishItem
 import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 
 @Composable
@@ -236,6 +240,12 @@ fun OpenMealNutritionSection(
     protein: Float,
     fat: Float
 ) {
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -249,7 +259,7 @@ fun OpenMealNutritionSection(
             } else 0f
 
             val animatedProgress by animateFloatAsState(
-                targetValue = progress,
+                targetValue = if(trigger) progress else 0f,
                 animationSpec = tween(
                     durationMillis = 800,
                     easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)

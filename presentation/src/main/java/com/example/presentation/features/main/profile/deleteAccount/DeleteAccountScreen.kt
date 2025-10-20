@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -127,21 +125,13 @@ private fun ActionsSection(
             onClick = onDelete
         )
 
-        TextButton(
+        CustomButton(
+            text = stringResource(R.string.cancel),
+            color = MaterialTheme.colorScheme.background,
+            textColor = MaterialTheme.colorScheme.onSecondary,
             onClick = onCancel,
             enabled = !isLoading,
-            modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.cancel),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-        }
+        )
     }
 }
 

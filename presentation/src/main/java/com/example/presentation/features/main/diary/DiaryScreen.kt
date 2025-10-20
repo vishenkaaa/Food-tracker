@@ -32,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +52,6 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
-import com.example.presentation.common.ui.components.ConnectionErrorSnackBar
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.shimmerEffect
@@ -70,6 +70,7 @@ import com.example.presentation.features.main.diary.extensions.getNutritionForMe
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -375,6 +376,12 @@ fun CaloriesProgressSection(
     protein: Float,
     fat: Float
 ) {
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -385,7 +392,7 @@ fun CaloriesProgressSection(
             val progress = (caloriesConsumed.toFloat() / caloriesTarget.toFloat()).coerceIn(0f, 1f)
 
             val animatedProgress by animateFloatAsState(
-                targetValue = progress,
+                targetValue = if(trigger) progress else 0f,
                 animationSpec = tween(
                     durationMillis = 800,
                     easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
@@ -528,6 +535,7 @@ fun DayItem(
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onBackground,
             disabledContainerColor =  if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.surfaceContainer,
         ),
@@ -538,12 +546,12 @@ fun DayItem(
         modifier = Modifier
             .softShadow(
                 color = MaterialTheme.colorScheme.surfaceVariant,
-                blurRadius = 25.dp,
+                blurRadius = 15.dp,
                 offsetY = 4.dp,
                 offsetX = 0.dp,
                 cornerRadius = 20.dp
             )
-            .alpha(if (enabled) 1f else 0.4f)
+            .alpha(if (enabled) 1f else 0.5f)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp),
@@ -614,7 +622,7 @@ fun CalendarHeader(
         modifier = Modifier
             .statusBarsPadding()
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp),
+            .padding(horizontal = 4.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

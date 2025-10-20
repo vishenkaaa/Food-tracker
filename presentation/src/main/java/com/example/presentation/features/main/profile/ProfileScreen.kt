@@ -2,7 +2,6 @@ package com.example.presentation.features.main.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -180,7 +178,7 @@ private fun Divider() {
         color = MaterialTheme.colorScheme.onBackground.copy(0.2f),
         thickness = 1.dp,
         modifier = Modifier
-            .padding(vertical = 24.dp)
+            .padding(vertical = 16.dp)
             .fillMaxWidth()
     )
 }
@@ -274,7 +272,7 @@ private fun UserGoalsSection(
     user: User,
     onEditClick: (ProfileEditDialogType) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         ProfileItem(
             title = stringResource(R.string.goal),
             value = user.goal.displayName(),
@@ -306,7 +304,7 @@ private fun UserGoalsSection(
 
 @Composable
 private fun UserGoalsSectionShimmer() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         repeat(3) {
             ProfileItemShimmer()
         }
@@ -318,7 +316,7 @@ private fun UserInfoSection(
     user: User,
     onEditClick: (ProfileEditDialogType) -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         ProfileItem(
             icon = painterResource(R.drawable.speedometer),
             title = stringResource(R.string.current_weight),
@@ -371,7 +369,7 @@ private fun UserInfoSection(
 
 @Composable
 private fun UserInfoSectionShimmer() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         repeat(5) {
             ProfileItemShimmer()
         }
@@ -384,7 +382,7 @@ private fun ProfileActionsSection(
     onLogoutClick: () -> Unit = {},
     onDeleteAccountClick: () -> Unit = {}
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         ProfileItem(
             icon = painterResource(R.drawable.info),
             title = stringResource(R.string.about),
@@ -422,9 +420,8 @@ private fun ProfileItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }) { onClick() },
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

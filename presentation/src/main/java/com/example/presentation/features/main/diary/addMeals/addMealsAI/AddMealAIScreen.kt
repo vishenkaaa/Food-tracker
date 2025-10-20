@@ -260,10 +260,8 @@ fun CameraControlsBar(
             modifier = Modifier
                 .size(48.dp)
                 .background(MaterialTheme.colorScheme.surface, CircleShape)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onCapturePhoto() },
+                .clip(CircleShape)
+                .clickable{ onCapturePhoto() },
             contentAlignment = Alignment.Center
         ){
             Box(

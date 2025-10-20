@@ -29,6 +29,7 @@ fun CustomButton(
     icon: Painter? = null,
     iconPositionStart: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -39,7 +40,7 @@ fun CustomButton(
         onClick = onClick,
         colors = ButtonColors(
             containerColor = color,
-            contentColor = color,
+            contentColor = MaterialTheme.colorScheme.onBackground,
             disabledContentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.surface
         ),
@@ -62,7 +63,7 @@ fun CustomButton(
                 modifier = Modifier.padding(vertical = 4.dp),
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = textColor
             )
             if(icon!=null && !iconPositionStart)
                 Icon(

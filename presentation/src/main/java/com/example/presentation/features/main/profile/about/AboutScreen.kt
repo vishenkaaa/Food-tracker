@@ -3,7 +3,6 @@ package com.example.presentation.features.main.profile.about
 import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -75,21 +73,18 @@ fun AboutScreen(
                 .padding(padding)
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(Modifier.height(20.dp))
 
             AboutItem(
                 icon = R.drawable.mail,
                 text = stringResource(R.string.contact_us),
                 onClick = { uriHandler.openUri(supportEmail) }
             )
-            Spacer(Modifier.height(20.dp))
 
             AboutItem(
                 icon = R.drawable.doc,
                 text = stringResource(R.string.terms_of_service),
                 onClick = { uriHandler.openUri(termsUrl) }
             )
-            Spacer(Modifier.height(20.dp))
 
             AboutItem(
                 icon = R.drawable.doc,
@@ -101,7 +96,7 @@ fun AboutScreen(
                 color = MaterialTheme.colorScheme.onBackground.copy(0.2f),
                 thickness = 1.dp,
                 modifier = Modifier
-                    .padding(vertical = 24.dp)
+                    .padding(top = 14.dp, bottom = 24.dp)
                     .fillMaxWidth()
             )
 
@@ -157,11 +152,8 @@ fun AboutItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ),
+            .clickable(onClick = onClick)
+            .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

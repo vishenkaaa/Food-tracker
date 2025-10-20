@@ -27,7 +27,7 @@ fun LeftAlignedHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
-            .padding(horizontal = 4.dp, vertical = 12.dp),
+            .padding(horizontal = 2.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onNavigateBack) {
