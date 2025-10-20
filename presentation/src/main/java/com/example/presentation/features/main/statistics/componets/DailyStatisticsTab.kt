@@ -1,6 +1,9 @@
 package com.example.presentation.features.main.statistics.componets
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +24,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,12 +44,12 @@ import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.components.MacroNutrientsSmallSection
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 @Composable
 fun DailyStatisticsTab(
-    statistics: DailyNutritionStatistics,
-    loading: Boolean = false
+    statistics: DailyNutritionStatistics
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -111,6 +119,22 @@ fun MealStatisticsItem(
 private fun LinearCaloriesProgress(mealStatistics: MealStatistics) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val boxSize = screenWidth * 0.7f
+
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = if(trigger) mealStatistics.percentage / 100.toFloat() else 0f,
+        animationSpec = tween(
+            durationMillis = 800,
+            easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
+        ),
+        label = "progress_animation"
+    )
+
     Box(
         modifier = Modifier
             .height(8.dp)
@@ -123,7 +147,7 @@ private fun LinearCaloriesProgress(mealStatistics: MealStatistics) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth(mealStatistics.percentage / 100 .toFloat())
+                .fillMaxWidth(animatedProgress)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(8.dp)
@@ -137,6 +161,12 @@ fun DailyNutritionCircularProgress(
     statistics: DailyNutritionStatistics,
     modifier: Modifier = Modifier
 ) {
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -154,11 +184,20 @@ fun DailyNutritionCircularProgress(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(161.dp)
         ) {
+            val animatedProgress by animateFloatAsState(
+                targetValue = if(trigger) statistics.progress else 0f,
+                animationSpec = tween(
+                    durationMillis = 800,
+                    easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
+                ),
+                label = "progress_animation"
+            )
+
             RoundedCircularProgress(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(150.dp)),
-                progress = statistics.progress,
+                progress = animatedProgress,
                 strokeWidth = 15.dp,
             )
 
@@ -226,8 +265,7 @@ fun DailyStatisticsTabPreview() {
 
     FoodTrackTheme {
         DailyStatisticsTab(
-            statistics = mockDailyStats,
-            loading = false
+            statistics = mockDailyStats
         )
     }
 }

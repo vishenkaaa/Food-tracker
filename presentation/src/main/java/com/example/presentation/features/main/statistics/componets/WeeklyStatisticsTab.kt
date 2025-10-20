@@ -1,6 +1,9 @@
 package com.example.presentation.features.main.statistics.componets
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +72,7 @@ import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -74,7 +81,6 @@ import java.time.format.TextStyle
 @Composable
 fun WeeklyStatisticsTab(
     statistics: WeeklyNutritionStatistics,
-    loading: Boolean = false,
     onPreviousWeek: () -> Unit = {},
     onNextWeek: () -> Unit = {},
 ) {
@@ -135,23 +141,30 @@ fun WeeklyNutritionAverage(
                 .fillMaxWidth()
         )
 
+        var trigger by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            delay(10)
+            trigger = true
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val caloriePercentage = if (statistics.targetCalories > 0) {
-                (statistics.averageCalories.toFloat() / statistics.targetCalories * 100).coerceAtMost(100f)
+
+            val caloriePercentageTarget = if (trigger && statistics.targetCalories > 0) {
+                (statistics.averageCalories.toFloat() / statistics.targetCalories).coerceIn(0f, 1f)
             } else 0f
 
             NutritionPill(
                 value = statistics.averageCalories.toString(),
                 label = stringResource(R.string.calories),
-                fillPercentage = caloriePercentage / 100f
+                fillPercentage = caloriePercentageTarget
             )
 
-            val carbPercentage = if (statistics.maxCarbs > 0) {
+            val carbPercentage = if (trigger && statistics.maxCarbs > 0) {
                 statistics.averageCarbs / statistics.maxCarbs
             } else 0f
 
@@ -161,7 +174,7 @@ fun WeeklyNutritionAverage(
                 fillPercentage = carbPercentage
             )
 
-            val fatPercentage = if (statistics.maxFat > 0) {
+            val fatPercentage = if (trigger && statistics.maxFat > 0) {
                 statistics.averageFat / statistics.maxFat
             } else 0f
 
@@ -171,7 +184,7 @@ fun WeeklyNutritionAverage(
                 fillPercentage = fatPercentage
             )
 
-            val proteinPercentage = if (statistics.maxProtein > 0) {
+            val proteinPercentage = if (trigger && statistics.maxProtein > 0) {
                 statistics.averageProtein/ statistics.maxProtein
             } else 0f
 
@@ -191,9 +204,27 @@ fun NutritionPill(
     value: String,
     label: String,
     fillPercentage: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val itemHeight = 160.dp
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = fillPercentage.coerceIn(0f, 1f),
+        animationSpec = tween(
+            durationMillis = 800,
+            easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
+        ),
+        label = "progress_animation"
+    )
+
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(300)
+        trigger = true
+    }
+
+    val fillHeight = itemHeight * animatedProgress
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -211,7 +242,6 @@ fun NutritionPill(
                     )
             )
 
-            val fillHeight = (itemHeight * fillPercentage.coerceIn(0f, 1f))
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -244,22 +274,23 @@ fun NutritionPill(
                     .size(circleSize)
             }
 
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = circleModifier
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = CircleShape
+            if(trigger)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = circleModifier
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = CircleShape
+                        )
+                ) {
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
                     )
-            ) {
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
-            }
+                }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -315,7 +346,6 @@ fun MacronutrientPieChart(
                 LegendItem(
                     color = nutrient.legendColor(isDark),
                     label = nutrient.label,
-                    percentage = nutrient.percent,
                     grams = nutrient.grams
                 )
             }
@@ -382,7 +412,6 @@ private fun calculateCorrectedPercentages(values: List<Float>, total: Float): Li
 fun LegendItem(
     color: Color,
     label: String,
-    percentage: Int,
     grams: Float,
 ) {
     Row(
@@ -416,7 +445,6 @@ fun LegendItem(
 fun WeeklyBarChart(
     days: List<DayStatistics>,
     targetCalories: Int,
-    modifier: Modifier = Modifier
 ) {
     val locale = remember { getAppLocale() }
     val daysOfWeek = remember {
