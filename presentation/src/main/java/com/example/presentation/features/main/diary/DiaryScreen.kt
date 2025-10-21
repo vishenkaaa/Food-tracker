@@ -253,7 +253,7 @@ fun MealsSectionShimmer() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-        repeat(3) {
+        repeat(4) {
             MealItemShimmer()
         }
     }
@@ -358,7 +358,7 @@ fun MealItemShimmer() {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(56.dp)
     ) {
         Box(
             modifier = Modifier

@@ -69,6 +69,16 @@ class AddMealAIVM @Inject constructor(
         }
     }
 
+    fun clearCapturedPhoto() {
+        _uiState.update {
+            it.copy(
+                capturedPhotoUri = null,
+                isFlashOn = false,
+                isCameraReady = false
+            )
+        }
+    }
+
     private fun checkStoragePermissions(){
         val granted = checkCameraPermissionUseCase.hasStoragePermission()
 
@@ -103,8 +113,8 @@ class AddMealAIVM @Inject constructor(
     }
 
     fun initializeCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
+        handleLoading(true)
         viewModelScope.launch {
-            handleLoading(true)
 
             if (!checkCameraPermissionUseCase.hasCameraPermission()) {
                 handleError(Exception(context.getString(R.string.error_camera_permission_required)))

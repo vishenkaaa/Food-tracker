@@ -219,11 +219,7 @@ private fun NavGraphBuilder.mainGraph(
                             date = args.date,
                             imgUri = imgUri
                         )
-                    ) {
-                        popUpTo<MainGraph.AddMealAI> {
-                            inclusive = true
-                        }
-                    }
+                    )
                 },
                 onBackPressed = { navController.popBackStack() }
             )
@@ -276,17 +272,7 @@ private fun NavGraphBuilder.mainGraph(
                 },
                 imgUri = args.imgUri,
                 onTryAgain = {
-                    navController.navigate(
-                        MainGraph.DishLoading(
-                            mealType = args.mealType,
-                            date = args.date,
-                            imgUri = args.imgUri
-                        )
-                    ) {
-                        popUpTo<MainGraph.AddMealAI> {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack()
                 }
             )
         }
