@@ -2,12 +2,13 @@ package com.example.presentation.features.main.profile.deleteAccount
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.common.ActivityHolder
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.auth.AuthError
 import com.example.domain.usecase.auth.DeleteAccountUseCase
+import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
+import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
 import com.example.presentation.extensions.getLocalizedMessage
@@ -23,16 +24,18 @@ import javax.inject.Inject
 class DeleteAccountVM @Inject constructor(
     private val deleteAccountUseCase: DeleteAccountUseCase,
     private val authStateManager: AuthStateManager,
-    private val activityHolder: ActivityHolder
+    private val activityHolder: ActivityHolder,
+    private val getGoogleIdTokenUseCase: GetGoogleIdTokenUseCase,
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase
 ) : BaseViewModel() {
     private val _showToast = MutableSharedFlow<Unit>()
     val showToast = _showToast.asSharedFlow()
 
-    private val _showInfoDialog = MutableStateFlow(false)
-    val showInfoDialog = _showInfoDialog.asStateFlow()
+    private val _showReauthDialog = MutableStateFlow(false)
+    val showReauthDialog = _showReauthDialog.asStateFlow()
 
-    fun onConfirmDialog() {
-        _showInfoDialog.value = false
+    fun onCancelDialog() {
+        _showReauthDialog.value = false
     }
 
     fun onDelete(context: Context) {
@@ -50,17 +53,71 @@ class DeleteAccountVM @Inject constructor(
                         handleLoading(false)
                     },
                     onFailure = { error ->
-                        _showInfoDialog.value = true
-                        Log.e("DeleteAccountVM", "ERROR: ", error)
-                        val localizedMessage =
-                            if (error is AuthError) error.getLocalizedMessage(context)
-                            else context.getString(R.string.error_unknown_auth)
-                        handleError(Exception(localizedMessage), context)
+                        handleLoading(false)
+                        when (error) {
+                            is AuthError.ReauthenticationRequired -> {
+                                _showReauthDialog.value = true
+                            }
+                            is AuthError -> {
+                                val localizedMessage = error.getLocalizedMessage(context)
+                                handleError(Exception(localizedMessage), context)
+                            }
+                            else -> {
+                                val localizedMessage = context.getString(R.string.error_account_deletion)
+                                handleError(Exception(localizedMessage), context)
+                            }
+                        }
                     }
                 )
             }
         } catch (e: Exception) {
             handleError(e)
+        }
+    }
+
+    fun reauthenticateAndDelete(context: Context) {
+        viewModelScope.launch {
+            clearErrors()
+            handleLoading(true)
+            _showReauthDialog.value = false
+
+            try {
+                if (context is Activity)
+                    activityHolder.setActivity(context)
+
+                val idTokenResult = getGoogleIdTokenUseCase(forceNewAccount = true)
+
+                idTokenResult.fold(
+                    onSuccess = { idToken ->
+                        val signInResult = signInWithGoogleUseCase(idToken)
+                        signInResult.fold(
+                            onSuccess = {
+                                onDelete(context)
+                            },
+                            onFailure = { error ->
+                                handleLoading(false)
+                                val localizedMessage = if (error is AuthError)
+                                    error.getLocalizedMessage(context)
+                                else
+                                    context.getString(R.string.error_unknown_auth)
+                                handleError(Exception(localizedMessage), context)
+                            }
+                        )
+                    },
+                    onFailure = { error ->
+                        handleLoading(false)
+                        val localizedMessage = if (error is AuthError)
+                            error.getLocalizedMessage(context)
+                        else
+                            context.getString(R.string.error_unknown_auth)
+                        handleError(Exception(localizedMessage), context)
+                    }
+                )
+            } catch (e: Exception) {
+                handleLoading(false)
+                val localizedMessage = context.getString(R.string.error_unknown_auth)
+                handleError(Exception(localizedMessage))
+            }
         }
     }
 

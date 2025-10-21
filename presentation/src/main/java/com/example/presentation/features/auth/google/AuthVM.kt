@@ -23,7 +23,7 @@ class AuthVM @Inject constructor(
     private val activityHolder: ActivityHolder
 ) : BaseViewModel() {
 
-    fun signInWithGoogle(context: Context, forceNewAccount: Boolean = true) {
+    fun signInWithGoogle(context: Context, forceNewAccount: Boolean = false) {
         viewModelScope.launch {
             clearErrors()
             handleLoading(true)

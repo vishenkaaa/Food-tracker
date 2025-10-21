@@ -28,9 +28,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.CustomButton
 import com.example.presentation.common.ui.components.HandleError
-import com.example.presentation.common.ui.components.InfoDialog
 import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.common.ui.values.FoodTrackTheme
 
@@ -40,7 +40,7 @@ fun DeleteAccountRoute(
     onCancelDelete: () -> Unit
 ) {
     val baseUiState by viewModel.baseUiState.collectAsStateWithLifecycle()
-    val showInfoDialog by viewModel.showInfoDialog.collectAsStateWithLifecycle()
+    val showReauthDialog by viewModel.showReauthDialog.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as Activity
 
@@ -53,22 +53,24 @@ fun DeleteAccountRoute(
 
     DeleteAccountScreen(
         baseUiState = baseUiState,
-        showInfoDialog = showInfoDialog,
-        onConfirmDialog = { viewModel.onConfirmDialog() },
+        showReauthDialog = showReauthDialog,
+        onCancelDialog = { viewModel.onCancelDialog() },
         onErrorConsume = { viewModel.consumeError() },
         onDelete = { viewModel.onDelete(activity) },
-        onCancel = { onCancelDelete() }
+        onCancel = { onCancelDelete() },
+        onReauth = { viewModel.reauthenticateAndDelete(context) }
     )
 }
 
 @Composable
 fun DeleteAccountScreen(
     baseUiState: BaseUiState,
-    showInfoDialog: Boolean,
-    onConfirmDialog: () -> Unit,
+    showReauthDialog: Boolean,
+    onCancelDialog: () -> Unit,
     onErrorConsume: () -> Unit,
     onDelete: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onReauth: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -91,11 +93,13 @@ fun DeleteAccountScreen(
             )
         }
 
-        InfoDialog(
-            visible = showInfoDialog,
+        ConfirmationDialog(
+            visible = showReauthDialog,
             title = stringResource(R.string.confirmation_person),
+            confirmButtonText = stringResource(R.string.signin_again),
             message = stringResource(R.string.confirmation_message),
-            onConfirm = { onConfirmDialog() },
+            onConfirm = { onReauth() },
+            onDismiss = { onCancelDialog() }
         )
 
         LoadingBackground(baseUiState.isLoading)
@@ -174,8 +178,9 @@ fun DeleteAccountScreenPreview (){
             onDelete = {},
             onCancel = {},
             onErrorConsume = {},
-            showInfoDialog = false,
-            onConfirmDialog = {}
+            showReauthDialog = false,
+            onCancelDialog = {},
+            onReauth = {}
         )
     }
 }

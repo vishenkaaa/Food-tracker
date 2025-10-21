@@ -34,9 +34,9 @@ class GoogleCredentialManager @Inject constructor(
             val nonce = generateNonce()
 
             val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(!forceNewAccount)
+                .setFilterByAuthorizedAccounts(forceNewAccount)
                 .setServerClientId(context.getString(R.string.firebase_client_id))
-                .setAutoSelectEnabled(!forceNewAccount)
+                .setAutoSelectEnabled(forceNewAccount)
                 .setNonce(nonce)
                 .build()
 
