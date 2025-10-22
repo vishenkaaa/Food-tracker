@@ -148,6 +148,7 @@
     <string name="failed_to_update_user_data_please_try_restarting_the_app">Не вдалося оновити дані користувача. Спробуйте перезапустити застосунок</string>
     <string name="congratulations_goal_achieved">Вітаємо! Мети досягнуто!</string>
     <string name="you_ve_successfully_reached_your_target_weight">Ви успішно досягли своєї цільової ваги. Чудова робота! Ви можете змінити свою мету у налаштуваннях профілю.</string>
-    <string name="error_account_deletion">Account deletion error</string>
-    <string name="signin_again">SignIn again</string>
+    <string name="error_account_deletion">Помилка видалення акаунту</string>
+    <string name="signin_again">Увійти знову</string>
+    <string name="error_different_account">Будь ласка, увійдіть в той самий акаунт, який хочете видалити</string>
 </resources>

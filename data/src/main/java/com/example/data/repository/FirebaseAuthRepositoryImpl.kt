@@ -7,8 +7,10 @@ import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.user.User
 import com.example.domain.repository.FirebaseAuthRepository
 import com.example.domain.repository.UserRepository
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -80,5 +82,9 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUserId(): String? {
         return localAuthStateManager.getCurrentUserId()
+    }
+
+    override suspend fun getCurrentUserEmail(): String? {
+        return  Firebase.auth.currentUser?.email
     }
 }

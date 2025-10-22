@@ -148,4 +148,5 @@
     <string name="you_ve_successfully_reached_your_target_weight">You\'ve successfully reached your target weight. Fantastic work! You can now adjust your goal in the profile settings.</string>
     <string name="error_account_deletion">Account deletion error</string>
     <string name="signin_again">SignIn again</string>
+    <string name="error_different_account">Please sign in with the same account you want to delete</string>
 </resources>

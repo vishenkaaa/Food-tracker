@@ -1,6 +1,9 @@
 package com.example.presentation.features.auth.onboarding
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -167,11 +170,18 @@ fun OnboardingScreen(
                             modifier = Modifier
                                 .padding(end = 16.dp)
                         ) {
-                            Icon(
-                                painter = painterResource(R.drawable.back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                            )
+                            if(uiState.step == WELCOME_STEP)
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_close),
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                )
+                            else
+                                Icon(
+                                    painter = painterResource(R.drawable.back),
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                )
                         }
                 },
                 title = {
@@ -191,15 +201,25 @@ fun OnboardingScreen(
             )
 
             if (uiState.step > 0) {
+                val targetProgress = remember(uiState.step) {
+                    currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
+                        .takeIf { it >= 0 } ?: 0
+                    val progressPageIndex = (currentPageIndex - 1).coerceAtLeast(0)
+                    progressPageIndex.toFloat() / (steps.size - 2).toFloat()
+                }
+
+                val animatedProgress by animateFloatAsState(
+                    targetValue = targetProgress,
+                    animationSpec = tween(
+                        durationMillis = 800,
+                        easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1f)
+                    ),
+                    label = "progress_animation"
+                )
+
                 LinearWavyProgressIndicator(
-                    progress = {
-                        currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
-                            .takeIf { it >= 0 } ?: 0
-                        val progressPageIndex = (currentPageIndex - 1).coerceAtLeast(0)
-                        progressPageIndex.toFloat() / (steps.size - 2).toFloat()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    progress = { animatedProgress },
+                    modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surface,
                 )

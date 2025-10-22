@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,13 +53,14 @@ fun UserActivityLevelSectionStep(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onActivityLevelSelected(currentGoal) }
                     .shadow(
                         elevation = if (selectedActivityLevel == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
                         clip = false,
                         ambientColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { onActivityLevelSelected(currentGoal) },
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedActivityLevel == currentGoal) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.background

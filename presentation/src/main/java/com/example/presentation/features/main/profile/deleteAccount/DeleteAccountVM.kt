@@ -7,6 +7,7 @@ import com.example.common.ActivityHolder
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.auth.AuthError
 import com.example.domain.usecase.auth.DeleteAccountUseCase
+import com.example.domain.usecase.auth.GetCurrentUserEmailUseCase
 import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
@@ -18,6 +19,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import android.util.Base64
+import org.json.JSONObject
+import android.util.Log
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +30,8 @@ class DeleteAccountVM @Inject constructor(
     private val authStateManager: AuthStateManager,
     private val activityHolder: ActivityHolder,
     private val getGoogleIdTokenUseCase: GetGoogleIdTokenUseCase,
-    private val signInWithGoogleUseCase: SignInWithGoogleUseCase
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    private val getCurrentUserEmailUseCase: GetCurrentUserEmailUseCase
 ) : BaseViewModel() {
     private val _showToast = MutableSharedFlow<Unit>()
     val showToast = _showToast.asSharedFlow()
@@ -85,10 +90,29 @@ class DeleteAccountVM @Inject constructor(
                 if (context is Activity)
                     activityHolder.setActivity(context)
 
+                val currentUserEmail = getCurrentUserEmailUseCase()
+
+                if (currentUserEmail == null) {
+                    handleLoading(false)
+                    handleError(Exception(context.getString(R.string.user_not_authenticated)), context)
+                    return@launch
+                }
+
                 val idTokenResult = getGoogleIdTokenUseCase(forceNewAccount = true)
 
                 idTokenResult.fold(
                     onSuccess = { idToken ->
+                        val tokenEmail = parseEmailFromIdToken(idToken)
+
+                        if (tokenEmail != currentUserEmail) {
+                            handleLoading(false)
+                            handleError(
+                                Exception(context.getString(R.string.error_different_account)),
+                                context
+                            )
+                            return@fold
+                        }
+
                         val signInResult = signInWithGoogleUseCase(idToken)
                         signInResult.fold(
                             onSuccess = {
@@ -118,6 +142,23 @@ class DeleteAccountVM @Inject constructor(
                 val localizedMessage = context.getString(R.string.error_unknown_auth)
                 handleError(Exception(localizedMessage))
             }
+        }
+    }
+
+    private fun parseEmailFromIdToken(idToken: String): String? {
+        return try {
+            val parts = idToken.split(".")
+            if (parts.size != 3) return null
+
+            val payload = parts[1]
+            val decodedBytes = Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+            val decodedString = String(decodedBytes, Charsets.UTF_8)
+
+            val jsonObject = JSONObject(decodedString)
+            jsonObject.optString("email", null.toString())
+        } catch (e: Exception) {
+            Log.e("DeleteAccountVM", "Error parsing ID token", e)
+            null
         }
     }
 
