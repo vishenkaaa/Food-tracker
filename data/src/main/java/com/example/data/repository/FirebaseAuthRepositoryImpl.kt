@@ -42,7 +42,6 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         if (isNewUser) {
             val newUser = User(
                 id = userId,
-                name = firebaseUser.displayName,
                 email = firebaseUser.email,
                 photoUrl = firebaseUser.photoUrl?.toString(),
                 isNew = true

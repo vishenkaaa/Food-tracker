@@ -25,6 +25,7 @@ object UserModelMapper {
     // User info в Map для Firebase
     fun userInfoToMap(user: User): Map<String, Any?> {
         return mapOf(
+            NAME_KEY to user.name,
             GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
             TARGET_WEIGHT_KEY to user.targetWeight,

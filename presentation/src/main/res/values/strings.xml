@@ -155,4 +155,6 @@
     <string name="validation_max_height">Maximum height: %1$d cm</string>
     <string name="validation_min_weight_change">Minimum weight change: %1$.1f kg</string>
     <string name="validation_max_weight_change">Maximum weight change: %1$.1f kg</string>
+    <string name="validation_min_name">The name must contain a minimum of %1$d characters</string>
+    <string name="what_s_your_name">What\'s your name</string>
 </resources>

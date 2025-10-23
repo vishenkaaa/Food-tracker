@@ -157,4 +157,6 @@
     <string name="validation_max_height">Максимальний зріст: %1$d см</string>
     <string name="validation_min_weight_change">Мінімальна зміна ваги: %1$.1f кг</string>
     <string name="validation_max_weight_change">Максимальна зміна ваги: %1$.1f кг</string>
+    <string name="validation_min_name">Ім\'я має містити мінімум %1$d символи</string>
+    <string name="what_s_your_name">Як Вас звати?</string>
 </resources>

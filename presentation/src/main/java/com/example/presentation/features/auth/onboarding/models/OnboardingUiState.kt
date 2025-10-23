@@ -8,6 +8,7 @@ import java.time.LocalDate
 
 data class OnboardingUiState(
     val step: Int = 0,
+    val name: String = "",
     val goal: Goal? = null,
     val currentWeight: String = "",
     val weightChange: String = "",
@@ -20,6 +21,7 @@ data class OnboardingUiState(
     val macroNutrients: MacroNutrients = MacroNutrients(),
     val isNextEnabled: Boolean = true,
     val showLogoutDialog: Boolean = false,
+    val nameValidation: InputValidation = InputValidation(),
     val weightValidation: InputValidation = InputValidation(),
     val heightValidation: InputValidation = InputValidation(),
     val weightChangeValidation: InputValidation = InputValidation()

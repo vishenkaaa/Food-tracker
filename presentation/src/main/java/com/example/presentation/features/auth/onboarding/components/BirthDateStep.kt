@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.user.UserActivityLevel
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.DatePickerTypography
 import com.example.presentation.common.ui.values.FoodTrackTheme
@@ -103,8 +102,8 @@ fun BirthDateStep(
 @Composable
 fun BirthDateStep() {
     FoodTrackTheme {
-        UserActivityLevelSectionStep(
-            UserActivityLevel.ACTIVE
+        BirthDateStep(
+            LocalDate.now()
         ) {}
     }
 }

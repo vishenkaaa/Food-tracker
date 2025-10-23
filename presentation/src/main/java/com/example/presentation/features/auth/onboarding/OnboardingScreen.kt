@@ -56,6 +56,7 @@ import com.example.presentation.features.auth.onboarding.components.CurrentWeigh
 import com.example.presentation.features.auth.onboarding.components.GenderSelectionStep
 import com.example.presentation.features.auth.onboarding.components.GoalSelectionStep
 import com.example.presentation.features.auth.onboarding.components.HeightStep
+import com.example.presentation.features.auth.onboarding.components.NameStep
 import com.example.presentation.features.auth.onboarding.components.ResultStep
 import com.example.presentation.features.auth.onboarding.components.UserActivityLevelSectionStep
 import com.example.presentation.features.auth.onboarding.components.WeightChangeStep
@@ -75,6 +76,7 @@ fun OnboardingRoute(
     OnboardingScreen(
         baseUiState = baseUiState,
         uiState = uiState,
+        onNameSelected = viewModel::onNameSelected,
         onGoalSelected = viewModel::onGoalSelected,
         onWeightChangeSelected = viewModel::onWeightChangeSelected,
         onGenderSelected = viewModel::onGenderSelected,
@@ -96,6 +98,7 @@ fun OnboardingRoute(
 fun OnboardingScreen(
     baseUiState: BaseUiState,
     uiState: OnboardingUiState,
+    onNameSelected: (String) -> Unit,
     onGoalSelected: (Goal) -> Unit,
     onWeightChangeSelected: (String) -> Unit,
     onGenderSelected: (Gender) -> Unit,
@@ -120,6 +123,7 @@ fun OnboardingScreen(
     val steps = remember(uiState.goal) {
         buildList {
             add(OnboardingStep.Welcome)
+            add(OnboardingStep.Name)
             add(OnboardingStep.GoalSelection)
             if (uiState.goal != Goal.MAINTAIN) {
                 add(OnboardingStep.WeightChange)
@@ -239,6 +243,12 @@ fun OnboardingScreen(
                 ) {
                     when (currentStep) {
                         is OnboardingStep.Welcome -> WelcomeStep()
+                        is OnboardingStep.Name -> NameStep(
+                            uiState.name,
+                            uiState.nameValidation,
+                            onNameSelected,
+                            onNextStep = onNextStep
+                        )
                         is OnboardingStep.GoalSelection -> GoalSelectionStep(
                             uiState.goal,
                             onGoalSelected
@@ -329,7 +339,7 @@ fun TargetScreenPreview() {
         OnboardingScreen(
             BaseUiState(),
             OnboardingUiState(step = 0),
-            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
         )
     }
 }

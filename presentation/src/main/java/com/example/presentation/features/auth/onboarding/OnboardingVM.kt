@@ -35,9 +35,10 @@ class OnboardingVM @Inject constructor(
     @ApplicationContext private val context: Context
 ) : BaseViewModel() {
     companion object {
-        const val MAX_STEPS = 8
+        const val MAX_STEPS = 9
         const val WELCOME_STEP = 0
 
+        const val MIN_NAME = 2
         const val MIN_WEIGHT = 30f
         const val MAX_WEIGHT = 500f
         const val MIN_HEIGHT = 100
@@ -49,6 +50,7 @@ class OnboardingVM @Inject constructor(
     private var user by mutableStateOf(User())
 
     private var step by mutableIntStateOf(0)
+    private var name by mutableStateOf("")
     private var goal by mutableStateOf<Goal?>(null)
     private var weightChange by mutableStateOf("")
     private var gender by mutableStateOf<Gender?>(null)
@@ -58,6 +60,7 @@ class OnboardingVM @Inject constructor(
     private var birthDate by mutableStateOf<LocalDate?>(null)
     private var targetCalories by mutableIntStateOf(0)
 
+    private var nameValidation by mutableStateOf(InputValidation())
     private var weightValidation by mutableStateOf(InputValidation())
     private var heightValidation by mutableStateOf(InputValidation())
     private var weightChangeValidation by mutableStateOf(InputValidation())
@@ -65,6 +68,7 @@ class OnboardingVM @Inject constructor(
     val uiState: OnboardingUiState
         get() = OnboardingUiState(
             step = step,
+            name = name,
             goal = goal,
             currentWeight = currentWeight,
             weightChange = weightChange,
@@ -77,6 +81,7 @@ class OnboardingVM @Inject constructor(
             macroNutrients = macroNutrients,
             isNextEnabled = isNextEnabled,
             showLogoutDialog = showLogoutDialog.value,
+            nameValidation = nameValidation,
             weightValidation = weightValidation,
             heightValidation = heightValidation,
             weightChangeValidation = weightChangeValidation
@@ -85,13 +90,14 @@ class OnboardingVM @Inject constructor(
     private val isNextEnabled: Boolean
         get() = when (step) {
             0 -> true
-            1 -> goal != null
-            2 -> goal == Goal.MAINTAIN || weightValidation.isValid
-            3 -> weightValidation.isValid
-            4 -> heightValidation.isValid
-            5 -> gender != null
-            6 -> birthDate != null
-            7 -> userActivityLevel != null
+            1 -> nameValidation.isValid
+            2 -> goal != null
+            3 -> goal == Goal.MAINTAIN || weightChangeValidation.isValid
+            4 -> weightValidation.isValid
+            5 -> heightValidation.isValid
+            6 -> gender != null
+            7 -> birthDate != null
+            8 -> userActivityLevel != null
             else -> true
         }
 
@@ -118,9 +124,9 @@ class OnboardingVM @Inject constructor(
 
     private fun getValidStepsForGoal(): List<Int> {
         return if (goal == Goal.MAINTAIN) {
-            listOf(0, 1, 3, 4, 5, 6, 7, 8)
+            listOf(0, 1, 2, 4, 5, 6, 7, 8, 9)
         } else {
-            listOf(0, 1, 2, 3, 4, 5, 6, 7, 8)
+            listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         }
     }
 
@@ -163,6 +169,11 @@ class OnboardingVM @Inject constructor(
         }
     }
 
+    fun onNameSelected(value: String) {
+        name = value
+        nameValidation = validateName(value)
+    }
+
     fun onGoalSelected(value: Goal) {
         goal = value
         if (value == Goal.MAINTAIN) {
@@ -195,6 +206,16 @@ class OnboardingVM @Inject constructor(
 
     fun onBirthDateSelected(value: LocalDate) {
         birthDate = value
+    }
+
+    private fun validateName(value: String): InputValidation {
+        return when {
+            value.trim().length < MIN_NAME -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(R.string.validation_min_name, MIN_NAME)
+            )
+            else -> InputValidation(isValid = true, errorMessage = null)
+        }
     }
 
     private fun validateWeight(value: String): InputValidation {
@@ -297,6 +318,7 @@ class OnboardingVM @Inject constructor(
 
         user = User(
             id = userId,
+            name = name.trim(),
             goal = goal!!,
             targetWeight = targetWeight,
             gender = gender!!,
