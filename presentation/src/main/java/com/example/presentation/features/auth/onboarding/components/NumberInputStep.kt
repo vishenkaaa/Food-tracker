@@ -1,5 +1,13 @@
 package com.example.presentation.features.auth.onboarding.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.common.ui.values.FoodTrackTheme
+import com.example.presentation.features.auth.onboarding.models.InputValidation
 
 @Composable
 fun NumberInputStep(
@@ -46,21 +56,31 @@ fun NumberInputStep(
     value: String,
     unit: String,
     isIntegerInput: Boolean = false,
+    validation: (InputValidation) = InputValidation(),
     onValueSelected: (String) -> Unit,
+    onNextStep: () -> Unit
 ) {
-    var input by remember(value) {
-        val initialValue =
-            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+    var input by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = "",
+                selection = TextRange(0)
+            )
+        )
+    }
+
+    LaunchedEffect(value) {
+        if (value != input.text) {
+            val initialValue = if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
                 if (isIntegerInput) value.toFloat().toInt().toString()
                 else value
             } else ""
 
-        mutableStateOf(
-            TextFieldValue(
+            input = TextFieldValue(
                 text = initialValue,
                 selection = TextRange(initialValue.length)
             )
-        )
+        }
     }
 
     val focusManager = LocalFocusManager.current
@@ -94,16 +114,39 @@ fun NumberInputStep(
         ) {
             OutlinedTextField(
                 value = input,
+
                 onValueChange = { newValue ->
-                    val filteredValue = if (isIntegerInput) newValue.text.filter { it.isDigit() }
-                    else {
-                        val text = newValue.text
-                        if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
-                            text
-                        else input.text
+                    val text = newValue.text
+                    val isDecimal = !isIntegerInput
+                    val maxDecimalPlaces = 1
+
+                    val filteredText = if (isDecimal) {
+                        text.filterIndexed { _, char ->
+                            char.isDigit() || (char == '.' && text.count { it == '.' } <= 1)
+                        }
+                    } else {
+                        text.filter { it.isDigit() }
                     }
-                    input = newValue.copy(text = filteredValue)
-                    onValueSelected(filteredValue)
+
+                    var finalValue = filteredText
+
+                    if (finalValue.length > 1 && finalValue.startsWith('0') && finalValue[1] != '.')
+                        finalValue = finalValue.trimStart('0')
+
+                    if (isDecimal) {
+                        if (finalValue == ".")
+                            finalValue = "0."
+
+                        val parts = finalValue.split(".")
+                        if (parts.size > 1 && parts[1].length > maxDecimalPlaces)
+                            finalValue = "${parts[0]}.${parts[1].substring(0, maxDecimalPlaces)}"
+                    }
+
+                    input = newValue.copy(
+                        text = finalValue,
+                        selection = TextRange(finalValue.length)
+                    )
+                    onValueSelected(finalValue)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
@@ -114,7 +157,10 @@ fun NumberInputStep(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
+                    onDone = {
+                        focusManager.clearFocus()
+                        onNextStep()
+                    }
                 ),
                 singleLine = true,
                 modifier = Modifier
@@ -149,6 +195,27 @@ fun NumberInputStep(
                 )
             }
         }
+
+        AnimatedVisibility(
+            visible = !validation.isValid && validation.errorMessage != null,
+//            enter = fadeIn() + expandVertically(),
+//            exit = fadeOut() + shrinkVertically(),
+
+            enter = slideInVertically(
+                initialOffsetY = { it }
+            ) + fadeIn(animationSpec = tween(durationMillis = 200)),
+
+            exit = slideOutVertically(
+                targetOffsetY = { it }
+            ) + fadeOut(animationSpec = tween(durationMillis = 200))
+        ) {
+            Text(
+                text = validation.errorMessage ?: "",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }
 
@@ -161,6 +228,8 @@ fun NumberInputStepPreview() {
             "0",
             "Кг",
             false,
-        ) {}
+            onNextStep = {},
+            onValueSelected = {}
+        )
     }
 }

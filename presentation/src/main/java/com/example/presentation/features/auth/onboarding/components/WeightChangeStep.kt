@@ -6,13 +6,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.model.user.Goal
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
-import kotlin.math.abs
+import com.example.presentation.features.auth.onboarding.models.InputValidation
 
 @Composable
 fun WeightChangeStep(
     goal: Goal,
     weightChange: String,
+    validation: (InputValidation) = InputValidation(),
     onWeightChangeSelected: (String) -> Unit,
+    onNextStep: () -> Unit
 ) {
     val title = when (goal) {
         Goal.LOSE -> stringResource(R.string.how_much_weight_lose)
@@ -21,10 +23,12 @@ fun WeightChangeStep(
     }
     NumberInputStep(
         title = title,
-        value = abs(weightChange.toFloatOrNull() ?: 0f).toString(),
+        value = weightChange,
         unit = stringResource(R.string.kilograms),
         isIntegerInput = false,
+        validation = validation,
         onValueSelected = onWeightChangeSelected,
+        onNextStep = onNextStep
     )
 }
 
@@ -33,7 +37,10 @@ fun WeightChangeStep(
 fun WeightChangeStepPreview() {
     FoodTrackTheme {
         WeightChangeStep(
-            Goal.GAIN, ""
-        ) {}
+            goal = Goal.GAIN,
+            weightChange = "",
+            onNextStep = {},
+            onWeightChangeSelected = {}
+        )
     }
 }

@@ -246,15 +246,21 @@ fun OnboardingScreen(
                         is OnboardingStep.WeightChange -> WeightChangeStep(
                             uiState.goal ?: Goal.MAINTAIN,
                             uiState.weightChange,
-                            onWeightChangeSelected
+                            uiState.weightChangeValidation,
+                            onWeightChangeSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.CurrentWeight -> CurrentWeightStep(
                             uiState.currentWeight,
-                            onCurrentWeightSelected
+                            uiState.weightValidation,
+                            onCurrentWeightSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.Height -> HeightStep(
                             uiState.height,
+                            uiState.heightValidation,
                             onHeightSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.Gender -> GenderSelectionStep(
                             uiState.gender,

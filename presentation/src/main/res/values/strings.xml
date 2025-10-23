@@ -149,4 +149,10 @@
     <string name="error_account_deletion">Account deletion error</string>
     <string name="signin_again">SignIn again</string>
     <string name="error_different_account">Please sign in with the same account you want to delete</string>
+    <string name="validation_min_weight">Minimum weight: %1$.1f kg</string>
+    <string name="validation_max_weight">Maximum weight: %1$.1f kg</string>
+    <string name="validation_min_height">Minimum height: %1$d cm</string>
+    <string name="validation_max_height">Maximum height: %1$d cm</string>
+    <string name="validation_min_weight_change">Minimum weight change: %1$.1f kg</string>
+    <string name="validation_max_weight_change">Maximum weight change: %1$.1f kg</string>
 </resources>

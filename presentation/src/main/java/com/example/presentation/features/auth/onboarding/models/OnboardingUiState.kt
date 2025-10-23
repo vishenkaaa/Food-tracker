@@ -19,5 +19,8 @@ data class OnboardingUiState(
     val bmi: Float = 0f,
     val macroNutrients: MacroNutrients = MacroNutrients(),
     val isNextEnabled: Boolean = true,
-    val showLogoutDialog: Boolean = false
+    val showLogoutDialog: Boolean = false,
+    val weightValidation: InputValidation = InputValidation(),
+    val heightValidation: InputValidation = InputValidation(),
+    val weightChangeValidation: InputValidation = InputValidation()
 )

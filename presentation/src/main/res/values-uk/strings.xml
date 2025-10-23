@@ -151,4 +151,10 @@
     <string name="error_account_deletion">Помилка видалення акаунту</string>
     <string name="signin_again">Увійти знову</string>
     <string name="error_different_account">Будь ласка, увійдіть в той самий акаунт, який хочете видалити</string>
+    <string name="validation_min_weight">Мінімальна вага: %1$.1f кг</string>
+    <string name="validation_max_weight">Максимальна вага: %1$.1f кг</string>
+    <string name="validation_min_height">Мінімальний зріст: %1$d см</string>
+    <string name="validation_max_height">Максимальний зріст: %1$d см</string>
+    <string name="validation_min_weight_change">Мінімальна зміна ваги: %1$.1f кг</string>
+    <string name="validation_max_weight_change">Максимальна зміна ваги: %1$.1f кг</string>
 </resources>
