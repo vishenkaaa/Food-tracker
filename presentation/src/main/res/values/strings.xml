@@ -157,4 +157,7 @@
     <string name="validation_max_weight_change">Maximum weight change: %1$.1f kg</string>
     <string name="validation_min_name">The name must contain a minimum of %1$d characters</string>
     <string name="what_s_your_name">What\'s your name</string>
+    <string name="camera_permission_required_title">Camera Permission Required</string>
+    <string name="camera_permission_denied_message">To add a dish by photo, the app needs access to the camera. Please grant permission manually in your system settings.</string>
+    <string name="open_settings">Open Settings</string>
 </resources>

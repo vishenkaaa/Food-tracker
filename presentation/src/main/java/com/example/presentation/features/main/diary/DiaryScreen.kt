@@ -1,7 +1,9 @@
 package com.example.presentation.features.main.diary
 
 import android.Manifest
-import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -52,6 +54,7 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.shimmerEffect
@@ -67,6 +70,7 @@ import com.example.presentation.features.main.diary.extensions.findActivity
 import com.example.presentation.features.main.diary.extensions.getDishesForMealType
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.extensions.getNutritionForMealType
+import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -113,6 +117,7 @@ fun DiaryRoute(
     }
 
     DiaryScreen(
+        cameraPermissionState = cameraPermissionState,
         uiState = uiState,
         baseUiState = baseUiState,
         onPreviousWeek = { viewModel.onPreviousWeek() },
@@ -127,26 +132,17 @@ fun DiaryRoute(
             )
         },
         onAddMealClick = { mealType ->
-            viewModel.checkCameraPermission()
-            when {
-                cameraPermissionState.hasPermission -> onNavigateToAddMeal(mealType, uiState.selectedDate)
-                cameraPermissionState.permanentlyDenied -> {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.request_camera_permission),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                else -> viewModel.requestCameraPermissions(mealType)
-            }
+            viewModel.onAddMealClick(mealType)
         },
         onErrorConsume = { viewModel.clearErrors() },
-        onConnectionRetry = { viewModel.retryLastAction() }
+        onConnectionRetry = { viewModel.retryLastAction() },
+        hideCameraPermissionDeniedDialog = { viewModel.hideCameraPermissionDeniedDialog() }
     )
 }
 
 @Composable
 fun DiaryScreen(
+    cameraPermissionState: CameraPermissionState,
     uiState: DiaryScreenUIState,
     baseUiState: BaseUiState,
     onPreviousWeek: () -> Unit,
@@ -155,10 +151,22 @@ fun DiaryScreen(
     onMealItemClick: (MealType, List<Dish>) -> Unit,
     onAddMealClick: (MealType) -> Unit = {},
     onErrorConsume: () -> Unit,
-    onConnectionRetry: () -> Unit
+    onConnectionRetry: () -> Unit,
+    hideCameraPermissionDeniedDialog: () -> Unit
 ) {
     val isLoading = baseUiState.isLoading
     val hasError = baseUiState.unexpectedError != null || baseUiState.isConnectionError
+
+    val context = LocalContext.current
+
+    val openAppSettings = {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context.packageName, null)
+        )
+        context.startActivity(intent)
+        hideCameraPermissionDeniedDialog()
+    }
 
     Box(
         modifier = Modifier
@@ -207,6 +215,16 @@ fun DiaryScreen(
                 Spacer(Modifier.height(90.dp))
             }
         }
+
+        ConfirmationDialog(
+            visible = cameraPermissionState.showPermanentlyDeniedDialog,
+            title = stringResource(R.string.camera_permission_required_title),
+            message = stringResource(R.string.camera_permission_denied_message),
+            confirmButtonText = stringResource(R.string.open_settings),
+            confirmButtonColor = MaterialTheme.colorScheme.primary,
+            onDismiss = { hideCameraPermissionDeniedDialog() },
+            onConfirm = openAppSettings
+        )
 
         HandleError(
             baseUiState = baseUiState,
@@ -679,7 +697,9 @@ fun DiaryScreenPreview() {
             onMealItemClick = { _, _ -> },
             onAddMealClick = {},
             onErrorConsume = {},
-            onConnectionRetry = {}
+            onConnectionRetry = {},
+            cameraPermissionState = CameraPermissionState(),
+            hideCameraPermissionDeniedDialog = {}
         )
     }
 }

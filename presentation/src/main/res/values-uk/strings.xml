@@ -159,4 +159,7 @@
     <string name="validation_max_weight_change">Максимальна зміна ваги: %1$.1f кг</string>
     <string name="validation_min_name">Ім\'я має містити мінімум %1$d символи</string>
     <string name="what_s_your_name">Як Вас звати?</string>
+    <string name="camera_permission_required_title">Потрібен дозвіл на камеру</string>
+    <string name="camera_permission_denied_message">Щоб додати страву за фото, застосунку потрібен доступ до камери. Будь ласка, надайте дозвіл вручну в системних налаштуваннях.</string>
+    <string name="open_settings">Відкрити налаштування</string>
 </resources>

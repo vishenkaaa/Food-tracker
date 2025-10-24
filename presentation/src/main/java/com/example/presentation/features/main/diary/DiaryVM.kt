@@ -97,7 +97,32 @@ class DiaryVM @Inject constructor(
         }
     }
 
-    fun checkCameraPermission() {
+    fun onAddMealClick(mealType: MealType) {
+        checkCameraPermission()
+
+        if (_cameraPermissionState.value.permanentlyDenied) {
+            showCameraPermissionDeniedDialog()
+        } else if (_cameraPermissionState.value.hasPermission) {
+            _cameraPermissionState.update { it.copy(pendingMealType = mealType) }
+        } else {
+            requestCameraPermissions(mealType)
+        }
+    }
+
+    private fun showCameraPermissionDeniedDialog() {
+        _cameraPermissionState.update { it.copy(showPermanentlyDeniedDialog = true) }
+    }
+
+    fun hideCameraPermissionDeniedDialog() {
+        _cameraPermissionState.update {
+            it.copy(
+                showPermanentlyDeniedDialog = false,
+                pendingMealType = null
+            )
+        }
+    }
+
+    private fun checkCameraPermission() {
         val granted = checkCameraPermissionUseCase.hasCameraPermission() &&
                 checkCameraPermissionUseCase.isCameraAvailable()
         _cameraPermissionState.update {
@@ -108,7 +133,7 @@ class DiaryVM @Inject constructor(
         }
     }
 
-    fun requestCameraPermissions(mealType: MealType) {
+    private fun requestCameraPermissions(mealType: MealType) {
         _cameraPermissionState.update {
             it.copy(
                 shouldRequest = true,

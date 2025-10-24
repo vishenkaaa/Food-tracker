@@ -18,6 +18,7 @@ fun ConfirmationDialog(
     visible: Boolean,
     title: String,
     message: String,
+    confirmButtonColor: Color = MaterialTheme.colorScheme.error,
     confirmButtonText: String = stringResource(R.string.ok),
     dismissButtonText: String = stringResource(R.string.cancel),
     onConfirm: () -> Unit,
@@ -42,7 +43,7 @@ fun ConfirmationDialog(
                 TextButton(
                     onClick = onConfirm,
                     colors =  ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
+                        containerColor = confirmButtonColor
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
