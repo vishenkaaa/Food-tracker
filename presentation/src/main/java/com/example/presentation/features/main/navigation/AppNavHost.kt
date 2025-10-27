@@ -31,6 +31,7 @@ import com.example.presentation.features.main.profile.ProfileRoute
 import com.example.presentation.features.main.profile.about.AboutRoute
 import com.example.presentation.features.main.profile.deleteAccount.DeleteAccountRoute
 import com.example.presentation.features.main.statistics.StatisticsRoute
+import com.example.presentation.features.main.statistics.StatisticsVM
 import com.example.presentation.model.DishDto
 import com.example.presentation.model.toDomain
 import com.example.presentation.model.toDto
@@ -189,9 +190,9 @@ private fun NavGraphBuilder.mainGraph(
                 navController.getBackStackEntry<Graphs.Main>()
             }
             val diaryVM = hiltViewModel<DiaryVM>(parentEntry)
+            val statisticsVM = hiltViewModel<StatisticsVM>(parentEntry)
 
             OpenMealRoute(
-                diaryVM = diaryVM,
                 mealType = args.mealType,
                 dishes = dishes,
                 date = LocalDate.parse(args.date),
@@ -204,6 +205,13 @@ private fun NavGraphBuilder.mainGraph(
                             date = date.toString(),
                         )
                     )
+                },
+                refreshStatistics = {
+                    val addedDate = LocalDate.parse(args.date)
+                    statisticsVM.refreshAllStatistics(addedDate)
+                },
+                refreshDairy = {
+                    diaryVM.refreshData()
                 }
             )
         }
@@ -219,11 +227,7 @@ private fun NavGraphBuilder.mainGraph(
                             date = args.date,
                             imgUri = imgUri
                         )
-                    ) {
-                        popUpTo<MainGraph.AddMealAI> {
-                            inclusive = true
-                        }
-                    }
+                    )
                 },
                 onBackPressed = { navController.popBackStack() }
             )
@@ -262,9 +266,9 @@ private fun NavGraphBuilder.mainGraph(
             val dishesDto = parentEntry.savedStateHandle.get<List<DishDto>>(DISHES_KEY) ?: listOf()
             val dishes = dishesDto.toDomain()
             val diaryVM = hiltViewModel<DiaryVM>(parentEntry)
+            val statisticsVM = hiltViewModel<StatisticsVM>(parentEntry)
 
             ResultAIRoute(
-                diaryVM = diaryVM,
                 mealType = args.mealType,
                 dishes = dishes,
                 date = LocalDate.parse(args.date),
@@ -276,23 +280,23 @@ private fun NavGraphBuilder.mainGraph(
                 },
                 imgUri = args.imgUri,
                 onTryAgain = {
-                    navController.navigate(
-                        MainGraph.DishLoading(
-                            mealType = args.mealType,
-                            date = args.date,
-                            imgUri = args.imgUri
-                        )
-                    ) {
-                        popUpTo<MainGraph.AddMealAI> {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack()
+                },
+                refreshStatistics = {
+                    val addedDate = LocalDate.parse(args.date)
+                    statisticsVM.refreshAllStatistics(addedDate)
+                },
+                refreshDairy = {
+                    diaryVM.refreshData()
                 }
             )
         }
 
-        composable<MainGraph.Statistics> {
-            StatisticsRoute()
+        composable<MainGraph.Statistics> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Graphs.Main>()
+            }
+            StatisticsRoute(viewModel = hiltViewModel(parentEntry))
         }
 
         composable<MainGraph.Profile> { backStackEntry ->

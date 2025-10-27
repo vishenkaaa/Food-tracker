@@ -326,7 +326,7 @@ fun MacronutrientPieChart(
         PieChart(
             modifier = Modifier.size(boxSize),
             data = {
-                nutrients.map { nutrient ->
+                nutrients.filter { it.percent > 0 }.map { nutrient ->
                     PieChartData(
                         value = nutrient.percent.toFloat(),
                         color = nutrient.chartColor(isDark),

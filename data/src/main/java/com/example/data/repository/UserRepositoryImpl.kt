@@ -64,8 +64,8 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun isUserFullyRegistered(userId: String): Boolean = safeCall(errorLogger){
-        val snapshot = usersCollection.document(userId).get().await()
-        val user = snapshot.data?.let { mapToUser(it, userId) }
-        return user?.targetCalories != 0
+        val user = getUser(userId)
+        val userIsNew = user.getOrThrow().isNew
+        !userIsNew
     }.getOrDefault(false)
 }

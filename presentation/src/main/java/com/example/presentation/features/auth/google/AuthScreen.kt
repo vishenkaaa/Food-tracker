@@ -59,7 +59,7 @@ fun AuthRoute(
 
     AuthScreen(
         baseUiState = baseUiState,
-        onLoginClicked = { viewModel.signInWithGoogle(activity, forceNewAccount = true) },
+        onLoginClicked = { viewModel.signInWithGoogle(activity) },
         onErrorConsume = { viewModel.clearErrors() }
     )
 }

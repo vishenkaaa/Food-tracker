@@ -61,7 +61,7 @@ val headline2: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 20.sp,
+        fontSize = 22.sp,
         lineHeight = 30.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -71,7 +71,7 @@ val headline3: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -81,7 +81,7 @@ val subtitle1: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -91,7 +91,7 @@ val subtitle2: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 21.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -101,7 +101,7 @@ val subtitle3: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         lineHeight = 18.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -111,7 +111,7 @@ val body1: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -121,7 +121,7 @@ val body2: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 21.sp,
         color = MaterialTheme.colorScheme.onBackground
     )
@@ -131,7 +131,7 @@ val body3: TextStyle
     get() = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         lineHeight = 18.sp,
         color = MaterialTheme.colorScheme.onBackground
     )

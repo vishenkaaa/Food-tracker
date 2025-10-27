@@ -121,18 +121,24 @@ fun StatisticsScreen(
         ) { padding ->
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize().padding(padding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
                 verticalAlignment = Alignment.Top
             ) { page ->
                 when (StatisticsPeriod.entries[page]) {
-                    StatisticsPeriod.TODAY,
-                    StatisticsPeriod.YESTERDAY -> {
-                        if (isDailyLoading || uiState.dailyStatistics == null)
+                    StatisticsPeriod.TODAY -> {
+                        if (isDailyLoading || uiState.todayStatistics == null)
                             DailyStatisticsTabShimmer()
                         else
-                            DailyStatisticsTab(
-                                statistics = uiState.dailyStatistics
-                            )
+                            DailyStatisticsTab(uiState.todayStatistics)
+                    }
+
+                    StatisticsPeriod.YESTERDAY -> {
+                        if (isDailyLoading || uiState.yesterdayStatistics == null)
+                            DailyStatisticsTabShimmer()
+                        else
+                            DailyStatisticsTab(uiState.yesterdayStatistics)
                     }
 
                     StatisticsPeriod.WEEK -> {

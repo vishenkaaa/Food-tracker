@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -51,13 +52,14 @@ fun GoalSelectionStep(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onGoalSelected(currentGoal) }
                     .shadow(
                         elevation = if (selectedGoal == currentGoal) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
                         clip = false,
                         ambientColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { onGoalSelected(currentGoal) },
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedGoal == currentGoal)
                         MaterialTheme.colorScheme.primary

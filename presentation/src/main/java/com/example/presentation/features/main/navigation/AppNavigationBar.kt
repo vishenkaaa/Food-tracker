@@ -34,8 +34,7 @@ import com.example.presentation.extensions.toTitle
 
 @Composable
 fun AppNavigationBar(
-    currentDestination: NavDestination?,
-    navController: NavHostController
+    currentDestination: NavDestination?, navController: NavHostController
 ) {
     Box {
         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
@@ -63,11 +62,13 @@ fun AppNavigationBar(
                 val isSelected = currentDestination?.route == screen.route::class.qualifiedName
 
                 CustomNavigationBarItem(
-                    selected = isSelected,
-                    tab = screen,
-                    modifier = Modifier.weight(1f)
+                    selected = isSelected, tab = screen, modifier = Modifier.weight(1f)
                 ) {
-                    navController.navigate(screen.route)
+                    navController.navigate(screen.route) {
+                        popUpTo(Graphs.Main) { inclusive = false }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             }
         }
@@ -84,7 +85,7 @@ fun NavigationShadow() {
                 Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.background.copy(alpha = 0.0f),
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
                         MaterialTheme.colorScheme.background,
                     )
                 )
@@ -94,19 +95,14 @@ fun NavigationShadow() {
 
 @Composable
 fun CustomNavigationBarItem(
-    selected: Boolean,
-    tab: TopLevelDestinations,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-){
-    Column (
+    selected: Boolean, tab: TopLevelDestinations, modifier: Modifier = Modifier, onClick: () -> Unit
+) {
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.clickable(
             indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) { onClick() }
-    ) {
+            interactionSource = remember { MutableInteractionSource() }) { onClick() }) {
         Icon(
             painter = tab.toIcon(),
             modifier = Modifier.size(28.dp),

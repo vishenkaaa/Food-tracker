@@ -1,7 +1,9 @@
 package com.example.presentation.features.main.diary
 
 import android.Manifest
-import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,7 +34,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,7 +47,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +54,7 @@ import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
-import com.example.presentation.common.ui.components.ConnectionErrorSnackBar
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.common.ui.modifiers.shimmerEffect
@@ -67,9 +70,11 @@ import com.example.presentation.features.main.diary.extensions.findActivity
 import com.example.presentation.features.main.diary.extensions.getDishesForMealType
 import com.example.presentation.features.main.diary.extensions.getMealsForDate
 import com.example.presentation.features.main.diary.extensions.getNutritionForMealType
+import com.example.presentation.features.main.diary.models.CameraPermissionState
 import com.example.presentation.features.main.diary.models.DiaryScreenUIState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -112,6 +117,7 @@ fun DiaryRoute(
     }
 
     DiaryScreen(
+        cameraPermissionState = cameraPermissionState,
         uiState = uiState,
         baseUiState = baseUiState,
         onPreviousWeek = { viewModel.onPreviousWeek() },
@@ -126,26 +132,17 @@ fun DiaryRoute(
             )
         },
         onAddMealClick = { mealType ->
-            viewModel.checkCameraPermission()
-            when {
-                cameraPermissionState.hasPermission -> onNavigateToAddMeal(mealType, uiState.selectedDate)
-                cameraPermissionState.permanentlyDenied -> {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.request_camera_permission),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                else -> viewModel.requestCameraPermissions(mealType)
-            }
+            viewModel.onAddMealClick(mealType)
         },
         onErrorConsume = { viewModel.clearErrors() },
-        onConnectionRetry = { viewModel.retryLastAction() }
+        onConnectionRetry = { viewModel.retryLastAction() },
+        hideCameraPermissionDeniedDialog = { viewModel.hideCameraPermissionDeniedDialog() }
     )
 }
 
 @Composable
 fun DiaryScreen(
+    cameraPermissionState: CameraPermissionState,
     uiState: DiaryScreenUIState,
     baseUiState: BaseUiState,
     onPreviousWeek: () -> Unit,
@@ -154,10 +151,22 @@ fun DiaryScreen(
     onMealItemClick: (MealType, List<Dish>) -> Unit,
     onAddMealClick: (MealType) -> Unit = {},
     onErrorConsume: () -> Unit,
-    onConnectionRetry: () -> Unit
+    onConnectionRetry: () -> Unit,
+    hideCameraPermissionDeniedDialog: () -> Unit
 ) {
     val isLoading = baseUiState.isLoading
     val hasError = baseUiState.unexpectedError != null || baseUiState.isConnectionError
+
+    val context = LocalContext.current
+
+    val openAppSettings = {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context.packageName, null)
+        )
+        context.startActivity(intent)
+        hideCameraPermissionDeniedDialog()
+    }
 
     Box(
         modifier = Modifier
@@ -207,6 +216,16 @@ fun DiaryScreen(
             }
         }
 
+        ConfirmationDialog(
+            visible = cameraPermissionState.showPermanentlyDeniedDialog,
+            title = stringResource(R.string.camera_permission_required_title),
+            message = stringResource(R.string.camera_permission_denied_message),
+            confirmButtonText = stringResource(R.string.open_settings),
+            confirmButtonColor = MaterialTheme.colorScheme.primary,
+            onDismiss = { hideCameraPermissionDeniedDialog() },
+            onConfirm = openAppSettings
+        )
+
         HandleError(
             baseUiState = baseUiState,
             onErrorConsume = onErrorConsume,
@@ -252,7 +271,7 @@ fun MealsSectionShimmer() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-        repeat(3) {
+        repeat(4) {
             MealItemShimmer()
         }
     }
@@ -357,7 +376,7 @@ fun MealItemShimmer() {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(56.dp)
     ) {
         Box(
             modifier = Modifier
@@ -375,6 +394,12 @@ fun CaloriesProgressSection(
     protein: Float,
     fat: Float
 ) {
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -385,7 +410,7 @@ fun CaloriesProgressSection(
             val progress = (caloriesConsumed.toFloat() / caloriesTarget.toFloat()).coerceIn(0f, 1f)
 
             val animatedProgress by animateFloatAsState(
-                targetValue = progress,
+                targetValue = if(trigger) progress else 0f,
                 animationSpec = tween(
                     durationMillis = 800,
                     easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)
@@ -528,6 +553,7 @@ fun DayItem(
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onBackground,
             disabledContainerColor =  if (selected) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.surfaceContainer,
         ),
@@ -538,12 +564,12 @@ fun DayItem(
         modifier = Modifier
             .softShadow(
                 color = MaterialTheme.colorScheme.surfaceVariant,
-                blurRadius = 25.dp,
+                blurRadius = 15.dp,
                 offsetY = 4.dp,
                 offsetX = 0.dp,
                 cornerRadius = 20.dp
             )
-            .alpha(if (enabled) 1f else 0.4f)
+            .alpha(if (enabled) 1f else 0.5f)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp),
@@ -614,7 +640,7 @@ fun CalendarHeader(
         modifier = Modifier
             .statusBarsPadding()
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp),
+            .padding(horizontal = 4.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -671,7 +697,9 @@ fun DiaryScreenPreview() {
             onMealItemClick = { _, _ -> },
             onAddMealClick = {},
             onErrorConsume = {},
-            onConnectionRetry = {}
+            onConnectionRetry = {},
+            cameraPermissionState = CameraPermissionState(),
+            hideCameraPermissionDeniedDialog = {}
         )
     }
 }

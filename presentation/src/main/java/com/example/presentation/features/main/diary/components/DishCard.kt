@@ -1,6 +1,5 @@
 package com.example.presentation.features.main.diary.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.diary.Dish
+import com.example.domain.model.diary.UnitType
 import com.example.presentation.R
 import com.example.presentation.common.ui.modifiers.softShadow
 import com.example.presentation.extensions.displayName
@@ -28,6 +28,9 @@ import com.example.presentation.extensions.displayName
 fun DishCard(
     dish: Dish,
 ) {
+    val finishDishAmount = if (dish.unit == UnitType.PIECE) dish.amount.toInt()
+    else dish.amount
+
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -70,7 +73,7 @@ fun DishCard(
                 }
 
                 Text(
-                    text = "${dish.amount} ${dish.unit.displayName()}",
+                    text = "$finishDishAmount ${dish.unit.displayName()}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(start = 8.dp)

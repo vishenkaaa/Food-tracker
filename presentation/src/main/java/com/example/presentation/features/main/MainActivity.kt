@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
+        viewModel.resetLoadingState()
         viewModel.checkUserState()
         setupSplashScreen(splashScreen)
         setContent()

@@ -9,9 +9,8 @@ import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.meal.RemoveDishFromMealUseCase
 import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
-import com.example.presentation.features.main.diary.DiaryVM
-import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
 import com.example.presentation.common.utils.WidgetUpdater
+import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -68,7 +67,12 @@ open class BaseOpenMealVM (
         }
     }
 
-    open fun onSaveEditedDish(updatedDish: Dish, updatedMealType: MealType, diaryVM: DiaryVM) {
+    open fun onSaveEditedDish(
+        updatedDish: Dish,
+        updatedMealType: MealType,
+        refreshDairy: () -> Unit,
+        refreshStatistics: (LocalDate) -> Unit
+    ) {
         viewModelScope.launch {
             handleLoading(true)
 
@@ -86,7 +90,8 @@ open class BaseOpenMealVM (
                     onSuccess = {
                         updateLocalDishes(updatedDish, updatedMealType)
                         WidgetUpdater.updateWidget(context)
-                        diaryVM.refreshData()
+                        refreshDairy()
+                        refreshStatistics(uiState.value.date)
                         onEditDishDismiss()
                     },
                     onFailure = {
@@ -122,9 +127,9 @@ open class BaseOpenMealVM (
         }
     }
 
-    open fun onDeleteConfirmationResult(status: Boolean, diaryVM: DiaryVM) {
+    open fun onDeleteConfirmationResult(status: Boolean, refreshDairy: () -> Unit) {
         if (status) uiState.value.dishIdToDelete?.let { id ->
-            onDeleteDish(id, diaryVM)
+            onDeleteDish(id, refreshDairy)
             WidgetUpdater.updateWidget(context)
         }
         _uiState.update {
@@ -135,7 +140,7 @@ open class BaseOpenMealVM (
         }
     }
 
-    private fun onDeleteDish(dishId: String, diaryVM: DiaryVM) {
+    private fun onDeleteDish(dishId: String, refreshDairy: () -> Unit ) {
         viewModelScope.launch {
             handleLoading(true)
 
@@ -151,7 +156,7 @@ open class BaseOpenMealVM (
                 ).fold(
                     onSuccess = {
                         deleteLocalDish(dishId)
-                        diaryVM.refreshData()
+                        refreshDairy()
                     },
                     onFailure = {
                         handleError(Exception(context.getString(R.string.failed_to_remove_the_dish)), context)

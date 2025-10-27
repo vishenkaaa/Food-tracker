@@ -6,15 +6,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,7 +24,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +34,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,42 +42,26 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
 import com.example.presentation.features.auth.onboarding.models.InputValidation
 
 @Composable
-fun NumberInputStep(
-    title: String,
-    value: String,
-    unit: String,
-    isIntegerInput: Boolean = false,
+fun NameStep(
+    name: String,
     validation: (InputValidation) = InputValidation(),
-    onValueSelected: (String) -> Unit,
+    onNameSelected: (String) -> Unit,
     onNextStep: () -> Unit
 ) {
-    val maxDecimalPlaces = 1
+    val maxLength = 25
 
-    var input by remember {
+    var input by remember(name) {
         mutableStateOf(
             TextFieldValue(
-                text = "",
-                selection = TextRange(0)
+                text = name,
+                selection = TextRange(name.length)
             )
         )
-    }
-
-    LaunchedEffect(value) {
-        if (value != input.text) {
-            val initialValue = if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
-                if (isIntegerInput) value.toFloat().toInt().toString()
-                else value
-            } else ""
-
-            input = TextFieldValue(
-                text = initialValue,
-                selection = TextRange(initialValue.length)
-            )
-        }
     }
 
     val focusManager = LocalFocusManager.current
@@ -99,7 +80,7 @@ fun NumberInputStep(
             }
     ) {
         Text(
-            text = title,
+            text = stringResource(R.string.what_s_your_name),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
@@ -114,45 +95,28 @@ fun NumberInputStep(
         ) {
             OutlinedTextField(
                 value = input,
-
                 onValueChange = { newValue ->
                     val text = newValue.text
-                    val isDecimal = !isIntegerInput
 
-                    val filteredText = if (isDecimal) {
-                        text.filterIndexed { _, char ->
-                            char.isDigit() || (char == '.' && text.count { it == '.' } <= 1)
-                        }
+                    val finalValue = if (text.length > maxLength) {
+                        text.substring(0, maxLength)
                     } else {
-                        text.filter { it.isDigit() }
-                    }
-
-                    var finalValue = filteredText
-
-                    if (finalValue.length > 1 && finalValue.startsWith('0') && finalValue[1] != '.')
-                        finalValue = finalValue.trimStart('0')
-
-                    if (isDecimal) {
-                        if (finalValue == ".")
-                            finalValue = "0."
-
-                        val parts = finalValue.split(".")
-                        if (parts.size > 1 && parts[1].length > maxDecimalPlaces)
-                            finalValue = "${parts[0]}.${parts[1].substring(0, maxDecimalPlaces)}"
+                        text
                     }
 
                     input = newValue.copy(
                         text = finalValue,
                         selection = TextRange(finalValue.length)
                     )
-                    onValueSelected(finalValue)
+
+                    onNameSelected(finalValue)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
                 ),
                 label = null,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = if (isIntegerInput) KeyboardType.Number else KeyboardType.Decimal,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
@@ -163,7 +127,7 @@ fun NumberInputStep(
                 ),
                 singleLine = true,
                 modifier = Modifier
-                    .width(140.dp)
+                    .width(280.dp)
                     .focusRequester(focusRequester)
                     .onGloballyPositioned {
                         if (!hasFocusBeenRequested) {
@@ -177,22 +141,6 @@ fun NumberInputStep(
                 ),
                 shape = RoundedCornerShape(16.dp),
             )
-            Spacer(modifier = Modifier.width(12.dp))
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp)
-                    )
-                    .fillMaxHeight()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    unit,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
         }
 
         AnimatedVisibility(
@@ -218,15 +166,12 @@ fun NumberInputStep(
 
 @Preview(showBackground = true)
 @Composable
-fun NumberInputStepPreview() {
+fun NameStepPreview() {
     FoodTrackTheme {
-        NumberInputStep(
-            "Ваша ціль набору ваги",
-            "0",
-            "Кг",
-            false,
+        NameStep (
+            "Аня",
             onNextStep = {},
-            onValueSelected = {}
+            onNameSelected = {}
         )
     }
 }

@@ -8,4 +8,5 @@ interface FirebaseAuthRepository {
     suspend fun deleteAccount(): Result<Unit>
     suspend fun isUserLoggedIn(): Boolean
     suspend fun getCurrentUserId(): String?
+    suspend fun getCurrentUserEmail(): String?
 }

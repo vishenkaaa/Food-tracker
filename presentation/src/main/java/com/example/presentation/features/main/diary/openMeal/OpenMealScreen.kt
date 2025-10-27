@@ -27,6 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,22 +48,23 @@ import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.extensions.displayName
-import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.SwipeDishItem
 import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 
 @Composable
 fun OpenMealRoute(
-    diaryVM: DiaryVM = hiltViewModel(),
     viewModel: OpenMealVM = hiltViewModel(),
     mealType: MealType,
     dishes: List<Dish>,
     date: LocalDate,
     targetCalories: Int,
+    refreshDairy: () -> Unit,
+    refreshStatistics: (LocalDate) -> Unit,
     onBackPressed: () -> Unit,
     onNavigateToAddDish: (MealType, LocalDate) -> Unit = { _, _ -> }
 ) {
@@ -77,10 +81,10 @@ fun OpenMealRoute(
         onBackPressed = onBackPressed,
         onAddDishClick = { onNavigateToAddDish(mealType, date) },
         onEditDish = { dish -> viewModel.onEditDish(dish) },
-        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, diaryVM) },
+        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, refreshDairy, refreshStatistics) },
         onEditDishDismiss = { viewModel.onEditDishDismiss() },
         onDeleteDish = viewModel::requestDeleteConfirmation,
-        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
+        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, refreshDairy) },
         onErrorConsume = { viewModel.clearErrors() },
         onRetry = { viewModel.retryLastAction() }
     )
@@ -236,6 +240,12 @@ fun OpenMealNutritionSection(
     protein: Float,
     fat: Float
 ) {
+    var trigger by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(10)
+        trigger = true
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -249,7 +259,7 @@ fun OpenMealNutritionSection(
             } else 0f
 
             val animatedProgress by animateFloatAsState(
-                targetValue = progress,
+                targetValue = if(trigger) progress else 0f,
                 animationSpec = tween(
                     durationMillis = 800,
                     easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)

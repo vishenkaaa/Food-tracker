@@ -1,6 +1,9 @@
 package com.example.presentation.features.auth.onboarding
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +56,7 @@ import com.example.presentation.features.auth.onboarding.components.CurrentWeigh
 import com.example.presentation.features.auth.onboarding.components.GenderSelectionStep
 import com.example.presentation.features.auth.onboarding.components.GoalSelectionStep
 import com.example.presentation.features.auth.onboarding.components.HeightStep
+import com.example.presentation.features.auth.onboarding.components.NameStep
 import com.example.presentation.features.auth.onboarding.components.ResultStep
 import com.example.presentation.features.auth.onboarding.components.UserActivityLevelSectionStep
 import com.example.presentation.features.auth.onboarding.components.WeightChangeStep
@@ -72,6 +76,7 @@ fun OnboardingRoute(
     OnboardingScreen(
         baseUiState = baseUiState,
         uiState = uiState,
+        onNameSelected = viewModel::onNameSelected,
         onGoalSelected = viewModel::onGoalSelected,
         onWeightChangeSelected = viewModel::onWeightChangeSelected,
         onGenderSelected = viewModel::onGenderSelected,
@@ -93,6 +98,7 @@ fun OnboardingRoute(
 fun OnboardingScreen(
     baseUiState: BaseUiState,
     uiState: OnboardingUiState,
+    onNameSelected: (String) -> Unit,
     onGoalSelected: (Goal) -> Unit,
     onWeightChangeSelected: (String) -> Unit,
     onGenderSelected: (Gender) -> Unit,
@@ -117,6 +123,7 @@ fun OnboardingScreen(
     val steps = remember(uiState.goal) {
         buildList {
             add(OnboardingStep.Welcome)
+            add(OnboardingStep.Name)
             add(OnboardingStep.GoalSelection)
             if (uiState.goal != Goal.MAINTAIN) {
                 add(OnboardingStep.WeightChange)
@@ -167,11 +174,18 @@ fun OnboardingScreen(
                             modifier = Modifier
                                 .padding(end = 16.dp)
                         ) {
-                            Icon(
-                                painter = painterResource(R.drawable.back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onBackground,
-                            )
+                            if(uiState.step == WELCOME_STEP)
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_close),
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                )
+                            else
+                                Icon(
+                                    painter = painterResource(R.drawable.back),
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                )
                         }
                 },
                 title = {
@@ -191,15 +205,25 @@ fun OnboardingScreen(
             )
 
             if (uiState.step > 0) {
+                val targetProgress = remember(uiState.step) {
+                    currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
+                        .takeIf { it >= 0 } ?: 0
+                    val progressPageIndex = (currentPageIndex - 1).coerceAtLeast(0)
+                    progressPageIndex.toFloat() / (steps.size - 2).toFloat()
+                }
+
+                val animatedProgress by animateFloatAsState(
+                    targetValue = targetProgress,
+                    animationSpec = tween(
+                        durationMillis = 800,
+                        easing = CubicBezierEasing(0.4f, 0.0f, 0.2f, 1f)
+                    ),
+                    label = "progress_animation"
+                )
+
                 LinearWavyProgressIndicator(
-                    progress = {
-                        currentPageIndex = steps.indexOfFirst { it.stepNumber == uiState.step }
-                            .takeIf { it >= 0 } ?: 0
-                        val progressPageIndex = (currentPageIndex - 1).coerceAtLeast(0)
-                        progressPageIndex.toFloat() / (steps.size - 2).toFloat()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    progress = { animatedProgress },
+                    modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surface,
                 )
@@ -219,6 +243,12 @@ fun OnboardingScreen(
                 ) {
                     when (currentStep) {
                         is OnboardingStep.Welcome -> WelcomeStep()
+                        is OnboardingStep.Name -> NameStep(
+                            uiState.name,
+                            uiState.nameValidation,
+                            onNameSelected,
+                            onNextStep = onNextStep
+                        )
                         is OnboardingStep.GoalSelection -> GoalSelectionStep(
                             uiState.goal,
                             onGoalSelected
@@ -226,15 +256,21 @@ fun OnboardingScreen(
                         is OnboardingStep.WeightChange -> WeightChangeStep(
                             uiState.goal ?: Goal.MAINTAIN,
                             uiState.weightChange,
-                            onWeightChangeSelected
+                            uiState.weightChangeValidation,
+                            onWeightChangeSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.CurrentWeight -> CurrentWeightStep(
                             uiState.currentWeight,
-                            onCurrentWeightSelected
+                            uiState.weightValidation,
+                            onCurrentWeightSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.Height -> HeightStep(
                             uiState.height,
+                            uiState.heightValidation,
                             onHeightSelected,
+                            onNextStep = onNextStep
                         )
                         is OnboardingStep.Gender -> GenderSelectionStep(
                             uiState.gender,
@@ -303,7 +339,7 @@ fun TargetScreenPreview() {
         OnboardingScreen(
             BaseUiState(),
             OnboardingUiState(step = 0),
-            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
         )
     }
 }

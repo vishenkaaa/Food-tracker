@@ -49,14 +49,13 @@ fun DailyStatisticsTabShimmer(
 @Composable
 fun DailyNutritionCircularProgressShimmer() {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
+                .padding(vertical = 16.dp)
                 .width(180.dp)
                 .height(30.dp)
-                .padding(vertical = 16.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .shimmerEffect()
         )
@@ -66,6 +65,7 @@ fun DailyNutritionCircularProgressShimmer() {
                 .size(161.dp)
                 .clip(RoundedCornerShape(150.dp))
                 .shimmerEffect()
+                .align(Alignment.CenterHorizontally),
         )
     }
 }

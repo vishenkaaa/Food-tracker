@@ -8,7 +8,6 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -109,8 +108,10 @@ fun AddMealAIRoute(
     }
 
     LaunchedEffect(uiState.capturedPhotoUri) {
-        if(uiState.capturedPhotoUri!=null)
+        if(uiState.capturedPhotoUri != null) {
             onNavigateToAnalyze(uiState.capturedPhotoUri!!)
+            viewModel.clearCapturedPhoto()
+        }
     }
 
     AddMealAIScreen(
@@ -260,10 +261,8 @@ fun CameraControlsBar(
             modifier = Modifier
                 .size(48.dp)
                 .background(MaterialTheme.colorScheme.surface, CircleShape)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onCapturePhoto() },
+                .clip(CircleShape)
+                .clickable{ onCapturePhoto() },
             contentAlignment = Alignment.Center
         ){
             Box(

@@ -6,5 +6,6 @@ data class CameraPermissionState(
     val hasPermission: Boolean = false,
     val shouldRequest: Boolean = false,
     val permanentlyDenied: Boolean = false,
-    val pendingMealType: MealType? = null
+    val pendingMealType: MealType? = null,
+    val showPermanentlyDeniedDialog: Boolean = false
 )
