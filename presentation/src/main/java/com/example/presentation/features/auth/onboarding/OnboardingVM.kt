@@ -326,6 +326,7 @@ class OnboardingVM @Inject constructor(
             currentWeight = currentWeightFloat,
             height = heightInt,
             birthDate = birthDate,
+            isNew = false
         )
 
         val calculatedCalories = user.calculateCalories() ?: 0

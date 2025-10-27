@@ -95,7 +95,7 @@ object UserModelMapper {
             name = data[NAME_KEY] as? String,
             email = data[EMAIL_KEY] as? String,
             photoUrl = data[PHOTO_URL_KEY] as? String,
-            isNew = data[IS_NEW_KEY] as? Boolean ?: false
+            isNew = data[IS_NEW_KEY] as? Boolean ?: true
         )
     }
 }

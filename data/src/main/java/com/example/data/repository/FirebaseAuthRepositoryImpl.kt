@@ -35,7 +35,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
         val firebaseUser = authResult.user ?: throw Exception("User is null")
 
-        val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+        val isNewUser = authResult.additionalUserInfo?.isNewUser ?: true
         val userId = firebaseUser.uid
         val userDocument = usersCollection.document(userId)
 

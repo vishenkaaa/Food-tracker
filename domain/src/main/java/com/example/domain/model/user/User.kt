@@ -8,7 +8,7 @@ data class User(
     val name: String? = null,
     val email: String? = null,
     val photoUrl: String? = null,
-    val isNew: Boolean = false,
+    val isNew: Boolean = true,
     val goal: Goal = Goal.MAINTAIN,
     val currentWeight: Float? = null,
     val targetWeight: Float? = null,
