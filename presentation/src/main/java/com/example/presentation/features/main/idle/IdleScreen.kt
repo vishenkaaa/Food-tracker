@@ -9,7 +9,6 @@ fun IdleRoute() {
 }
 
 @Composable
-fun IdleScreen(
-) {
+fun IdleScreen() {
     CustomSplashScreen()
 }

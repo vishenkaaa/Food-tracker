@@ -24,6 +24,10 @@ class AuthStateManager @Inject constructor(
         )
     }
 
+    fun resetToLoading() {
+        _userAuthState.value = UserAuthState(isLoading = true)
+    }
+
     fun updateFullyRegistered(isFullyRegistered: Boolean) {
         val currentState = _userAuthState.value
         _userAuthState.value = currentState.copy(
@@ -33,7 +37,6 @@ class AuthStateManager @Inject constructor(
 
     suspend fun checkAndUpdateUserState() {
         try {
-            _userAuthState.value = _userAuthState.value.copy(isLoading = true)
             val newState = checkUserStateUseCase()
             _userAuthState.value = newState.copy(isLoading = false)
         } catch (e: Exception) {

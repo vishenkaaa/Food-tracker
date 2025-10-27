@@ -50,6 +50,12 @@ class MainVM @Inject constructor(
         }
     }
 
+    fun resetLoadingState() {
+        viewModelScope.launch {
+            authStateManager.resetToLoading()
+        }
+    }
+
     fun checkUserState() {
         viewModelScope.launch {
             authStateManager.checkAndUpdateUserState()
