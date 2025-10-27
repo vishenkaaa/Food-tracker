@@ -48,7 +48,6 @@ import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.RoundedCircularProgress
 import com.example.presentation.extensions.displayName
-import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.features.main.diary.components.CaloriesDisplay
 import com.example.presentation.features.main.diary.components.MacroNutrientsBigSection
 import com.example.presentation.features.main.diary.components.SwipeDishItem
@@ -59,12 +58,13 @@ import java.time.LocalDate
 
 @Composable
 fun OpenMealRoute(
-    diaryVM: DiaryVM = hiltViewModel(),
     viewModel: OpenMealVM = hiltViewModel(),
     mealType: MealType,
     dishes: List<Dish>,
     date: LocalDate,
     targetCalories: Int,
+    refreshDairy: () -> Unit,
+    refreshStatistics: (LocalDate) -> Unit,
     onBackPressed: () -> Unit,
     onNavigateToAddDish: (MealType, LocalDate) -> Unit = { _, _ -> }
 ) {
@@ -81,10 +81,10 @@ fun OpenMealRoute(
         onBackPressed = onBackPressed,
         onAddDishClick = { onNavigateToAddDish(mealType, date) },
         onEditDish = { dish -> viewModel.onEditDish(dish) },
-        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, diaryVM) },
+        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, refreshDairy, refreshStatistics) },
         onEditDishDismiss = { viewModel.onEditDishDismiss() },
         onDeleteDish = viewModel::requestDeleteConfirmation,
-        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
+        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, refreshDairy) },
         onErrorConsume = { viewModel.clearErrors() },
         onRetry = { viewModel.retryLastAction() }
     )

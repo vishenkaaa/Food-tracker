@@ -10,11 +10,11 @@ import com.example.domain.usecase.meal.RemoveDishFromMealUseCase
 import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseOpenMealVM
-import com.example.presentation.features.main.diary.DiaryVM
 import com.example.presentation.common.utils.WidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,12 +30,17 @@ class ResultAIVM @Inject constructor(
     getCurrentUserIdUseCase,
     context
 ) {
-    override fun onSaveEditedDish(updatedDish: Dish, updatedMealType: MealType, diaryVM: DiaryVM) {
+    override fun onSaveEditedDish(
+        updatedDish: Dish,
+        updatedMealType: MealType,
+        refreshDairy: () -> Unit,
+        refreshStatistics: (LocalDate) -> Unit
+    ) {
         updateLocalDishes(updatedDish, updatedMealType)
         onEditDishDismiss()
     }
 
-    override fun onDeleteConfirmationResult(status: Boolean, diaryVM: DiaryVM) {
+    override fun onDeleteConfirmationResult(status: Boolean, refreshDairy: () -> Unit) {
         if (status) uiState.value.dishIdToDelete?.let { id ->
             deleteLocalDish(id)
         }
@@ -47,7 +52,7 @@ class ResultAIVM @Inject constructor(
         }
     }
 
-    suspend fun onSaveDishes(diaryVM: DiaryVM): Result<Unit> {
+    suspend fun onSaveDishes(refreshDairy: () -> Unit): Result<Unit> {
         return try {
             val userId = getCurrentUserIdUseCase() ?: return Result.failure(Exception(context.getString(R.string.user_not_authenticated)))
             val date = uiState.value.date.toString()
@@ -63,7 +68,7 @@ class ResultAIVM @Inject constructor(
             }
 
             WidgetUpdater.updateWidget(context)
-            diaryVM.refreshData()
+            refreshDairy()
             Result.success(Unit)
         } catch (e: Exception) {
             handleError(e)

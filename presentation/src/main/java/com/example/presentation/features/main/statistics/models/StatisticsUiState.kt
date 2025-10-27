@@ -8,7 +8,8 @@ import java.time.LocalDate
 
 data class StatisticsUiState(
     val selectedPeriod: StatisticsPeriod = StatisticsPeriod.TODAY,
-    val dailyStatistics: DailyNutritionStatistics? = null,
+    val todayStatistics: DailyNutritionStatistics? = null,
+    val yesterdayStatistics: DailyNutritionStatistics? = null,
     val weeklyStatistics: WeeklyNutritionStatistics? = null,
     val weekStart: LocalDate = LocalDate.now().with(DayOfWeek.MONDAY)
 )

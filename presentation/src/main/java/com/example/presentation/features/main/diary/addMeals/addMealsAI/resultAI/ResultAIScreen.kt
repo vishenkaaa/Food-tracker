@@ -53,17 +53,19 @@ import com.example.presentation.features.main.diary.components.MacroNutrientsBig
 import com.example.presentation.features.main.diary.components.SwipeDishItem
 import com.example.presentation.features.main.diary.editDish.EditDishBottomSheet
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
+import com.example.presentation.features.main.statistics.StatisticsVM
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
 fun ResultAIRoute(
-    diaryVM: DiaryVM = hiltViewModel(),
     viewModel: ResultAIVM = hiltViewModel(),
     imgUri: String,
     mealType: MealType,
     dishes: List<Dish>,
     date: LocalDate,
+    refreshDairy: () -> Unit,
+    refreshStatistics: (LocalDate) -> Unit,
     onBackPressed: () -> Unit,
     onTryAgain: () -> Unit
 ) {
@@ -83,15 +85,15 @@ fun ResultAIRoute(
         baseUiState = baseUiState,
         onBackPressed = onBackPressed,
         onEditDish = { dish -> viewModel.onEditDish(dish) },
-        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, diaryVM) },
+        onSaveEditedDish = { dish, newMealType -> viewModel.onSaveEditedDish(dish, newMealType, refreshDairy, refreshStatistics) },
         onEditDishDismiss = { viewModel.onEditDishDismiss() },
         onDeleteDish = viewModel::requestDeleteConfirmation,
-        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, diaryVM) },
+        onDeleteConfirmationResult = { status -> viewModel.onDeleteConfirmationResult(status, refreshDairy) },
         onErrorConsume = { viewModel.clearErrors() },
         onRetry = { viewModel.retryLastAction() },
         onSave = {
             scope.launch {
-                val result = viewModel.onSaveDishes(diaryVM)
+                val result = viewModel.onSaveDishes(refreshDairy)
                 if (result.isSuccess) {
                     Toast.makeText(
                         context,

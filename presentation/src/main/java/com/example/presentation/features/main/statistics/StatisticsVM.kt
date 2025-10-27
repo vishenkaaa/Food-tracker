@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,10 +43,18 @@ class StatisticsVM @Inject constructor(
         _uiState.update { it.copy(selectedPeriod = period) }
 
         when (period) {
-            StatisticsPeriod.TODAY,
-            StatisticsPeriod.YESTERDAY -> {
-                loadDailyStatistics(period)
+            StatisticsPeriod.TODAY -> {
+                if (_uiState.value.todayStatistics == null) {
+                    loadDailyStatistics(period)
+                }
             }
+
+            StatisticsPeriod.YESTERDAY -> {
+                if (_uiState.value.yesterdayStatistics == null) {
+                    loadDailyStatistics(period)
+                }
+            }
+
             StatisticsPeriod.WEEK -> {
                 val currentWeekStart = _uiState.value.weekStart
                 val existingWeekStart = _uiState.value.weeklyStatistics?.weekStart
@@ -54,6 +63,23 @@ class StatisticsVM @Inject constructor(
                     loadWeeklyStatistics()
                 }
             }
+        }
+    }
+
+    fun refreshAllStatistics(date: LocalDate) {
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+
+        when (date) {
+            today -> loadDailyStatistics(StatisticsPeriod.TODAY)
+            yesterday -> loadDailyStatistics(StatisticsPeriod.YESTERDAY)
+        }
+
+        val weekStart = uiState.value.weekStart
+        val weekEnd = weekStart.plusDays(6)
+
+        if (!date.isBefore(weekStart) && !date.isAfter(weekEnd) && _uiState.value.weeklyStatistics != null) {
+            loadWeeklyStatistics()
         }
     }
 
@@ -79,8 +105,12 @@ class StatisticsVM @Inject constructor(
             result.fold(
                 onSuccess = { statistics ->
                     if (statistics is NutritionStatistics.Daily) {
-                        _uiState.update {
-                            it.copy(dailyStatistics = statistics.data)
+                        _uiState.update { currentState ->
+                            when (period) {
+                                StatisticsPeriod.TODAY -> currentState.copy(todayStatistics = statistics.data)
+                                StatisticsPeriod.YESTERDAY -> currentState.copy(yesterdayStatistics = statistics.data)
+                                else -> currentState
+                            }
                         }
                     }
                     _isDailyLoading.value = false
@@ -151,6 +181,7 @@ class StatisticsVM @Inject constructor(
             StatisticsPeriod.YESTERDAY -> {
                 loadDailyStatistics(_uiState.value.selectedPeriod)
             }
+
             StatisticsPeriod.WEEK -> {
                 loadWeeklyStatistics()
             }
