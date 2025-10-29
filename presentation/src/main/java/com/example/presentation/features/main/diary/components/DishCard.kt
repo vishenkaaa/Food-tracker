@@ -28,8 +28,14 @@ import com.example.presentation.extensions.displayName
 fun DishCard(
     dish: Dish,
 ) {
-    val finishDishAmount = if (dish.unit == UnitType.PIECE) dish.amount.toInt()
-    else dish.amount
+    val finishDishAmount: Any = if (dish.unit == UnitType.PIECE) {
+        if (dish.amount % 1f == 0f)
+            dish.amount.toInt()
+        else
+            dish.amount
+    } else {
+        dish.amount
+    }
 
     Card(
         shape = RoundedCornerShape(16.dp),

@@ -369,7 +369,7 @@ private fun UserInfoSection(
 
 @Composable
 private fun UserInfoSectionShimmer() {
-    Column {
+    Column{
         repeat(5) {
             ProfileItemShimmer()
         }
@@ -467,7 +467,8 @@ private fun ProfileItemShimmer() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(21.dp)
+            .padding(vertical = 8.dp)
+            .height(20.dp)
             .clip(RoundedCornerShape(4.dp))
             .shimmerEffect(),
         horizontalArrangement = Arrangement.SpaceBetween,

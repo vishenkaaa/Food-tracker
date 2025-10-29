@@ -1,7 +1,6 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI
 
 import android.content.Context
-import android.util.Log
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
@@ -60,8 +59,7 @@ class ResultAIVM @Inject constructor(
 
             uiState.value.dishes.forEach { dish ->
                 val result = addDishToMealUseCase(userId, date, mealType, dish)
-                result.onFailure { error ->
-                    Log.e("ResultAIVM", "Failed to save dish: ${dish.title}", error)
+                result.onFailure {
                     handleError(Exception(context.getString(R.string.saving_error)))
                     return Result.failure(Exception(context.getString(R.string.saving_error)))
                 }
