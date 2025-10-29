@@ -216,6 +216,14 @@ private fun ProfileUserCard(
 
             Spacer(Modifier.height(12.dp))
 
+            Text(
+                text = user.email!!,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(Modifier.height(8.dp))
+
             if (user.birthDate != null) {
                 val age = Period.between(user.birthDate, LocalDate.now()).years
                 Text(
@@ -255,6 +263,16 @@ private fun ProfileUserCardShimmer() {
             )
 
             Spacer(Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(180.dp)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmerEffect()
+            )
+
+            Spacer(Modifier.height(8.dp))
 
             Box(
                 modifier = Modifier
