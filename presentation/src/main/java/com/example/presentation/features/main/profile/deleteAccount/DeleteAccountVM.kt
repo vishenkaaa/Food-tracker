@@ -1,7 +1,11 @@
 package com.example.presentation.features.main.profile.deleteAccount
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.common.ActivityHolder
 import com.example.domain.manager.AuthStateManager
@@ -12,16 +16,16 @@ import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.common.utils.WidgetEventNotifier
 import com.example.presentation.extensions.getLocalizedMessage
+import com.example.presentation.widget.CaloriesSmallWidgetReceiver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import android.util.Base64
 import org.json.JSONObject
-import android.util.Log
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,6 +59,9 @@ class DeleteAccountVM @Inject constructor(
                     onSuccess = {
                         authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
                         _showToast.emit(Unit)
+
+                        WidgetEventNotifier.notifyAuthChanged(context)
+
                         handleLoading(false)
                     },
                     onFailure = { error ->

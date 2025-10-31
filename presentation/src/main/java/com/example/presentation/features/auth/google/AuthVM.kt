@@ -1,7 +1,9 @@
 package com.example.presentation.features.auth.google
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.example.common.ActivityHolder
 import com.example.domain.manager.AuthStateManager
@@ -10,7 +12,9 @@ import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.common.utils.WidgetEventNotifier
 import com.example.presentation.extensions.getLocalizedMessage
+import com.example.presentation.widget.CaloriesSmallWidgetReceiver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -76,6 +80,8 @@ class AuthVM @Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     authStateManager.setAuthState(true, user.targetCalories != 0)
+
+                    WidgetEventNotifier.notifyAuthChanged(context)
                 },
                 onFailure = { error ->
                     val localizedMessage = if (error is AuthError)

@@ -1,6 +1,8 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI.resultAI
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import com.example.domain.model.diary.Dish
 import com.example.domain.model.diary.MealType
 import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
@@ -9,7 +11,8 @@ import com.example.domain.usecase.meal.RemoveDishFromMealUseCase
 import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseOpenMealVM
-import com.example.presentation.common.utils.WidgetUpdater
+import com.example.presentation.common.utils.WidgetEventNotifier
+import com.example.presentation.widget.CaloriesSmallWidgetReceiver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.update
@@ -65,7 +68,8 @@ class ResultAIVM @Inject constructor(
                 }
             }
 
-            WidgetUpdater.updateWidget(context)
+            WidgetEventNotifier.notifyCaloriesUpdated(context)
+
             refreshDairy()
             Result.success(Unit)
         } catch (e: Exception) {

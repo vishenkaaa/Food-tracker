@@ -161,5 +161,6 @@
     <string name="what_s_your_name">Як Вас звати?</string>
     <string name="camera_permission_required_title">Потрібен дозвіл на камеру</string>
     <string name="camera_permission_denied_message">Щоб додати страву за фото, застосунку потрібен доступ до камери. Будь ласка, надайте дозвіл вручну в системних налаштуваннях.</string>
-    <string name="open_settings">Відкрити налаштування</string>
+    <string name="open_settings">Налаштування</string>
+    <string name="login_required">Увійдіть для відстеження калорій</string>
 </resources>

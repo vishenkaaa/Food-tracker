@@ -1,6 +1,8 @@
 package com.example.presentation.arch
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.example.domain.extension.calculateMealNutritionForDishes
 import com.example.domain.model.diary.Dish
@@ -9,8 +11,9 @@ import com.example.domain.usecase.auth.GetCurrentUserIdUseCase
 import com.example.domain.usecase.meal.RemoveDishFromMealUseCase
 import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
-import com.example.presentation.common.utils.WidgetUpdater
+import com.example.presentation.common.utils.WidgetEventNotifier
 import com.example.presentation.features.main.diary.openMeal.models.OpenMealUIState
+import com.example.presentation.widget.CaloriesSmallWidgetReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -89,7 +92,9 @@ open class BaseOpenMealVM (
                 ).fold(
                     onSuccess = {
                         updateLocalDishes(updatedDish, updatedMealType)
-                        WidgetUpdater.updateWidget(context)
+
+                        WidgetEventNotifier.notifyCaloriesUpdated(context)
+
                         refreshDairy()
                         refreshStatistics(uiState.value.date)
                         onEditDishDismiss()
@@ -130,7 +135,8 @@ open class BaseOpenMealVM (
     open fun onDeleteConfirmationResult(status: Boolean, refreshDairy: () -> Unit) {
         if (status) uiState.value.dishIdToDelete?.let { id ->
             onDeleteDish(id, refreshDairy)
-            WidgetUpdater.updateWidget(context)
+
+            WidgetEventNotifier.notifyCaloriesUpdated(context)
         }
         _uiState.update {
             it.copy(

@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -30,28 +31,31 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.example.presentation.R
 import com.example.presentation.common.utils.createProgressCircleBitmap
 import com.example.presentation.features.main.MainActivity
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object  CaloriesWidget : GlanceAppWidget() {
+object CaloriesWidget : GlanceAppWidget() {
 
     private const val CONSUMED_KEY = "consumed"
     private const val TARGET_KEY = "target"
     private const val IS_LOADING_KEY = "is_loading"
     private const val HAS_ERROR_KEY = "has_error"
+    private const val IS_LOGGED_OUT_KEY = "is_logged_out"
+
+    suspend fun refreshData(context: Context, glanceId: GlanceId) {
+        setLoadingState(context, glanceId, true)
+        loadFreshData(context, glanceId)
+    }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         setLoadingState(context, id, true)
-
         loadFreshData(context, id)
 
         provideContent {
@@ -91,50 +95,64 @@ object  CaloriesWidget : GlanceAppWidget() {
         update(context, glanceId)
     }
 
-    private fun loadFreshData(context: Context, glanceId: GlanceId) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val entryPoint = EntryPointAccessors.fromApplication(
-                    context,
-                    CaloriesWidgetEntryPoint::class.java
-                )
-
-                val getCaloriesUseCase = entryPoint.getCaloriesUseCase()
-                val userId = entryPoint.getCurrentUserIdUseCase()()
-
-                if (userId == null) {
-                    setErrorState(context, glanceId)
-                    return@launch
-                }
-
-                val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                val caloriesResult = getCaloriesUseCase(userId, currentDate)
-
-                caloriesResult.fold(
-                    onSuccess = { caloriesProgress ->
-                        androidx.glance.appwidget.state.updateAppWidgetState(
-                            context,
-                            androidx.glance.state.PreferencesGlanceStateDefinition,
-                            glanceId
-                        ) { prefs ->
-                            prefs.toMutablePreferences().apply {
-                                this[intPreferencesKey(CONSUMED_KEY)] = caloriesProgress.consumed
-                                this[intPreferencesKey(TARGET_KEY)] = caloriesProgress.target
-                                this[booleanPreferencesKey(IS_LOADING_KEY)] = false
-                                this[booleanPreferencesKey(HAS_ERROR_KEY)] = false
-                            }
-                        }
-                        update(context, glanceId)
-                    },
-                    onFailure = { error ->
-                        error.printStackTrace()
-                        setErrorState(context, glanceId)
-                    }
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                setErrorState(context, glanceId)
+    private suspend fun setLoggedOutState(context: Context, glanceId: GlanceId) {
+        androidx.glance.appwidget.state.updateAppWidgetState(
+            context,
+            androidx.glance.state.PreferencesGlanceStateDefinition,
+            glanceId
+        ) { prefs ->
+            prefs.toMutablePreferences().apply {
+                this[booleanPreferencesKey(IS_LOADING_KEY)] = false
+                this[booleanPreferencesKey(HAS_ERROR_KEY)] = false
+                this[booleanPreferencesKey(IS_LOGGED_OUT_KEY)] = true
             }
+        }
+        update(context, glanceId)
+    }
+
+    private suspend fun loadFreshData(context: Context, glanceId: GlanceId) {
+        try {
+            val entryPoint = EntryPointAccessors.fromApplication(
+                context,
+                CaloriesWidgetEntryPoint::class.java
+            )
+
+            val getCaloriesUseCase = entryPoint.getCaloriesUseCase()
+            val userId = entryPoint.getCurrentUserIdUseCase()()
+
+            if (userId == null) {
+                setLoggedOutState(context, glanceId)
+                return
+            }
+
+            val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            val caloriesResult = getCaloriesUseCase(userId, currentDate)
+
+            caloriesResult.fold(
+                onSuccess = { caloriesProgress ->
+                    androidx.glance.appwidget.state.updateAppWidgetState(
+                        context,
+                        androidx.glance.state.PreferencesGlanceStateDefinition,
+                        glanceId
+                    ) { prefs ->
+                        prefs.toMutablePreferences().apply {
+                            this[intPreferencesKey(CONSUMED_KEY)] = caloriesProgress.consumed
+                            this[intPreferencesKey(TARGET_KEY)] = caloriesProgress.target
+                            this[booleanPreferencesKey(IS_LOADING_KEY)] = false
+                            this[booleanPreferencesKey(HAS_ERROR_KEY)] = false
+                            this[booleanPreferencesKey(IS_LOGGED_OUT_KEY)] = false
+                        }
+                    }
+                    update(context, glanceId)
+                },
+                onFailure = { error ->
+                    error.printStackTrace()
+                    setErrorState(context, glanceId)
+                }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            setErrorState(context, glanceId)
         }
     }
 
@@ -143,8 +161,9 @@ object  CaloriesWidget : GlanceAppWidget() {
         val prefs = currentState<Preferences>()
         val isLoading = prefs[booleanPreferencesKey(IS_LOADING_KEY)] ?: false
         val hasError = prefs[booleanPreferencesKey(HAS_ERROR_KEY)] ?: false
+        val isLoggedOut = prefs[booleanPreferencesKey(IS_LOGGED_OUT_KEY)] ?: false
         val consumed = prefs[intPreferencesKey(CONSUMED_KEY)] ?: 0
-        val target = prefs[intPreferencesKey(TARGET_KEY)] ?: 2000
+        val target = prefs[intPreferencesKey(TARGET_KEY)] ?: 0
 
         val launchMainActivityAction = actionStartActivity(
             Intent(context, MainActivity::class.java).apply {
@@ -163,46 +182,108 @@ object  CaloriesWidget : GlanceAppWidget() {
             when {
                 isLoading -> LoadingContent(context)
                 hasError -> ErrorContent(context)
+                isLoggedOut -> LoggedOutContent(context)
                 else -> DataContent(context, consumed, target)
             }
         }
     }
 
     @Composable
-    private fun LoadingContent(context: Context) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                color = GlanceTheme.colors.primary,
-                modifier = GlanceModifier.size(48.dp)
-            )
-
-            Spacer(modifier = GlanceModifier.height(8.dp))
-
-            Text(
-                text = context.getString(R.string.loading),
-                style = TextStyle(
-                    color = GlanceTheme.colors.onSurfaceVariant,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
+    private fun LoggedOutContent(context: Context) {
+        Box(contentAlignment = Alignment.TopEnd){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = GlanceModifier.fillMaxSize().padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    provider = ImageProvider(R.drawable.ic_lock),
+                    contentDescription = "Logged out",
+                    modifier = GlanceModifier.size(32.dp),
+                    colorFilter = ColorFilter.tint(GlanceTheme.colors.primary)
                 )
+                Spacer(modifier = GlanceModifier.height(8.dp))
+                Text(
+                    text = context.getString(R.string.login_required),
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                    ),
+                )
+            }
+
+            Image(
+                provider = ImageProvider(R.drawable.app_logo),
+                contentDescription = "Logged out",
+                modifier = GlanceModifier.size(20.dp),
+            )
+        }
+    }
+
+    @Composable
+    private fun LoadingContent(context: Context) {
+        Box(contentAlignment = Alignment.TopEnd) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    color = GlanceTheme.colors.primary,
+                    modifier = GlanceModifier.size(48.dp)
+                )
+
+                Spacer(modifier = GlanceModifier.height(8.dp))
+
+                Text(
+                    text = context.getString(R.string.loading),
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp
+                    )
+                )
+            }
+            Image(
+                provider = ImageProvider(R.drawable.app_logo),
+                contentDescription = "Logged out",
+                modifier = GlanceModifier.size(20.dp),
             )
         }
     }
 
     @Composable
     private fun ErrorContent(context: Context) {
+        Box(contentAlignment = Alignment.TopEnd) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = context.getString(R.string.loading_error),
+                text = context.getString(R.string.oops),
                 style = TextStyle(
                     color = GlanceTheme.colors.error,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
                 )
+            )
+
+            Spacer(modifier = GlanceModifier.height(8.dp))
+
+            Text(
+                text = context.getString(R.string.loading_error),
+                style = TextStyle(
+                    color = GlanceTheme.colors.onSurfaceVariant,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            )
+        }
+            Image(
+                provider = ImageProvider(R.drawable.app_logo),
+                contentDescription = "Logged out",
+                modifier = GlanceModifier.size(20.dp),
             )
         }
     }
@@ -230,6 +311,7 @@ object  CaloriesWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = GlanceModifier
         ) {
+
             Image(
                 provider = ImageProvider(R.drawable.lightning),
                 contentDescription = "Energy",

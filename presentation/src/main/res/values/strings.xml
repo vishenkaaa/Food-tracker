@@ -125,15 +125,15 @@
     <string name="error_invalid_credential_type">Invalid credential type</string>
     <string name="error_user_cancelled_auth">Authentication cancelled by user</string>
     <string name="error_unknown_auth">An unknown error occurred during authentication</string>
-    <string name="error_google_token_null">Не вдалося отримати Google токен</string>
-    <string name="error_google_signin_cancelled">Вхід через Google скасовано</string>
+    <string name="error_google_token_null">Failed to retrieve Google token</string>
+    <string name="error_google_signin_cancelled">Google sign-in cancelled</string>
     <string name="confirmation_person">Identity confirmation</string>
     <string name="confirmation_message">For security reasons, you need to confirm your identity to delete your account. Please sign in again.</string>
     <string name="try_again">Try again</string>
     <string name="oops">Oops!</string>
     <string name="dish_not_recognized">Dish not recognized</string>
-    <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
-    <string name="loading_error">Помилка завантаження</string>
+    <string name="calories_widget_description">Track your calorie consumption progress</string>
+    <string name="loading_error">Loading\nerror</string>
     <string name="and">"\n and "</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_service">Terms of Use</string>
@@ -159,5 +159,6 @@
     <string name="what_s_your_name">What\'s your name</string>
     <string name="camera_permission_required_title">Camera Permission Required</string>
     <string name="camera_permission_denied_message">To add a dish by photo, the app needs access to the camera. Please grant permission manually in your system settings.</string>
-    <string name="open_settings">Open Settings</string>
+    <string name="open_settings">Settings</string>
+    <string name="login_required">Log in to track calories</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.presentation.features.main.profile
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.user.Gender
@@ -11,8 +12,10 @@ import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.GetCurrentUserUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.common.utils.WidgetEventNotifier
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
+import com.example.presentation.widget.CaloriesSmallWidgetReceiver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -205,6 +208,9 @@ class ProfileVM @Inject constructor(
         if(status)
             viewModelScope.launch {
                 signOutUseCase.invoke()
+
+                WidgetEventNotifier.notifyAuthChanged(context)
+
                 authStateManager.setAuthState(isLoggedIn = false, isFullyRegistered = false)
             }
     }
