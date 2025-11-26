@@ -8,8 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LargeCaloriesWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget = LargeCaloriesWidget
+class AdaptiveCaloriesWidgetReceiver : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget = AdaptiveCaloriesWidget
 
     companion object {
         const val ACTION_USER_AUTH_CHANGED = "com.stfalcon.foodsnap.ACTION_USER_AUTH_CHANGED"
@@ -38,10 +38,10 @@ class LargeCaloriesWidgetReceiver : GlanceAppWidgetReceiver() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val glanceIds = GlanceAppWidgetManager(context)
-                    .getGlanceIds(LargeCaloriesWidget::class.java)
+                    .getGlanceIds(AdaptiveCaloriesWidget::class.java)
 
                 glanceIds.forEach { glanceId ->
-                    LargeCaloriesWidget.refreshData(context, glanceId)
+                    AdaptiveCaloriesWidget.refreshData(context, glanceId)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

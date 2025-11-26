@@ -133,7 +133,6 @@
     <string name="oops">Oops!</string>
     <string name="dish_not_recognized">Dish not recognized</string>
     <string name="calories_widget_description">Track your calorie consumption progress</string>
-    <string name="large_calories_widget_description">Track your calorie and essential macronutrient</string>
     <string name="loading_error">Loading\nerror</string>
     <string name="and">"\n and "</string>
     <string name="privacy_policy">Privacy Policy</string>

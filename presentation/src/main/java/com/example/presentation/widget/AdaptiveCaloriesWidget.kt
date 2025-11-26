@@ -2,7 +2,6 @@ package com.example.presentation.widget
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,9 +15,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
@@ -49,7 +50,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object LargeCaloriesWidget : GlanceAppWidget() {
+object AdaptiveCaloriesWidget : GlanceAppWidget() {
 
     private const val CONSUMED_KEY = "consumed"
     private const val TARGET_KEY = "target"
@@ -68,6 +69,8 @@ object LargeCaloriesWidget : GlanceAppWidget() {
         setLoadingState(context, glanceId, true)
         loadFreshData(context, glanceId)
     }
+
+    override val sizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         setLoadingState(context, id, true)
@@ -206,6 +209,10 @@ object LargeCaloriesWidget : GlanceAppWidget() {
             }
         )
 
+        val size = LocalSize.current
+        val isLarge = size.width > size.height * 1.5f
+        val isMedium = !isLarge && size.width > size.height * 1.1f
+
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -218,24 +225,38 @@ object LargeCaloriesWidget : GlanceAppWidget() {
                 isLoading -> LoadingContent(context)
                 hasError -> ErrorContent(context)
                 isLoggedOut -> LoggedOutContent(context)
-                else -> DataContent(
-                    context = context,
-                    consumed = consumed,
-                    target = target,
-                    consumedCarb = consumedCarb,
-                    targetCarb = targetCarb,
-                    consumedProtein = consumedProtein,
-                    targetProtein = targetProtein,
-                    consumedFat = consumedFat,
-                    targetFat = targetFat
-                )
+                else -> {
+                    if (isLarge) {
+                        LargeWidgetContent(
+                            context = context,
+                            consumed = consumed,
+                            target = target,
+                            consumedCarb = consumedCarb,
+                            targetCarb = targetCarb,
+                            consumedProtein = consumedProtein,
+                            targetProtein = targetProtein,
+                            consumedFat = consumedFat,
+                            targetFat = targetFat
+                        )
+                    } else {
+                        SmallWidgetContent(
+                            context = context,
+                            consumed = consumed,
+                            target = target,
+                            isMedium = isMedium
+                        )
+                    }
+                }
             }
         }
     }
 
     @Composable
     private fun LoggedOutContent(context: Context) {
-        Box(contentAlignment = Alignment.TopEnd){
+        Box(
+            contentAlignment = Alignment.TopEnd,
+            modifier = GlanceModifier.fillMaxSize()
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = GlanceModifier.fillMaxSize().padding(12.dp),
@@ -269,9 +290,14 @@ object LargeCaloriesWidget : GlanceAppWidget() {
 
     @Composable
     private fun LoadingContent(context: Context) {
-        Box(contentAlignment = Alignment.TopEnd) {
+        Box(
+            contentAlignment = Alignment.TopEnd,
+            modifier = GlanceModifier.fillMaxSize()
+        ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = GlanceModifier.fillMaxSize()
             ) {
                 CircularProgressIndicator(
                     color = GlanceTheme.colors.primary,
@@ -334,7 +360,28 @@ object LargeCaloriesWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun DataContent(
+    private fun SmallWidgetContent(
+        context: Context,
+        consumed: Int,
+        target: Int,
+        isMedium: Boolean
+    ) {
+        val progress = if (target > 0) {
+            (consumed.toFloat() / target.toFloat()).coerceIn(0f, 1f)
+        } else 0f
+
+        CaloriesProgress(
+            context = context,
+            progress = progress,
+            target = target,
+            consumed = consumed,
+            isMedium = isMedium,
+            modifier = GlanceModifier.fillMaxSize()
+        )
+    }
+
+    @Composable
+    private fun LargeWidgetContent(
         context: Context,
         consumed: Int,
         target: Int,
@@ -349,13 +396,6 @@ object LargeCaloriesWidget : GlanceAppWidget() {
             (consumed.toFloat() / target.toFloat()).coerceIn(0f, 1f)
         } else 0f
 
-        val bitmap = createProgressCircleBitmap(
-            progress = progress,
-            sizePx = 300,
-            strokeWidthPx = 32f,
-            context = context
-        )
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = GlanceModifier.fillMaxSize()
@@ -364,7 +404,8 @@ object LargeCaloriesWidget : GlanceAppWidget() {
                 context = context,
                 consumed = consumed,
                 target = target,
-                bitmap = bitmap
+                progress = progress,
+                modifier = GlanceModifier.size(140.dp)
             )
 
             Spacer(modifier = GlanceModifier.width(16.dp))
@@ -463,11 +504,20 @@ fun CaloriesProgress(
     context: Context,
     consumed: Int,
     target: Int,
-    bitmap: Bitmap,
+    progress: Float,
+    isMedium: Boolean = false,
+    modifier: GlanceModifier
 ) {
+    val bitmap = createProgressCircleBitmap(
+        progress = progress,
+        sizePx = 300,
+        strokeWidthPx = 32f,
+        context = context
+    )
+
     Box(
         contentAlignment = Alignment.Center,
-        modifier = GlanceModifier.size(140.dp)
+        modifier = modifier
     ) {
         Image(
             provider = ImageProvider(bitmap),
@@ -481,7 +531,8 @@ fun CaloriesProgress(
             Image(
                 provider = ImageProvider(R.drawable.lightning),
                 contentDescription = "Energy",
-                modifier = GlanceModifier.size(20.dp)
+                modifier = GlanceModifier.size(
+                    if(isMedium) 24.dp else 20.dp)
             )
 
             Spacer(modifier = GlanceModifier.height(2.dp))
@@ -491,7 +542,7 @@ fun CaloriesProgress(
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp
+                    fontSize = if(isMedium) 20.sp else 16.sp
                 )
             )
 
@@ -502,7 +553,7 @@ fun CaloriesProgress(
                 style = TextStyle(
                     color = GlanceTheme.colors.onSurfaceVariant,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp
+                    fontSize = if(isMedium) 16.sp else 12.sp
                 )
             )
         }

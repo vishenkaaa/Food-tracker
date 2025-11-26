@@ -38,7 +38,7 @@
         </activity>
 
         <receiver
-            android:name="com.example.presentation.widget.SmallCaloriesWidgetReceiver"
+            android:name="com.example.presentation.widget.AdaptiveCaloriesWidgetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -49,20 +49,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/small_calories_widget"/>
-        </receiver>
-
-        <receiver
-            android:name="com.example.presentation.widget.LargeCaloriesWidgetReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.stfalcon.foodsnap.ACTION_USER_AUTH_CHANGED"/>
-                <action android:name="com.stfalcon.foodsnap.ACTION_CALORIES_UPDATED"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/large_calories_widget"/>
+                android:resource="@xml/calories_widget"/>
         </receiver>
     </application>
 </manifest>
