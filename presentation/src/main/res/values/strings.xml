@@ -158,7 +158,9 @@
     <string name="validation_min_name">The name must contain a minimum of %1$d characters</string>
     <string name="what_s_your_name">What\'s your name</string>
     <string name="camera_permission_required_title">Camera Permission Required</string>
+    <string name="storage_permission_required_title">Gallery Access Required</string>
     <string name="camera_permission_denied_message">To add a dish by photo, the app needs access to the camera. Please grant permission manually in your system settings.</string>
+    <string name="storage_permission_denied_message">To select a photo for analysis, the app needs access to your media library. Please grant permission manually in your system settings.</string>
     <string name="open_settings">Settings</string>
     <string name="login_required">Log in to track calories</string>
 </resources>

@@ -160,7 +160,9 @@
     <string name="validation_min_name">Ім\'я має містити мінімум %1$d символи</string>
     <string name="what_s_your_name">Як Вас звати?</string>
     <string name="camera_permission_required_title">Потрібен дозвіл на камеру</string>
+    <string name="storage_permission_required_title">Потрібен дозвіл до галереї</string>
     <string name="camera_permission_denied_message">Щоб додати страву за фото, застосунку потрібен доступ до камери. Будь ласка, надайте дозвіл вручну в системних налаштуваннях.</string>
+    <string name="storage_permission_denied_message">Щоб вибрати фотографію для аналізу, застосунку потрібен доступ до вашої медіатеки. Будь ласка, надайте дозвіл вручну в системних налаштуваннях.</string>
     <string name="open_settings">Налаштування</string>
     <string name="login_required">Увійдіть для відстеження калорій</string>
 </resources>
