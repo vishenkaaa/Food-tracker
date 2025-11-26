@@ -19,8 +19,7 @@ data class WeeklyNutritionStatistics(
     val averageCarbs: Float = 0f,
     val averageProtein: Float = 0f,
     val averageFat: Float = 0f,
-    val maxCalories: Int = 0,
-    val maxCarbs: Float = 0f,
-    val maxProtein: Float = 0f,
-    val maxFat: Float = 0f
+    val targetCarbs: Float = 0f,
+    val targetProtein: Float = 0f,
+    val targetFat: Float = 0f
 )

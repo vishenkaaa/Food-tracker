@@ -11,7 +11,7 @@ import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.GetCurrentUserUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase
 import com.example.presentation.arch.BaseViewModel
-import com.example.presentation.common.utils.WidgetEventNotifier
+import com.example.presentation.widget.WidgetEventNotifier
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

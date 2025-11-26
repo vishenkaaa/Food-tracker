@@ -39,9 +39,9 @@
     <string name="your_birthdate">Your birth date</string>
     <string name="recommendations_ready">Your recommendations are ready!</string>
     <string name="personalized_recommendations_description">Personalized recommendations calculated based on your data</string>
-    <string name="proteins">Proteins</string>
-    <string name="carbs">Carbs</string>
-    <string name="fats">Fats</string>
+    <string name="proteins">Protein</string>
+    <string name="carbs">Carb</string>
+    <string name="fats">Fat</string>
     <string name="calories_format">%1$d Kcal</string>
     <string name="daily_calories_recommendation">Recommended daily calories\nto achieve your goals</string>
     <string name="bmi_format">Body Mass Index: %.2f</string>
@@ -85,8 +85,8 @@
     <string name="lunch">Lunch</string>
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
-    <string name="protein">Proteins</string>
-    <string name="fat">Fats</string>
+    <string name="protein">Protein</string>
+    <string name="fat">Fat</string>
     <string name="kcal">kcal</string>
     <string name="kcal_value">%1$d kcal</string>
     <string name="error_storage_permission_required">To open gallery, enable access to images in settings</string>
@@ -133,6 +133,7 @@
     <string name="oops">Oops!</string>
     <string name="dish_not_recognized">Dish not recognized</string>
     <string name="calories_widget_description">Track your calorie consumption progress</string>
+    <string name="large_calories_widget_description">Track your calorie and essential macronutrient</string>
     <string name="loading_error">Loading\nerror</string>
     <string name="and">"\n and "</string>
     <string name="privacy_policy">Privacy Policy</string>

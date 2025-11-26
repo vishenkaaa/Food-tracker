@@ -10,7 +10,7 @@ import com.example.domain.usecase.auth.GetGoogleIdTokenUseCase
 import com.example.domain.usecase.auth.SignInWithGoogleUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
-import com.example.presentation.common.utils.WidgetEventNotifier
+import com.example.presentation.widget.WidgetEventNotifier
 import com.example.presentation.extensions.getLocalizedMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

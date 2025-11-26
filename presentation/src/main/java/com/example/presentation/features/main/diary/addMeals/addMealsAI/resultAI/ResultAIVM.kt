@@ -9,7 +9,7 @@ import com.example.domain.usecase.meal.RemoveDishFromMealUseCase
 import com.example.domain.usecase.meal.UpdateDishInMealUseCase
 import com.example.presentation.R
 import com.example.presentation.arch.BaseOpenMealVM
-import com.example.presentation.common.utils.WidgetEventNotifier
+import com.example.presentation.widget.WidgetEventNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.update

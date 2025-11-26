@@ -90,7 +90,7 @@ fun MealStatisticsItem(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                LinearCaloriesProgress(mealStatistics)
+                LinearCaloriesProgress(mealStatistics.percentage)
             }
 
             Column(horizontalAlignment = Alignment.End) {
@@ -116,7 +116,7 @@ fun MealStatisticsItem(
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-private fun LinearCaloriesProgress(mealStatistics: MealStatistics) {
+private fun LinearCaloriesProgress(percentage: Int) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val boxSize = screenWidth * 0.7f
 
@@ -127,7 +127,7 @@ private fun LinearCaloriesProgress(mealStatistics: MealStatistics) {
     }
 
     val animatedProgress by animateFloatAsState(
-        targetValue = if(trigger) mealStatistics.percentage / 100.toFloat() else 0f,
+        targetValue = if(trigger) percentage / 100.toFloat() else 0f,
         animationSpec = tween(
             durationMillis = 800,
             easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)

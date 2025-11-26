@@ -135,6 +135,7 @@
     <string name="oops">Упс!</string>
     <string name="dish_not_recognized">Не вдалось розвізнати страву</string>
     <string name="calories_widget_description">Слідкуйте за прогресом споживання калорій</string>
+    <string name="large_calories_widget_description">Слідкуйте за прогресом калорій та основними макронутрієнтами</string>
     <string name="loading_error">Помилка завантаження</string>
     <string name="and">"\n та "</string>
     <string name="privacy_policy">Політика конфіденційності</string>

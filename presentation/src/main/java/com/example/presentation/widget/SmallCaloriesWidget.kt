@@ -41,7 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object CaloriesWidget : GlanceAppWidget() {
+object SmallCaloriesWidget : GlanceAppWidget() {
 
     private const val CONSUMED_KEY = "consumed"
     private const val TARGET_KEY = "target"
@@ -311,7 +311,6 @@ object CaloriesWidget : GlanceAppWidget() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = GlanceModifier
         ) {
-
             Image(
                 provider = ImageProvider(R.drawable.lightning),
                 contentDescription = "Energy",

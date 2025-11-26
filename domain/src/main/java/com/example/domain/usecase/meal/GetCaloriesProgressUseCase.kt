@@ -4,6 +4,7 @@ import com.example.domain.model.diary.CaloriesProgress
 import com.example.domain.repository.MealRepository
 import com.example.domain.repository.UserRepository
 import javax.inject.Inject
+
 class GetCaloriesProgressUseCase @Inject constructor(
     private val mealRepository: MealRepository,
     private val userRepository: UserRepository
