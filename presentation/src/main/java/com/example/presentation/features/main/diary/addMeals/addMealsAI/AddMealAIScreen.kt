@@ -1,7 +1,9 @@
 package com.example.presentation.features.main.diary.addMeals.addMealsAI
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.PreviewView
@@ -39,6 +41,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -50,14 +53,16 @@ import com.example.domain.model.diary.MealType
 import com.example.presentation.R
 import com.example.presentation.arch.BaseUiState
 import com.example.presentation.camera.CameraPermissionManager
+import com.example.presentation.common.ui.components.ConfirmationDialog
 import com.example.presentation.common.ui.components.HandleError
 import com.example.presentation.common.ui.components.LeftAlignedHeader
 import com.example.presentation.common.ui.components.LoadingBackground
 import com.example.presentation.extensions.displayName
 import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.AddMealAIUiState
+import com.example.presentation.features.main.diary.addMeals.addMealsAI.models.StoragePermissionState
 import com.example.presentation.features.main.diary.extensions.findActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -78,24 +83,24 @@ fun AddMealAIRoute(
         if(uri!=null) viewModel.onPhotoSelectedFromGallery(uri.toString())
     }
 
-    val galleryPermissionLauncher = rememberPermissionState(
-        permission = CameraPermissionManager.REQUIRED_STORAGE_PERMISSION
-    ) { granted ->
-        val permanentlyDenied = !granted && !ActivityCompat.shouldShowRequestPermissionRationale(
-            context.findActivity(),
-            CameraPermissionManager.REQUIRED_STORAGE_PERMISSION
-        )
+    val galleryPermissionLauncher = rememberMultiplePermissionsState(
+        permissions = CameraPermissionManager.REQUIRED_STORAGE_PERMISSIONS.toList()
+    ) { permissionsStatus ->
+        val contextActivity = context.findActivity()
+
+        val granted = permissionsStatus.values.any { it }
+
+        val permanentlyDenied = permissionsStatus.keys.any { permission ->
+            permissionsStatus[permission] == false &&
+                    !ActivityCompat.shouldShowRequestPermissionRationale(contextActivity, permission)
+        }
 
         viewModel.onStoragePermissionResult(granted, permanentlyDenied)
-
-        if (granted) {
-            galleryLauncher.launch("image/*")
-        }
     }
 
     LaunchedEffect(storagePermissionState.shouldRequest) {
         if (storagePermissionState.shouldRequest) {
-            galleryPermissionLauncher.launchPermissionRequest()
+            galleryPermissionLauncher.launchMultiplePermissionRequest()
             viewModel.resetStoragePermissionRequest()
         }
     }
@@ -118,13 +123,15 @@ fun AddMealAIRoute(
         mealType = mealType,
         uiState = uiState,
         baseUiState = baseUiState,
+        storagePermissionState = storagePermissionState,
         onInitializeCamera = viewModel::initializeCamera,
         onCapturePhoto = viewModel::capturePhoto,
         onToggleFlash = viewModel::toggleFlash,
         onNavigateBack = { onBackPressed() },
         onErrorConsume = viewModel::clearErrors,
         onGalleryClick = { viewModel.handleStorageAccess() },
-        onConnectionRetry = { viewModel.retryLastAction() }
+        onConnectionRetry = { viewModel.retryLastAction() },
+        hideStorePermissionDeniedDialog = { viewModel.hideCameraPermissionDeniedDialog() }
     )
 }
 
@@ -133,17 +140,28 @@ fun AddMealAIScreen(
     mealType: MealType,
     uiState: AddMealAIUiState,
     baseUiState: BaseUiState,
+    storagePermissionState: StoragePermissionState,
     onInitializeCamera: (LifecycleOwner, PreviewView) -> Unit,
     onCapturePhoto: () -> Unit,
     onToggleFlash: () -> Unit,
     onNavigateBack: () -> Unit,
     onErrorConsume: () -> Unit,
     onConnectionRetry: () -> Unit,
-    onGalleryClick: () -> Unit
+    onGalleryClick: () -> Unit,
+    hideStorePermissionDeniedDialog: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val content = LocalContext.current
-    val previewView = remember { PreviewView(content) }
+    val context = LocalContext.current
+    val previewView = remember { PreviewView(context) }
+
+    val openAppSettings = {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context.packageName, null)
+        )
+        context.startActivity(intent)
+        hideStorePermissionDeniedDialog()
+    }
 
     LaunchedEffect(Unit) {
         onInitializeCamera(lifecycleOwner, previewView)
@@ -181,6 +199,17 @@ fun AddMealAIScreen(
                 )
             }
         }
+
+        ConfirmationDialog(
+            visible = storagePermissionState.showPermanentlyDeniedDialog,
+            title = stringResource(R.string.storage_permission_required_title),
+            message = stringResource(R.string.storage_permission_denied_message),
+            confirmButtonText = stringResource(R.string.open_settings),
+            confirmButtonColor = MaterialTheme.colorScheme.primary,
+            onDismiss = { hideStorePermissionDeniedDialog() },
+            onConfirm = openAppSettings
+        )
+
         LoadingBackground(baseUiState.isLoading)
         HandleError(
             baseUiState = baseUiState,

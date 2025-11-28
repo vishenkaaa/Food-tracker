@@ -164,8 +164,8 @@ fun WeeklyNutritionAverage(
                 fillPercentage = caloriePercentageTarget
             )
 
-            val carbPercentage = if (trigger && statistics.maxCarbs > 0) {
-                statistics.averageCarbs / statistics.maxCarbs
+            val carbPercentage = if (trigger && statistics.targetCarbs > 0) {
+                statistics.averageCarbs / statistics.targetCarbs
             } else 0f
 
             NutritionPill(
@@ -174,8 +174,8 @@ fun WeeklyNutritionAverage(
                 fillPercentage = carbPercentage
             )
 
-            val fatPercentage = if (trigger && statistics.maxFat > 0) {
-                statistics.averageFat / statistics.maxFat
+            val fatPercentage = if (trigger && statistics.targetFat > 0) {
+                statistics.averageFat / statistics.targetFat
             } else 0f
 
             NutritionPill(
@@ -184,8 +184,8 @@ fun WeeklyNutritionAverage(
                 fillPercentage = fatPercentage
             )
 
-            val proteinPercentage = if (trigger && statistics.maxProtein > 0) {
-                statistics.averageProtein/ statistics.maxProtein
+            val proteinPercentage = if (trigger && statistics.targetProtein > 0) {
+                statistics.averageProtein/ statistics.targetProtein
             } else 0f
 
             NutritionPill(
@@ -645,10 +645,9 @@ fun WeeklyStatisticsTabPreview() {
         averageCarbs = 190f,
         averageProtein = 79f,
         averageFat = 60f,
-        maxCalories = 2200,
-        maxCarbs = 230f,
-        maxProtein = 95f,
-        maxFat = 80f
+        targetCarbs = 230f,
+        targetProtein = 95f,
+        targetFat = 80f
     )
 
     FoodTrackTheme {

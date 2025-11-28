@@ -89,11 +89,14 @@ class GetNutritionStatisticsUseCase @Inject constructor(
             val averageCarbs = dayStatistics.map { it.carbs }.average().toFloat().roundTo1Decimal()
             val averageProtein = dayStatistics.map { it.protein }.average().toFloat().roundTo1Decimal()
             val averageFat = dayStatistics.map { it.fat }.average().toFloat().roundTo1Decimal()
+            
+            val user = userRepository.getUser(userId).getOrNull()
 
-            val maxCalories = dayStatistics.maxOfOrNull { it.calories } ?: 0
-            val maxCarbs = dayStatistics.maxOfOrNull { it.carbs } ?: 0f
-            val maxProtein = dayStatistics.maxOfOrNull { it.protein } ?: 0f
-            val maxFat = dayStatistics.maxOfOrNull { it.fat } ?: 0f
+            val macroNutrients = user?.calculateMacroNutrients()
+
+            val targetCarbs = macroNutrients?.carbs ?: 0f
+            val targetProtein = macroNutrients?.proteins ?: 0f
+            val targetFat = macroNutrients?.fats ?: 0f
 
             val weeklyStatistics = WeeklyNutritionStatistics(
                 targetCalories = targetCalories,
@@ -103,10 +106,9 @@ class GetNutritionStatisticsUseCase @Inject constructor(
                 averageCarbs = averageCarbs,
                 averageProtein = averageProtein,
                 averageFat = averageFat,
-                maxCalories = maxCalories,
-                maxCarbs = maxCarbs,
-                maxProtein = maxProtein,
-                maxFat = maxFat
+                targetCarbs = targetCarbs,
+                targetProtein = targetProtein,
+                targetFat = targetFat
             )
 
             Result.success(NutritionStatistics.Weekly(weeklyStatistics))

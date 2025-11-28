@@ -49,9 +49,21 @@ class AddMealAIVM @Inject constructor(
                 }
             }
             currentState.permanentlyDenied -> {
-                handleError(Exception(context.getString(R.string.error_storage_permission_required)))
+                showCameraPermissionDeniedDialog()
             }
             else -> requestStoragePermissions()
+        }
+    }
+
+    private fun showCameraPermissionDeniedDialog() {
+        _storagePermissionState.update { it.copy(showPermanentlyDeniedDialog = true) }
+    }
+
+    fun hideCameraPermissionDeniedDialog() {
+        _storagePermissionState.update {
+            it.copy(
+                showPermanentlyDeniedDialog = false,
+            )
         }
     }
 
@@ -105,6 +117,10 @@ class AddMealAIVM @Inject constructor(
                 hasPermission = granted,
                 permanentlyDenied = permanentlyDenied
             )
+        }
+
+        if (granted) {
+            _storagePermissionState.update { it.copy(shouldOpenGallery = true) }
         }
     }
 

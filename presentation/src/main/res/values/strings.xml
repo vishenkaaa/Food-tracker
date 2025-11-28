@@ -39,9 +39,9 @@
     <string name="your_birthdate">Your birth date</string>
     <string name="recommendations_ready">Your recommendations are ready!</string>
     <string name="personalized_recommendations_description">Personalized recommendations calculated based on your data</string>
-    <string name="proteins">Proteins</string>
-    <string name="carbs">Carbs</string>
-    <string name="fats">Fats</string>
+    <string name="proteins">Protein</string>
+    <string name="carbs">Carb</string>
+    <string name="fats">Fat</string>
     <string name="calories_format">%1$d Kcal</string>
     <string name="daily_calories_recommendation">Recommended daily calories\nto achieve your goals</string>
     <string name="bmi_format">Body Mass Index: %.2f</string>
@@ -85,8 +85,8 @@
     <string name="lunch">Lunch</string>
     <string name="dinner">Dinner</string>
     <string name="snack">Snack</string>
-    <string name="protein">Proteins</string>
-    <string name="fat">Fats</string>
+    <string name="protein">Protein</string>
+    <string name="fat">Fat</string>
     <string name="kcal">kcal</string>
     <string name="kcal_value">%1$d kcal</string>
     <string name="error_storage_permission_required">To open gallery, enable access to images in settings</string>
@@ -158,7 +158,9 @@
     <string name="validation_min_name">The name must contain a minimum of %1$d characters</string>
     <string name="what_s_your_name">What\'s your name</string>
     <string name="camera_permission_required_title">Camera Permission Required</string>
+    <string name="storage_permission_required_title">Gallery Access Required</string>
     <string name="camera_permission_denied_message">To add a dish by photo, the app needs access to the camera. Please grant permission manually in your system settings.</string>
+    <string name="storage_permission_denied_message">To select a photo for analysis, the app needs access to your media library. Please grant permission manually in your system settings.</string>
     <string name="open_settings">Settings</string>
     <string name="login_required">Log in to track calories</string>
 </resources>

@@ -113,7 +113,6 @@ fun OnboardingScreen(
     onErrorConsume: () -> Unit,
     onFinish: () -> Unit
 ) {
-
     val focusManager = LocalFocusManager.current
 
     BackHandler {
