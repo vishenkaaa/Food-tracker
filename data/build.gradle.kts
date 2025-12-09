@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.googleid)
     implementation(libs.firebase.firestore.ktx)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
@@ -82,5 +81,10 @@ dependencies {
 
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.auth.v2140)
+    implementation(libs.play.services.auth)
+
+    testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.14.6")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.21")
 }

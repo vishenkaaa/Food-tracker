@@ -8,19 +8,19 @@ import java.time.LocalDate
 import kotlin.math.abs
 
 object UserModelMapper {
-    private const val GOAL_KEY = "goal"
-    private const val TARGET_CALORIES_KEY = "targetCalories"
-    private const val WEIGHT_CHANGE_KEY = "weightChange" // старий ключ
-    private const val TARGET_WEIGHT_KEY = "targetWeight" // новий ключ
-    private const val CURRENT_WEIGHT_KEY = "currentWeight"
-    private const val GENDER_KEY = "gender"
-    private const val USER_ACTIVITY_LEVEL_KEY = "userActivityLevel"
-    private const val HEIGHT_KEY = "height"
-    private const val BIRTH_DATE_KEY = "birthDate"
-    private const val NAME_KEY = "name"
-    private const val EMAIL_KEY = "email"
-    private const val PHOTO_URL_KEY = "photoUrl"
-    private const val IS_NEW_KEY = "isNew"
+     const val GOAL_KEY = "goal"
+     const val TARGET_CALORIES_KEY = "targetCalories"
+     const val WEIGHT_CHANGE_KEY = "weightChange" // старий ключ
+     const val TARGET_WEIGHT_KEY = "targetWeight" // новий ключ
+     const val CURRENT_WEIGHT_KEY = "currentWeight"
+     const val GENDER_KEY = "gender"
+     const val USER_ACTIVITY_LEVEL_KEY = "userActivityLevel"
+     const val HEIGHT_KEY = "height"
+     const val BIRTH_DATE_KEY = "birthDate"
+     const val NAME_KEY = "name"
+     const val EMAIL_KEY = "email"
+     const val PHOTO_URL_KEY = "photoUrl"
+     const val IS_NEW_KEY = "isNew"
 
     // User info в Map для Firebase
     fun userInfoToMap(user: User): Map<String, Any?> {

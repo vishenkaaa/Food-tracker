@@ -2,7 +2,6 @@ package com.example.data.repository
 
 import com.example.data.mapper.DishModelMapper
 import com.example.data.util.safeCall
-import com.example.domain.extension.calculateDayNutrition
 import com.example.domain.logger.ErrorLogger
 import com.example.domain.model.diary.DailyMeals
 import com.example.domain.model.diary.Dish
