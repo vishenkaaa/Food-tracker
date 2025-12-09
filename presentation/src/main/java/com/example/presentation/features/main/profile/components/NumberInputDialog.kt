@@ -33,13 +33,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.R
 import com.example.presentation.common.ui.values.FoodTrackTheme
-import java.time.LocalDate
+import com.example.presentation.features.auth.onboarding.models.InputValidation
 
 @Composable
 fun NumberInputDialog(
     title: String,
     description: String? = null,
     isIntegerInput: Boolean = false,
+    validation: InputValidation = InputValidation(),
     value: String,
     onValueChanged: (String) -> Unit,
     onDismiss: () -> Unit,
@@ -84,53 +85,65 @@ fun NumberInputDialog(
             }
         },
         text = {
-            BasicTextField(
-                value = input,
-                onValueChange = { newValue ->
-                    val filteredText = if (isIntegerInput) newValue.text.filter { it.isDigit() }
-                    else {
-                        val text = newValue.text
-                        if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
-                            text
-                        else input.text
-                    }
-
-                    input = newValue.copy(text = filteredText)
-                    onValueChanged(filteredText)
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = if (isIntegerInput) KeyboardType.Number else KeyboardType.Decimal,
-                    imeAction = ImeAction.Done
-                ),
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onGloballyPositioned {
-                        if (!hasFocusBeenRequested) {
-                            focusRequester.requestFocus()
-                            hasFocusBeenRequested = true
+            Column {
+                BasicTextField(
+                    value = input,
+                    onValueChange = { newValue ->
+                        val filteredText = if (isIntegerInput) newValue.text.filter { it.isDigit() }
+                        else {
+                            val text = newValue.text
+                            if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
+                                text
+                            else input.text
                         }
+
+                        onValueChanged(filteredText)
                     },
-            ) { innerTextField ->
-                TextFieldDefaults.DecorationBox(
-                    value = input.text,
-                    innerTextField = innerTextField,
-                    enabled = true,
+
                     singleLine = true,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = remember { MutableInteractionSource() },
-                    contentPadding = PaddingValues(top = 4.dp, bottom = 0.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = if (isIntegerInput) KeyboardType.Number else KeyboardType.Decimal,
+                        imeAction = ImeAction.Done
+                    ),
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            if (!hasFocusBeenRequested) {
+                                focusRequester.requestFocus()
+                                hasFocusBeenRequested = true
+                            }
+                        },
+                ) { innerTextField ->
+                    TextFieldDefaults.DecorationBox(
+                        value = input.text,
+                        innerTextField = innerTextField,
+                        enabled = true,
+                        singleLine = true,
+                        visualTransformation = VisualTransformation.None,
+                        interactionSource = remember { MutableInteractionSource() },
+                        contentPadding = PaddingValues(top = 4.dp, bottom = 0.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                            errorIndicatorColor = MaterialTheme.colorScheme.error
+                        )
                     )
-                )
+                }
+
+                if (!validation.isValid && validation.errorMessage != null) {
+                    Text(
+                        text = validation.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         },
         confirmButton = {

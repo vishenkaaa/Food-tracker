@@ -81,6 +81,7 @@ fun ProfileEditDialogs(
             NumberInputDialog(
                 title = title,
                 value = displayValue,
+                validation = uiState.validation,
                 onValueChanged = onWeightChangeUpdate,
                 onDismiss = onDismiss,
                 onSave = onSave
@@ -91,6 +92,7 @@ fun ProfileEditDialogs(
             NumberInputDialog(
                 title = stringResource(R.string.current_weight),
                 value = uiState.tempCurrentWeight,
+                validation = uiState.validation,
                 onValueChanged = onCurrentWeightUpdate,
                 onDismiss = onDismiss,
                 onSave = onSave,
@@ -101,6 +103,7 @@ fun ProfileEditDialogs(
             NumberInputDialog(
                 title = stringResource(R.string.height),
                 value = uiState.tempHeight,
+                validation = uiState.validation,
                 onValueChanged = onHeightUpdate,
                 onDismiss = onDismiss,
                 onSave = onSave,

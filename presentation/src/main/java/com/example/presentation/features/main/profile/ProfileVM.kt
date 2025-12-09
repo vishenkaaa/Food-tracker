@@ -10,7 +10,15 @@ import com.example.domain.model.user.isGoalAchieved
 import com.example.domain.usecase.auth.SignOutUseCase
 import com.example.domain.usecase.user.GetCurrentUserUseCase
 import com.example.domain.usecase.user.UpdateUserInfoUseCase
+import com.example.presentation.R
 import com.example.presentation.arch.BaseViewModel
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MAX_HEIGHT
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MAX_WEIGHT
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MAX_WEIGHT_CHANGE
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MIN_HEIGHT
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MIN_WEIGHT
+import com.example.presentation.features.auth.onboarding.OnboardingVM.Companion.MIN_WEIGHT_CHANGE
+import com.example.presentation.features.auth.onboarding.models.InputValidation
 import com.example.presentation.widget.WidgetEventNotifier
 import com.example.presentation.features.main.profile.models.ProfileEditDialogType
 import com.example.presentation.features.main.profile.models.ProfileUiState
@@ -68,14 +76,14 @@ class ProfileVM @Inject constructor(
         _uiState.update { state ->
             state.copy(
                 editDialogType = dialogType,
-                tempGender = if (dialogType == ProfileEditDialogType.GENDER) currentUser?.gender else null,
-                tempGoal = if (dialogType == ProfileEditDialogType.GOAL) currentUser?.goal else null,
-                tempActivityLevel = if (dialogType == ProfileEditDialogType.ACTIVITY_LEVEL) currentUser?.userActivityLevel else null,
+                tempGender = currentUser?.gender,
+                tempGoal = currentUser?.goal,
+                tempActivityLevel = currentUser?.userActivityLevel,
                 tempWeightChange = tempWeightChange,
-                tempCurrentWeight = if (dialogType == ProfileEditDialogType.CURRENT_WEIGHT) (currentUser?.currentWeight).toString() else "",
-                tempHeight = if (dialogType == ProfileEditDialogType.HEIGHT) (currentUser?.height).toString() else "",
-                tempBirthDate = if (dialogType == ProfileEditDialogType.DATE_OF_BIRTH) currentUser?.birthDate else null,
-                tempCaloriesGoal = if (dialogType == ProfileEditDialogType.CALORIES_GOAL) (currentUser?.targetCalories).toString() else ""
+                tempCurrentWeight = currentUser?.currentWeight?.toString() ?: "",
+                tempHeight = currentUser?.height?.toString() ?: "",
+                tempBirthDate = currentUser?.birthDate,
+                tempCaloriesGoal = currentUser?.targetCalories?.toString() ?: ""
             )
         }
     }
@@ -88,8 +96,6 @@ class ProfileVM @Inject constructor(
         val oldUserGoal = currentUser.goal
 
         viewModelScope.launch {
-            handleLoading(true)
-
             val updatedUser = when (currentDialogType) {
                 ProfileEditDialogType.GENDER -> currentUser.copy(gender = state.tempGender!!)
                 ProfileEditDialogType.GOAL -> {
@@ -108,13 +114,16 @@ class ProfileVM @Inject constructor(
                 }
                 ProfileEditDialogType.ACTIVITY_LEVEL -> currentUser.copy(userActivityLevel = state.tempActivityLevel!!)
                 ProfileEditDialogType.WEIGHT_CHANGE -> {
-                    val weightChangeAmount = state.tempWeightChange.toFloatOrNull()
+                    val weightChange = state.tempWeightChange.toFloatOrNull()
                     val currentWeight = currentUser.currentWeight
+                    val validation = validateWeightChange(weightChange)
 
-                    if (weightChangeAmount != null && currentWeight != null) {
+                    _uiState.update { it.copy(validation = validation) }
+
+                    if (validation.isValid && currentWeight != null) {
                         val calculatedTargetWeight = when (currentUser.goal) {
-                            Goal.LOSE -> currentWeight - weightChangeAmount
-                            Goal.GAIN -> currentWeight + weightChangeAmount
+                            Goal.LOSE -> currentWeight - weightChange!!
+                            Goal.GAIN -> currentWeight + weightChange!!
                             Goal.MAINTAIN -> currentWeight
                         }
                         currentUser.copy(targetWeight = calculatedTargetWeight)
@@ -123,12 +132,22 @@ class ProfileVM @Inject constructor(
                     }
                 }
                 ProfileEditDialogType.CURRENT_WEIGHT -> {
-                    val weight = state.tempCurrentWeight.toFloatOrNull() ?: 0f
-                    currentUser.copy(currentWeight = weight)
+                    val weight = state.tempCurrentWeight.toFloatOrNull()
+
+                    val validation = validateWeight(weight)
+                    _uiState.update { it.copy(validation = validation) }
+
+                    if (validation.isValid) currentUser.copy(currentWeight = weight)
+                    else currentUser
                 }
                 ProfileEditDialogType.HEIGHT -> {
-                    val height = state.tempHeight.toIntOrNull() ?: 0
-                    currentUser.copy(height = height)
+                    val height = state.tempHeight.toIntOrNull()
+
+                    val validation = validateHeight(height)
+                    _uiState.update { it.copy(validation = validation) }
+
+                    if (validation.isValid) currentUser.copy(height = height)
+                    else currentUser
                 }
                 ProfileEditDialogType.DATE_OF_BIRTH -> currentUser.copy(birthDate = state.tempBirthDate)
                 ProfileEditDialogType.CALORIES_GOAL -> {
@@ -138,31 +157,96 @@ class ProfileVM @Inject constructor(
                 null -> currentUser
             }
 
-            updateUserInfoUseCase(updatedUser)
-                .onSuccess {
-                    _uiState.update { it.copy(user = updatedUser, editDialogType = null) }
-                    handleLoading(false)
+            if(_uiState.value.validation.isValid) {
+                handleLoading(true)
+                updateUserInfoUseCase(updatedUser)
+                    .onSuccess {
+                        _uiState.update { it.copy(user = updatedUser, editDialogType = null) }
 
-                    val newGoal = state.tempGoal
+                        val newGoal = state.tempGoal
 
-                    if (currentDialogType == ProfileEditDialogType.GOAL &&
-                        (newGoal == Goal.LOSE || newGoal == Goal.GAIN) &&
-                        (oldUserGoal != newGoal)
-                    )
-                        _uiState.update { it.copy(editDialogType = ProfileEditDialogType.WEIGHT_CHANGE) }
+                        if (currentDialogType == ProfileEditDialogType.GOAL &&
+                            (newGoal == Goal.LOSE || newGoal == Goal.GAIN) &&
+                            (oldUserGoal != newGoal)
+                        ) {
+                            _uiState.update { it.copy(editDialogType = ProfileEditDialogType.WEIGHT_CHANGE) }
+                        }
 
-                    if(updatedUser.isGoalAchieved() && oldUserGoal == newGoal)
-                        _uiState.update { it.copy(showInfoDialog = true) }
-                }
-                .onFailure { error ->
-                    handleError(error, context) { saveDialogChanges() }
-                    onDialogDismiss()
-                }
+                        if (updatedUser.isGoalAchieved() && oldUserGoal == newGoal)
+                            _uiState.update { it.copy(showInfoDialog = true) }
+
+                        handleLoading(false)
+                    }
+                    .onFailure { error ->
+                        handleError(error, context) { saveDialogChanges() }
+                        onDialogDismiss()
+                    }
+            }
+        }
+    }
+
+    private fun validateWeight(value: Float?): InputValidation {
+        return when {
+            value == null || value <= 0 -> InputValidation(
+                isValid = false,
+                errorMessage = null
+            )
+            value < MIN_WEIGHT -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(R.string.validation_min_weight, MIN_WEIGHT)
+            )
+            value > MAX_WEIGHT -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(R.string.validation_max_weight, MAX_WEIGHT)
+            )
+            else -> InputValidation(isValid = true, errorMessage = null)
+        }
+    }
+
+    private fun validateHeight(value: Int?): InputValidation {
+        return when {
+            value == null || value <= 0 -> InputValidation(
+                isValid = false,
+                errorMessage = null
+            )
+            value < MIN_HEIGHT -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(R.string.validation_min_height, MIN_HEIGHT)
+            )
+            value > MAX_HEIGHT -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(R.string.validation_max_height, MAX_HEIGHT)
+            )
+            else -> InputValidation(isValid = true, errorMessage = null)
+        }
+    }
+
+    private fun validateWeightChange(value: Float?): InputValidation {
+        return when {
+            value == null || value < 0 -> InputValidation(
+                isValid = false,
+                errorMessage = null
+            )
+            value < MIN_WEIGHT_CHANGE -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(
+                    R.string.validation_min_weight_change,
+                    MIN_WEIGHT_CHANGE
+                )
+            )
+            value > MAX_WEIGHT_CHANGE -> InputValidation(
+                isValid = false,
+                errorMessage = context.getString(
+                    R.string.validation_max_weight_change,
+                    MAX_WEIGHT_CHANGE
+                )
+            )
+            else -> InputValidation(isValid = true, errorMessage = null)
         }
     }
 
     fun onDialogDismiss() {
-        _uiState.update { it.copy(editDialogType = null, showInfoDialog = false) }
+        _uiState.update { it.copy(editDialogType = null, showInfoDialog = false, validation = InputValidation()) }
     }
 
     fun updateTempGender(gender: Gender) {
@@ -178,15 +262,15 @@ class ProfileVM @Inject constructor(
     }
 
     fun updateTempWeightChange(weight: String) {
-        _uiState.update { it.copy(tempWeightChange = weight) }
+        _uiState.update { it.copy(tempWeightChange = weight, validation = InputValidation()) }
     }
 
     fun updateTempCurrentWeight(weight: String) {
-        _uiState.update { it.copy(tempCurrentWeight = weight) }
+        _uiState.update { it.copy(tempCurrentWeight = weight, validation = InputValidation()) }
     }
 
     fun updateTempHeight(height: String) {
-        _uiState.update { it.copy(tempHeight = height) }
+        _uiState.update { it.copy(tempHeight = height, validation = InputValidation()) }
     }
 
     fun updateTempBirthDate(date: LocalDate) {
