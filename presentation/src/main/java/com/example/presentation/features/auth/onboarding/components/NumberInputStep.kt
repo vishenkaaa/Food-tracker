@@ -58,29 +58,19 @@ fun NumberInputStep(
     onValueSelected: (String) -> Unit,
     onNextStep: () -> Unit
 ) {
-    val maxDecimalPlaces = 1
-
-    var input by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange(0)
-            )
-        )
-    }
-
-    LaunchedEffect(value) {
-        if (value != input.text) {
-            val initialValue = if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+    var input by remember(value) {
+        val initialValue =
+            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() >= 0) {
                 if (isIntegerInput) value.toFloat().toInt().toString()
                 else value
             } else ""
 
-            input = TextFieldValue(
+        mutableStateOf(
+            TextFieldValue(
                 text = initialValue,
                 selection = TextRange(initialValue.length)
             )
-        }
+        )
     }
 
     val focusManager = LocalFocusManager.current
@@ -116,36 +106,36 @@ fun NumberInputStep(
                 value = input,
 
                 onValueChange = { newValue ->
+                    val oldText = input.text
                     val text = newValue.text
-                    val isDecimal = !isIntegerInput
 
-                    val filteredText = if (isDecimal) {
-                        text.filterIndexed { _, char ->
-                            char.isDigit() || (char == '.' && text.count { it == '.' } <= 1)
-                        }
-                    } else {
+                    if (text.length < oldText.length) {
+                        input = newValue
+                        onValueSelected(text)
+                        return@OutlinedTextField
+                    }
+
+                    val filteredText = if (isIntegerInput) {
                         text.filter { it.isDigit() }
+                    } else {
+                        val isTextValid = text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' }
+
+                        if (!isTextValid) return@OutlinedTextField
+
+                        if (text.contains('.')) {
+                            val decimalPart = text.substringAfter('.')
+                            if (decimalPart.length > 1) return@OutlinedTextField
+                        }
+
+                        if (text.length > 1 && text.startsWith('0') && !text.startsWith("0."))
+                            text.substring(1)
+                        else if (text == ".") "0."
+                        else text
                     }
 
-                    var finalValue = filteredText
+                    input = newValue.copy(text = filteredText)
 
-                    if (finalValue.length > 1 && finalValue.startsWith('0') && finalValue[1] != '.')
-                        finalValue = finalValue.trimStart('0')
-
-                    if (isDecimal) {
-                        if (finalValue == ".")
-                            finalValue = "0."
-
-                        val parts = finalValue.split(".")
-                        if (parts.size > 1 && parts[1].length > maxDecimalPlaces)
-                            finalValue = "${parts[0]}.${parts[1].substring(0, maxDecimalPlaces)}"
-                    }
-
-                    input = newValue.copy(
-                        text = finalValue,
-                        selection = TextRange(finalValue.length)
-                    )
-                    onValueSelected(finalValue)
+                    onValueSelected(filteredText)
                 },
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground

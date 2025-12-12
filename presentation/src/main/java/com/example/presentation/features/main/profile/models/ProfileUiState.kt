@@ -21,5 +21,5 @@ data class ProfileUiState(
     val tempHeight: String = "",
     val tempBirthDate: LocalDate? = null,
     val tempCaloriesGoal: String = "",
-    val validation: InputValidation = InputValidation(),
+    val validation: InputValidation = InputValidation(isValid = true),
 )

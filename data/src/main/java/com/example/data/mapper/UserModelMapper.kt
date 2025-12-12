@@ -1,5 +1,6 @@
 package com.example.data.mapper
 
+import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
 import com.example.domain.model.user.User
@@ -28,8 +29,8 @@ object UserModelMapper {
             NAME_KEY to user.name,
             GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
-            TARGET_WEIGHT_KEY to user.targetWeight,
-            CURRENT_WEIGHT_KEY to user.currentWeight,
+            TARGET_WEIGHT_KEY to user.targetWeight.roundTo1Decimal(),
+            CURRENT_WEIGHT_KEY to user.currentWeight.roundTo1Decimal(),
             GENDER_KEY to user.gender.value,
             USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
             HEIGHT_KEY to user.height,
@@ -43,8 +44,8 @@ object UserModelMapper {
         return mapOf(
             GOAL_KEY to user.goal.value,
             TARGET_CALORIES_KEY to user.targetCalories,
-            TARGET_WEIGHT_KEY to user.targetWeight,
-            CURRENT_WEIGHT_KEY to user.currentWeight,
+            TARGET_WEIGHT_KEY to user.targetWeight.roundTo1Decimal(),
+            CURRENT_WEIGHT_KEY to user.currentWeight.roundTo1Decimal(),
             GENDER_KEY to user.gender.value,
             USER_ACTIVITY_LEVEL_KEY to user.userActivityLevel.value,
             HEIGHT_KEY to user.height,
@@ -58,11 +59,11 @@ object UserModelMapper {
 
     // Map з Firebase в User
     fun mapToUser(data: Map<String, Any>, userId: String): User {
-        val currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat()
+        val currentWeight = (data[CURRENT_WEIGHT_KEY] as? Number)?.toFloat().roundTo1Decimal()
         val goal = data[GOAL_KEY]?.toString()?.let { Goal.fromValue(it) } ?: Goal.MAINTAIN
 
         val targetWeight = when{
-            data.containsKey(TARGET_WEIGHT_KEY) -> (data[TARGET_WEIGHT_KEY] as? Number)?.toFloat()
+            data.containsKey(TARGET_WEIGHT_KEY) -> (data[TARGET_WEIGHT_KEY] as? Number)?.toFloat() ?: currentWeight
 
             data.containsKey(WEIGHT_CHANGE_KEY) -> {
                 val weightChange = (data[WEIGHT_CHANGE_KEY] as? Number)?.toFloat()
@@ -78,7 +79,7 @@ object UserModelMapper {
             }
 
             else -> currentWeight
-        }
+        }.roundTo1Decimal()
 
         return User(
             id = userId,

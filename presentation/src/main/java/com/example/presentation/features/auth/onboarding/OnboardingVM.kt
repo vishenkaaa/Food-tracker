@@ -32,7 +32,7 @@ class OnboardingVM @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : BaseViewModel() {
     companion object {
         const val MAX_STEPS = 9
