@@ -121,20 +121,20 @@ fun ProfileScreen(
 
             item {
                 if (isLoading || hasError) ProfileUserCardShimmer()
-                else ProfileUserCard(uiState.user!!)
+                else ProfileUserCard(uiState.user)
                 Spacer(Modifier.height(16.dp))
             }
 
             item {
                 if (isLoading || hasError) UserGoalsSectionShimmer()
-                else UserGoalsSection(user = uiState.user!!, onEditClick = onEditClick)
+                else UserGoalsSection(user = uiState.user, onEditClick = onEditClick)
 
                 Divider()
             }
 
             item {
                 if (isLoading || hasError) UserInfoSectionShimmer()
-                else UserInfoSection(uiState.user!!, onEditClick = onEditClick)
+                else UserInfoSection(uiState.user, onEditClick = onEditClick)
 
                 Divider()
             }
