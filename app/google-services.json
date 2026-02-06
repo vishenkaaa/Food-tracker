@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "86530406637",
+    "project_id": "foodtracker-2055b",
+    "storage_bucket": "foodtracker-2055b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86530406637:android:4620a35ca753aadb06f4e4",
+        "android_client_info": {
+          "package_name": "com.stfalcon.foodsnap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86530406637-7jr3oo8rmbg0ap1brjrqo36hrt3k5i69.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stfalcon.foodsnap",
+            "certificate_hash": "f38d86fc642504e9db28314d36a1a68705e8816b"
+          }
+        },
+        {
+          "client_id": "86530406637-kknp1aqq51cn6uik2kij2jj5734t5cg4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stfalcon.foodsnap",
+            "certificate_hash": "379996823fb92538b6eeffd59fb7a0e201a61f44"
+          }
+        },
+        {
+          "client_id": "86530406637-sgvvk8lnbcskt6vgh1h9b9fukbf8b8gp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stfalcon.foodsnap",
+            "certificate_hash": "071ceb37af48a737547d190fc7554e640765f338"
+          }
+        },
+        {
+          "client_id": "86530406637-tog5j8nmbo79bc4fhi7l5aes2g69rsd1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stfalcon.foodsnap",
+            "certificate_hash": "9c91e4f60f3c1d125bc35d546b0dacf57a43a24b"
+          }
+        },
+        {
+          "client_id": "86530406637-gk9vs184k3kdi1bhr8gluueelvvs8847.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7CSRXzshMQ0ULM8C20vuGropi9ahkhLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86530406637-gk9vs184k3kdi1bhr8gluueelvvs8847.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "86530406637-bbfon5qoo8abhf0gc4ipm9a59vm2s5j5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.stfalcon.baseProjectFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86530406637:android:66a4be0315d9b5ac06f4e4",
+        "android_client_info": {
+          "package_name": "com.stfalcon.foodsnap.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86530406637-u10bo6o4pieg5g1ggdogfbrd22672ucs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stfalcon.foodsnap.staging",
+            "certificate_hash": "f38d86fc642504e9db28314d36a1a68705e8816b"
+          }
+        },
+        {
+          "client_id": "86530406637-gk9vs184k3kdi1bhr8gluueelvvs8847.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7CSRXzshMQ0ULM8C20vuGropi9ahkhLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86530406637-gk9vs184k3kdi1bhr8gluueelvvs8847.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "86530406637-bbfon5qoo8abhf0gc4ipm9a59vm2s5j5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.stfalcon.baseProjectFlutter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
