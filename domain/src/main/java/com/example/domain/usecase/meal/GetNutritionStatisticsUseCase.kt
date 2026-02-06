@@ -86,9 +86,9 @@ class GetNutritionStatisticsUseCase @Inject constructor(
             }
 
             val averageCalories = dayStatistics.map { it.calories }.average().toInt()
-            val averageCarbs = dayStatistics.map { it.carbs }.average().toFloat().roundTo1Decimal()
-            val averageProtein = dayStatistics.map { it.protein }.average().toFloat().roundTo1Decimal()
-            val averageFat = dayStatistics.map { it.fat }.average().toFloat().roundTo1Decimal()
+            val averageCarbs = dayStatistics.map { it.carbs }.average().toFloat().roundTo1Decimal()!!
+            val averageProtein = dayStatistics.map { it.protein }.average().toFloat().roundTo1Decimal()!!
+            val averageFat = dayStatistics.map { it.fat }.average().toFloat().roundTo1Decimal()!!
             
             val user = userRepository.getUser(userId).getOrNull()
 

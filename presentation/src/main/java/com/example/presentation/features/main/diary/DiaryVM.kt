@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryVM @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getTargetCaloriesUseCase: GetTargetCaloriesUseCase,
     private val getMealsForDateRangeUseCase: GetMealsForDateRangeUseCase,
@@ -56,7 +56,7 @@ class DiaryVM @Inject constructor(
 
                 if (migrationResult.isFailure) migrationResult.getOrThrow()
 
-            } catch (e: Exception){
+            } catch (_: Exception){
                 handleError(Exception(context.getString(R.string.failed_to_update_user_data_please_try_restarting_the_app)), context)
             }
         }

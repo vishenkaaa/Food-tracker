@@ -41,8 +41,8 @@ fun BirthDateStep(
                 val dateToCheck = Instant.ofEpochMilli(utcTimeMillis)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
-                val today = LocalDate.now()
-                return dateToCheck <= today
+                val threeYearsAgo = LocalDate.now().minusYears(3)
+                return dateToCheck <= threeYearsAgo
             }
 
             override fun isSelectableYear(year: Int): Boolean {

@@ -98,9 +98,9 @@ class EditDishVM @Inject constructor() : BaseViewModel() {
             amount = amount,
             unit = currentState.selectedUnit,
             kcal = currentState.currentNutrition.calories,
-            protein = currentState.currentNutrition.protein.roundTo1Decimal(),
-            carb = currentState.currentNutrition.carb.roundTo1Decimal(),
-            fats = currentState.currentNutrition.fat.roundTo1Decimal()
+            protein = currentState.currentNutrition.protein.roundTo1Decimal()!!,
+            carb = currentState.currentNutrition.carb.roundTo1Decimal()!!,
+            fats = currentState.currentNutrition.fat.roundTo1Decimal()!!
         )
     }
 }

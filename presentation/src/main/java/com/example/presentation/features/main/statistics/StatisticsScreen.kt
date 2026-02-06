@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +34,6 @@ import com.example.presentation.features.main.statistics.componets.DailyStatisti
 import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTab
 import com.example.presentation.features.main.statistics.componets.WeeklyStatisticsTabShimmer
 import com.example.presentation.features.main.statistics.models.StatisticsUiState
-import kotlinx.coroutines.launch
 
 @Composable
 fun StatisticsRoute(
@@ -75,7 +73,6 @@ fun StatisticsScreen(
         initialPage = StatisticsPeriod.entries.indexOf(uiState.selectedPeriod),
         pageCount = { 3 }
     )
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.selectedPeriod) {
         val targetPage = StatisticsPeriod.entries.indexOf(uiState.selectedPeriod)
@@ -84,10 +81,12 @@ fun StatisticsScreen(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-        val newPeriod = StatisticsPeriod.entries[pagerState.currentPage]
-        if (newPeriod != uiState.selectedPeriod) {
-            onPeriodSelected(newPeriod)
+    LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+        if (!pagerState.isScrollInProgress) {
+            val newPeriod = StatisticsPeriod.entries[pagerState.currentPage]
+            if (newPeriod != uiState.selectedPeriod) {
+                onPeriodSelected(newPeriod)
+            }
         }
     }
 
@@ -101,11 +100,6 @@ fun StatisticsScreen(
                         selectedTab = uiState.selectedPeriod,
                         onTabSelected = { period ->
                             onPeriodSelected(period)
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    StatisticsPeriod.entries.indexOf(period)
-                                )
-                            }
                         }
                     )
 

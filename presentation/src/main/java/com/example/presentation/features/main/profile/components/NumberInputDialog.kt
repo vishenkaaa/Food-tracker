@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -48,7 +49,7 @@ fun NumberInputDialog(
 ) {
     var input by remember(value) {
         val initialValue =
-            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() > 0) {
+            if (value.isNotEmpty() && value.toFloatOrNull() != null && value.toFloat() >= 0) {
                 if (isIntegerInput) value.toFloat().toInt().toString()
                 else value
             } else ""
@@ -66,6 +67,13 @@ fun NumberInputDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        modifier = Modifier.pointerInput(Unit){
+            awaitPointerEventScope {
+                while (true){
+                    awaitPointerEvent()
+                }
+            }
+        },
         title = {
             Column {
                 Text(
@@ -89,17 +97,37 @@ fun NumberInputDialog(
                 BasicTextField(
                     value = input,
                     onValueChange = { newValue ->
-                        val filteredText = if (isIntegerInput) newValue.text.filter { it.isDigit() }
-                        else {
-                            val text = newValue.text
-                            if (text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' })
-                                text
-                            else input.text
+                        val oldText = input.text
+                        val text = newValue.text
+
+                        if (text.length < oldText.length) {
+                            input = newValue
+                            onValueChanged(text)
+                            return@BasicTextField
                         }
+
+                        val filteredText = if (isIntegerInput) {
+                            text.filter { it.isDigit() }
+                        } else {
+                            val isTextValid = text.count { it == '.' } <= 1 && text.all { it.isDigit() || it == '.' }
+
+                            if (!isTextValid) return@BasicTextField
+
+                            if (text.contains('.')) {
+                                val decimalPart = text.substringAfter('.')
+                                if (decimalPart.length > 1) return@BasicTextField
+                            }
+
+                            if (text.length > 1 && text.startsWith('0') && !text.startsWith("0."))
+                                text.substring(1)
+                            else if (text == ".") "0."
+                            else text
+                        }
+
+                        input = newValue.copy(text = filteredText)
 
                         onValueChanged(filteredText)
                     },
-
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = if (isIntegerInput) KeyboardType.Number else KeyboardType.Decimal,

@@ -2,6 +2,7 @@ package com.example.presentation.features.main.profile
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.example.domain.extension.roundTo1Decimal
 import com.example.domain.manager.AuthStateManager
 import com.example.domain.model.user.Gender
 import com.example.domain.model.user.Goal
@@ -39,7 +40,7 @@ class ProfileVM @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
     private val authStateManager: AuthStateManager,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -70,7 +71,7 @@ class ProfileVM @Inject constructor(
             val targetWeight = currentUser?.targetWeight
             val currentWeight = currentUser?.currentWeight
             if (targetWeight != null && currentWeight != null)
-                abs(currentWeight - targetWeight).toString() else ""
+                abs(currentWeight - targetWeight).roundTo1Decimal().toString() else ""
         } else ""
 
         _uiState.update { state ->
@@ -187,7 +188,7 @@ class ProfileVM @Inject constructor(
 
     private fun validateWeight(value: Float?): InputValidation {
         return when {
-            value == null || value <= 0 -> InputValidation(
+            value == null -> InputValidation(
                 isValid = false,
                 errorMessage = null
             )
@@ -205,7 +206,7 @@ class ProfileVM @Inject constructor(
 
     private fun validateHeight(value: Int?): InputValidation {
         return when {
-            value == null || value <= 0 -> InputValidation(
+            value == null -> InputValidation(
                 isValid = false,
                 errorMessage = null
             )
@@ -246,7 +247,7 @@ class ProfileVM @Inject constructor(
     }
 
     fun onDialogDismiss() {
-        _uiState.update { it.copy(editDialogType = null, showInfoDialog = false, validation = InputValidation()) }
+        _uiState.update { it.copy(editDialogType = null, showInfoDialog = false, validation = InputValidation(isValid = true)) }
     }
 
     fun updateTempGender(gender: Gender) {
